@@ -1,0 +1,111 @@
+.groupsPage {
+    padding: 20px;
+}
+
+.groupsList {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.groupTile {
+    background-color: #f5f5f5;
+    padding: 20px;
+    margin: 10px;
+    width: 300px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.textCenter {
+    text-align: center;
+    font-size: 2rem;
+}
+
+.groupTile:hover {
+    background-color: #e0e0e0;
+}
+
+.groupTile h2 {
+    margin-top: 0;
+}
+
+.groupTile p {
+    color: #555;
+}
+
+.joinButton {
+    background-color: #45a049;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    padding: 5px 10px;
+    color: white;
+}
+
+.createGroupButton {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.groupModalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.groupModalContent {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    width: 400px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.groupModalInput,
+.groupModalTextarea {
+    width: 100%;
+    margin: 10px 0;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.groupModalButton {
+    background-color: transparent;
+    color: #007bff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.groupModalButton:hover {
+    background-color: #45a049;
+}
+
+@media (max-width: 600px) {
+    .groupTile {
+        width: 100%;
+    }
+
+    .groupModalContent {
+        width: 90%;
+    }
+}

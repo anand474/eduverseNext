@@ -1,0 +1,17 @@
+.errorContainer {
+    text-align: center;
+    padding: 40px;
+}
+
+.errorImage {
+    margin: 20px auto;
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.errorLink {
+    color: #0070f3;
+    text-decoration: underline;
+    font-size: 1.2em;
+}

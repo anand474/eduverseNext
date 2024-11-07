@@ -1,0 +1,146 @@
+/*
+Agnihotram, Anand Manohar – 1002149690
+Ankireddy, Gurusai Ravi Raja Reddy – 1002138944
+Addepalli, Sravani – 1002148407
+Konduru Balakrishna, Hanish – 1002175225
+Akepati, Prem Nandhan Reddy - 1002170918
+*/
+
+/*
+    Font: 'Jua', sans-serif;
+
+    Color Palette:
+    -- Chat Window Background: #ffffff (White)
+    -- Chat Window Section Background: #e6f7f5 (Pale Cyan)
+    -- Sent Message Background: #dcf8c6 (Light Green)
+    -- Received Message Background: #ffffff (White)
+    -- Message Input Border: #ddd (Light Gray)
+    -- Button Background: #73c2ef (Sky Blue)
+    -- Button Hover Background: #1473e8 (Blue)
+    -- Message Time Text: #888 (Gray)
+*/
+
+.chatWindow {
+  flex: 0.8 1;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  overflow-y: auto;
+  background-color: white;
+  border-radius: 8px;
+  max-width: 100%;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.pmChatMessages {
+  flex: 1;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.chatWindowSection {
+  flex: 0.8;
+  display: flex;
+  flex-direction: inherit;
+  justify-content: space-evenly;
+  padding: 0;
+  background-color: #e6f7f5;
+  position: relative;
+  max-height: 100%;
+}
+
+.chatMessage {
+  max-width: 50%;
+  padding: 10px 15px;
+  margin: 5px 0;
+  border-radius: 20px;
+  position: relative;
+  word-wrap: break-word;
+  display: inline-block;
+}
+
+.chatMessage.sent {
+  align-self: flex-end;
+  background-color: #dcf8c6;
+  text-align: right;
+}
+
+.chatMessage.received {
+  align-self: flex-start;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.messageText {
+  margin: 0;
+  font-size: 14px;
+}
+
+.messageTime {
+  font-size: 12px;
+  color: #888;
+  margin-top: 5px;
+}
+
+.messageInputSection {
+  display: flex;
+  padding: 10px;
+  border-top: 1px solid #ddd;
+  background-color: white;
+}
+
+.messageInputSection input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  outline: none;
+}
+
+.messageInputSection button {
+  padding: 10px 20px;
+  margin-left: 10px;
+  background-color: #73c2ef;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.messageInputSection button:hover {
+  background-color: #1473e8;
+}
+
+@media (max-width: 768px) {
+  .chatWindowSection {
+    flex: unset;
+    width: 100%;
+  }
+
+  .pmChatMessages {
+    max-height: 300px;
+  }
+
+  .chatMessage {
+    max-width: 80%;
+  }
+
+  .chatWindow {
+    padding: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .messageInputSection input {
+    padding: 8px;
+  }
+
+  .messageInputSection button {
+    padding: 8px 15px;
+  }
+}
