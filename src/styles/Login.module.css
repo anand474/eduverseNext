@@ -1,0 +1,169 @@
+@import url('https://fonts.googleapis.com/css2?family=Jua&display=swap');
+
+.loginFlex {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+  padding: 16px;
+}
+
+.loginCustomImage {
+  max-width: 550px;
+  margin-top: 20px;
+}
+
+.loginBgWhite {
+  background-color: #fff;
+  padding: 32px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+}
+
+.loginHeader {
+  font-size: 1.75rem;
+  text-align: center;
+  color: #2d3748;
+}
+
+.loginError {
+  color: red;
+  text-align: center;
+}
+
+.loginInputBox {
+  width: 95%;
+  height: 25px;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  text-align: center;
+  margin-bottom: 16px;
+  font-size: 1.25rem;
+  font-family: 'Jua', sans-serif;
+}
+
+.loginSubmitButton {
+  width: 50%;
+  height: 40px;
+  background-color: #38a169;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  margin: 0 auto;
+  display: block;
+}
+
+.loginSubmitButton:hover {
+  background-color: #2f855a;
+}
+
+.loginLinks {
+  margin-top: 16px;
+  text-align: center;
+}
+
+.loginLink {
+  color: #4299e1;
+  text-decoration: none;
+}
+
+.loginLink:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 1024px) {
+  .loginHeader {
+    font-size: 1.5rem;
+  }
+
+  .loginInputBox {
+    font-size: 1rem;
+  }
+
+  .loginSubmitButton {
+    font-size: 0.875rem;
+  }
+
+  .loginCustomImage {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .loginBgWhite {
+    padding: 24px;
+    max-width: 350px;
+  }
+
+  .loginHeader {
+    font-size: 1.5rem;
+  }
+
+  .loginInputBox {
+    height: 40px;
+    width: 90%;
+    font-size: 1rem;
+  }
+
+  .loginSubmitButton {
+    height: 36px;
+    font-size: 0.875rem;
+    width: 60%;
+  }
+
+  .loginCustomImage {
+    width: 100%;
+    margin-top: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .loginHeader {
+    font-size: 1.25rem;
+  }
+
+  .loginBgWhite {
+    padding: 16px;
+    width: 90%;
+  }
+
+  .loginInputBox {
+    height: 38px;
+    font-size: 0.9rem;
+    width: 90%;
+  }
+
+  .loginSubmitButton {
+    height: 34px;
+    font-size: 0.8rem;
+    width: 70%;
+  }
+
+  .loginCustomImage {
+    width: 100%;
+  }
+}
+
+@media (max-width: 360px) {
+  .loginHeader {
+    font-size: 1rem;
+  }
+
+  .loginInputBox {
+    height: 35px;
+    font-size: 0.8rem;
+  }
+
+  .loginSubmitButton {
+    height: 32px;
+    font-size: 0.75rem;
+  }
+
+  .loginCustomImage {
+    max-width: 300px;
+  }
+}

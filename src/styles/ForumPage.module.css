@@ -1,0 +1,376 @@
+/*
+Agnihotram, Anand Manohar – 1002149690
+Ankireddy, Gurusai Ravi Raja Reddy – 1002138944
+Addepalli, Sravani – 1002148407
+Konduru Balakrishna, Hanish – 1002175225
+Akepati, Prem Nandhan Reddy - 1002170918
+*/
+
+.forumPage {
+  padding: 20px;
+  background-color: #f9f9f9;
+}
+
+.h2 {
+  font-size: 28px;
+  color: #333;
+}
+
+.p {
+  font-size: 16px;
+  color: #666;
+}
+
+.h3 {
+  margin-top: 20px;
+  font-size: 22px;
+  color: #333;
+}
+
+.posts-list {
+  margin-top: 20px;
+}
+
+.post-box {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.post-box h4 {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.post-box p {
+  font-size: 16px;
+  margin: 10px 0;
+  color: #555;
+}
+
+.post-box small {
+  display: block;
+  font-size: 12px;
+  color: #999;
+}
+
+.newPostForm {
+  margin-top: 30px;
+}
+
+.newPostForm textarea {
+  width: 100%;
+  height: 100px;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.newPostForm button {
+  padding: 10px 20px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.newPostForm button:hover {
+  background-color: #45a049;
+}
+
+.postsSection {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.postItem {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: column;
+}
+
+.postUsername {
+  font-weight: bold;
+  color: #007bff;
+  margin-bottom: 8px;
+}
+
+.postContent {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.postDetails {
+  flex-grow: 1;
+}
+
+.readMore {
+  color: #007bff;
+  text-decoration: none;
+  padding: 8px 12px;
+  border: 1px solid #007bff;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.readMore:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+.newPostForm {
+  margin-top: 20px;
+}
+
+.newPostForm input,
+.newPostForm textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.newPostForm button {
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.newPostForm button:hover {
+  background-color: #0056b3;
+}
+
+.commentUsername {
+  font-weight: bold;
+  font-size: 12px;
+  color: #555;
+  margin-right: 5px;
+}
+
+.membersList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.groupTextCenter {
+  text-align: center;
+}
+
+.comment {
+  margin-bottom: 5px;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+}
+
+.commentsSection {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+  width: 100%;
+}
+
+.commentsButton {
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  padding: 5px 10px;
+}
+
+.commentsButton:hover {
+  background: #4caf50;
+}
+
+.newComment {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+.newComment input {
+  flex-grow: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  width: 100%;
+}
+
+.newComment button {
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100px;
+}
+
+.newComment button:hover {
+  background-color: #0056b3;
+}
+
+.deletePostButton {
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  background: none;
+  margin-left: auto;
+}
+
+.deletePostButton:hover {
+  opacity: 0.7;
+  background-color: white;
+}
+
+
+@media only screen and (min-width: 600px) {
+  .forumPage {
+    padding: 20px;
+  }
+
+  .h2 {
+    font-size: 26px;
+  }
+
+  .h3 {
+    font-size: 20px;
+  }
+
+  .postBox {
+    padding: 12px;
+  }
+
+  .postBox h4 {
+    font-size: 20px;
+  }
+
+  .postsSection {
+    padding: 25px;
+  }
+
+  .newPostForm textarea {
+    height: 120px;
+  }
+
+  .newPostForm button {
+    padding: 10px 30px;
+  }
+
+  .postContent {
+    flex-direction: row;
+  }
+
+  .newComment {
+    flex-direction: row;
+  }
+
+  .newComment button {
+    width: 120px;
+  }
+}
+
+@media only screen and (min-width: 1024px) {
+  .forumPage {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 30px;
+  }
+
+  .h2 {
+    font-size: 28px;
+  }
+
+  .h3 {
+    font-size: 22px;
+  }
+
+  .postBox {
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  .postBox h4 {
+    font-size: 22px;
+  }
+
+  .newPostForm textarea {
+    height: 150px;
+  }
+
+  .newPostForm button {
+    padding: 10px 40px;
+  }
+
+  .newComment button {
+    width: 150px;
+  }
+
+  .newComment {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 10px;
+  }
+
+  .postsSection {
+    padding: 30px;
+  }
+
+  .deletePostButton {
+    padding: 8px;
+  }
+}
+
+
+@media only screen and (min-width: 1440px) {
+  .forumPage {
+    max-width: 1400px;
+    padding: 40px;
+  }
+
+  .h2 {
+    font-size: 30px;
+  }
+
+  .h3 {
+    font-size: 24px;
+  }
+
+  .post-box {
+    padding: 25px;
+  }
+
+  .post-box h4 {
+    font-size: 24px;
+  }
+
+  .newPostForm textarea {
+    height: 180px;
+  }
+
+  .newComment button {
+    width: 200px;
+  }
+}

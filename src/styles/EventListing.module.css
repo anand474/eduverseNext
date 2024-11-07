@@ -1,0 +1,161 @@
+ .eventCard {
+   display: grid;
+   grid-template-columns: 1fr auto;
+   gap: 20px;
+   border: 2px solid #000;
+   border-radius: 10px;
+   padding: 15px;
+   margin-bottom: 20px;
+   background-color: #f0fdf4;
+   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+   position: relative;
+   transition: transform 0.2s ease;
+ }
+
+ .eventCard:hover {
+   transform: translateY(-3px);
+ }
+
+ .eventCardInfo {
+   display: flex;
+   flex-direction: column;
+   justify-content: space-between;
+ }
+
+ .eventCardTitle {
+   font-size: 18px;
+   margin: 0;
+   font-weight: bold;
+   color: #000;
+ }
+
+ .eventCardLocation {
+   font-size: 16px;
+   color: #5a00e5;
+   margin-top: 5px;
+ }
+
+ .eventCardDate,
+ .eventCardTime {
+   font-size: 14px;
+   color: #555;
+   margin: 5px 0;
+ }
+
+ .eventCardLink a {
+   color: #00f;
+ }
+
+ .eventCardLink a:hover {
+   text-decoration: underline;
+ }
+
+ .eventCardButtons {
+   display: flex;
+   align-items: center;
+   gap: 15px;
+ }
+
+ .eventInterestedButton {
+   background-color: #007bff;
+   color: white;
+   border: none;
+   padding: 10px 20px;
+   border-radius: 5px;
+   cursor: pointer;
+   font-weight: bold;
+ }
+
+ .eventDeleteIcon {
+   cursor: pointer;
+   color: red;
+   transition: color 0.2s;
+ }
+
+ .eventDeleteIcon:hover {
+   color: darkred;
+ }
+
+ .eventMapIcon {
+   cursor: pointer;
+   font-size: 24px;
+   color: #2980b9;
+   transition: color 0.3s ease;
+ }
+
+ .eventMapIconHide {
+   font-size: 24px;
+   color: #2980b9;
+   visibility: hidden;
+   height: 50px;
+   width: 50px;
+ }
+
+ .eventMapIcon:hover {
+   color: #1a73e8;
+ }
+
+ .eventCardMapContainer {
+   margin-top: 10px;
+   padding: 10px;
+   background-color: #f4f6f7;
+   border-radius: 8px;
+   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+   display: none;
+ }
+
+ .eventCardMapContainer.open {
+   display: block;
+ }
+
+ .eventCardMapContainer iframe {
+   width: 100%;
+   height: 250px;
+   border: none;
+   border-radius: 8px;
+ }
+
+ @media (max-width: 480px) {
+   .eventCard {
+     grid-template-columns: 1fr;
+     padding: 10px;
+     margin-bottom: 15px;
+     width: 75%;
+   }
+
+   .eventCardTitle {
+     font-size: 16px;
+   }
+
+   .eventCardLocation,
+   .eventCardDate,
+   .eventCardTime {
+     font-size: 12px;
+   }
+
+   .eventCardButtons {
+     flex-direction: row;
+     justify-content: space-around;
+     margin-top: 10px;
+   }
+
+   .eventInterestedButton {
+     width: 100px;
+     font-size: 14px;
+     padding: 8px 12px;
+   }
+
+   .eventDeleteIcon {
+     font-size: 18px;
+     margin-left: 10px;
+   }
+
+   .eventMapIcon {
+     font-size: 20px;
+   }
+
+   .eventCardMapContainer iframe {
+     height: 180px;
+     width: 100%;
+   }
+ }
