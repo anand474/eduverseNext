@@ -1,0 +1,175 @@
+/*
+    Color Palette:
+    -- Table Header Background: #f4f4f4 (Light Gray)
+    -- Table Cell Border: #ddd (Light Gray)
+    -- Create Opportunity Button Background: #007bff (Blue)
+    -- Delete Button Background: red (Bright Red)
+    -- Modal Background Color: rgba(0, 0, 0, 0.7) (Semi-Transparent Black)
+    -- Modal Content Background Color: white
+    -- Modal Button Color: #007bff (Blue)
+    -- Modal Button Hover Background Color: #45a049 (Green)
+*/
+
+.manageOpportunities {
+    padding: 20px;
+}
+
+.opportunityTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.opportunityTable th,
+.opportunityTable td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+}
+
+.opportunityTable th {
+    background-color: #f4f4f4;
+}
+
+.actionsCell {
+    align-items: center;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.deleteButton {
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    padding: 5px 10px;
+    background-color: #f44336;
+    color: #fff;
+}
+
+.createOpportunityButton {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 20px auto;
+    display: block;
+}
+
+.oppModalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.oppModalContent {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    width: 100%;
+    max-width: 400px;
+    max-height: 80%;
+    overflow-y: auto;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.oppModalContent input,
+.oppModalContent textarea,
+.oppModalContent select {
+    width: 100%;
+    margin: 10px 0;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.oppModalContent button {
+    background-color: transparent;
+    color: #007bff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.oppCancelButton {
+    background-color: transparent;
+}
+
+.oppModalContent button:hover {
+    background-color: #45a049;
+}
+
+@media (max-width: 1024px) {
+    .createOpportunityButton {
+        width: 50%;
+    }
+
+    .oppModalContent {
+        padding: 15px;
+    }
+}
+
+@media (max-width: 768px) {
+    .opportunityTable th,
+    .opportunityTable td {
+        padding: 8px;
+        font-size: 14px;
+    }
+
+    .oppModalContent {
+        width: 95%;
+        padding: 10px;
+    }
+
+    .manageOpportunities {
+        padding: 15px;
+    }
+
+    .createOpportunityButton {
+        padding: 8px 16px;
+        width: 50%;
+    }
+
+    .oppModalContent input,
+    .oppModalContent textarea,
+    .oppModalContent select {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    .oppModalContent button {
+        padding: 8px 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .oppModalContent {
+        width: 95%;
+        padding: 10px;
+    }
+
+    .createOpportunityButton {
+        padding: 6px 12px;
+        font-size: 12px;
+        width: 50%;
+    }
+
+    .oppModalContent input,
+    .oppModalContent textarea,
+    .oppModalContent select {
+        font-size: 10px;
+        padding: 6px;
+    }
+}

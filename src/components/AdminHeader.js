@@ -28,7 +28,7 @@ export default function AdminHeader() {
   return (
     <header className={styles.header}>
       <div className={styles.logo}>
-        <Image src={logoImage} alt="EduVerse Logo" width={150} height={50} />
+        <Image src="/assets/edvlogo.jpg" alt="EduVerse Logo" width={150} height={50} />
       </div>
       <nav className={styles.nav}>
         <ul>

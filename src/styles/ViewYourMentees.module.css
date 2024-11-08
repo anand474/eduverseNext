@@ -1,0 +1,148 @@
+/*
+  Team Members:
+  Agnihotram, Anand Manohar – 1002149690
+  Ankireddy, Gurusai Ravi Raja Reddy – 1002138944
+  Addepalli, Sravani – 1002148407
+  Konduru Balakrishna, Hanish – 1002175225
+  Akepati, Prem Nandhan Reddy - 1002170918
+*/
+
+/*
+  Font: 'Jua', sans-serif;
+
+  Color Palette:
+  -- Mentees Container Background: #f9f9f9 (Light Gray)
+  -- Mentees Heading Color: #333 (Dark Gray)
+  -- Mentee Card Background: white
+  -- Mentee Card Shadow: rgba(0, 0, 0, 0.1) (Light Shadow)
+  -- Mentee Icon Background: #73c2ef (Sky Blue)
+  -- Mentee Icon Text Color: white
+  -- Mentee Actions Delete Icon Color: #ff4d4f (Red)
+  -- No Mentees Message Color: #888 (Gray)
+*/
+
+.menteesContainer {
+    max-width: 900px;
+    margin: 20px auto;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.menteesHeading {
+    text-align: center;
+    font-family: 'Jua', sans-serif;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.menteesList {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.menteeCard {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    box-sizing: border-box;
+    max-width: 100%;
+    gap: 10px;
+}
+
+.menteeCardContent {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.menteeLeft,
+.menteeRight {
+    display: flex;
+    flex-direction: column;
+}
+
+.menteeLeft {
+    flex-basis: 70%;
+}
+
+.menteeRight {
+    flex-basis: 30%;
+    align-items: flex-end;
+}
+
+.menteeIcon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #73c2ef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.menteeInfo p {
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+.menteeReason {
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px solid #ddd;
+    font-size: 14px;
+    text-align: center;
+}
+
+.menteeActions {
+    display: flex;
+    align-items: center;
+}
+
+.deleteIcon {
+    font-size: 20px;
+    color: #ff4d4f;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.deleteIcon:hover {
+    transform: scale(1.2);
+}
+
+.noMenteesMessage {
+    text-align: center;
+    font-size: 18px;
+    color: #888;
+    margin-top: 20px;
+    font-family: 'Jua', sans-serif;
+}
+
+@media (max-width: 768px) {
+    .menteeCard {
+        width: 100%;
+    }
+
+    .menteeCardContent {
+        flex-direction: column;
+    }
+
+    .menteeRight {
+        align-items: flex-start;
+    }
+
+    .menteeLeft {
+        align-items: center;
+    }
+}

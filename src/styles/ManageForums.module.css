@@ -1,0 +1,115 @@
+/*
+Agnihotram, Anand Manohar – 1002149690
+Ankireddy, Gurusai Ravi Raja Reddy – 1002138944
+Addepalli, Sravani – 1002148407
+Konduru Balakrishna, Hanish – 1002175225
+Akepati, Prem Nandhan Reddy - 1002170918
+*/
+
+/*
+    Font: 'Jua', sans-serif;
+
+    Color Palette:
+    -- Table Header Background: #f2f2f2 (Light Gray)
+    -- Table Cell Border: #ddd (Light Gray)
+    -- Delete Button Background: #f44336 (Red)
+    -- Delete Button Hover Background: #d32f2f (Dark Red)
+    -- Button Hover Opacity: 0.8 (Slightly Transparent)
+*/
+
+.manageForums {
+  padding: 20px;
+}
+
+.forumTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.forumTable th,
+.forumTable td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.forumTable th {
+  background-color: #f2f2f2;
+}
+
+.forumTable td {
+  vertical-align: middle;
+}
+
+.actionsCell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+}
+
+.deleteButton {
+  background-color: #f44336;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+
+.deleteButton:hover {
+  background-color: #d32f2f;
+  opacity: 0.8;
+}
+
+@media (max-width: 1024px) {
+  .manageForums {
+    padding: 15px;
+  }
+
+  .forumTable th,
+  .forumTable td {
+    padding: 8px;
+  }
+
+  .forumTable {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 768px) {
+
+  .forumTable th,
+  .forumTable td {
+    padding: 6px;
+  }
+
+  .forumTable {
+    font-size: 12px;
+  }
+
+  .manageForums {
+    padding: 10px;
+  }
+
+  .deleteButton {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .forumTable th,
+  .forumTable td {
+    padding: 4px;
+  }
+
+  .forumTable {
+    font-size: 10px;
+  }
+
+  .manageForums {
+    padding: 5px;
+  }
+}

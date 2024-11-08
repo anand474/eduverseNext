@@ -83,8 +83,8 @@ export default function Header() {
               <li><Link href="/chats">Chat</Link></li>
               {currentUser.user_type === "Mentor" && (
                 <>
-                  <li><Link href="/mentee-requests">Requests</Link></li>
-                  <li><Link href="/your-mentees">Your Mentees</Link></li>
+                  <li><Link href="/menteeRequests">Requests</Link></li>
+                  <li><Link href="/yourMentees">Your Mentees</Link></li>
                 </>
               )}
               <li><Link href="/contactForm">Contact Us</Link></li>
