@@ -1,0 +1,320 @@
+/*
+Agnihotram, Anand Manohar – 1002149690
+Ankireddy, Gurusai Ravi Raja Reddy – 1002138944
+Addepalli, Sravani – 1002148407
+Konduru Balakrishna, Hanish – 1002175225
+Akepati, Prem Nandhan Reddy - 1002170918
+*/
+
+.groupChat {
+    padding: 20px;
+    background-color: #fafafa;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.backButton {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    margin-bottom: 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.backButton:hover {
+    background-color: #0056b3;
+}
+
+.chatMessages {
+    max-height: 400px;
+    overflow-y: scroll;
+    margin-bottom: 20px;
+    background-color: #f5f5f5;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.message {
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    position: relative;
+    transition: transform 0.2s;
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+}
+
+.senderName {
+    font-weight: bold;
+    font-size: 12px;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+.messageYou {
+    background-color: #007bff;
+    color: white;
+    margin-left: auto;
+    width: 40%;
+}
+
+.messageOther {
+    background-color: #e5e5ea;
+    color: black;
+    margin-right: auto;
+    width: 40%;
+}
+
+.chatInput {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.chatInput input {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.chatInput button {
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.chatInput button:hover {
+    background-color: #0056b3;
+}
+
+
+.tabButtons {
+    display: flex;
+    justify-content: space-around;
+    margin: 10px 0;
+}
+
+.tabButtons button {
+    padding: 10px 20px;
+    border: none;
+    background-color: lightgray;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.tabButtons .active {
+    background-color: #007bff;
+    color: white;
+}
+
+.leaveGroupButton {
+    background-color: red;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.leaveGroupButton:hover {
+    background-color: darkred;
+}
+
+.postsSection {
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.postItem {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+}
+
+.postUsername {
+    font-weight: bold;
+    color: #007bff;
+    margin-bottom: 8px;
+}
+
+.postContent {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.postDetails {
+    flex-grow: 1;
+}
+
+.readMore {
+    color: #007bff;
+    text-decoration: none;
+    padding: 8px 12px;
+    border: 1px solid #007bff;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.readMore:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+.newPostForm {
+    margin-top: 20px;
+}
+
+.newPostForm input,
+.newPostForm textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.newPostForm button {
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.newPostForm button:hover {
+    background-color: #0056b3;
+}
+
+.commentUsername {
+    font-weight: bold;
+    font-size: 12px;
+    color: #555;
+    margin-right: 5px;
+}
+
+.membersList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.groupTextCenter {
+    text-align: center;
+    font-size: 2rem;
+}
+
+.comment {
+    margin-bottom: 5px;
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+}
+
+.commentsSection {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    width: 100%;
+}
+
+.newComment {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+}
+
+.newComment input {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    width: 100%;
+}
+
+.newComment button {
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100px;
+}
+
+.newComment button:hover {
+    background-color: #0056b3;
+}
+
+
+.chatMessages::-webkit-scrollbar {
+    width: 8px;
+}
+
+.chatMessages::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 10px;
+}
+
+.chatMessages::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
+}
+
+.deleteGroupButton {
+    background-color: darkorange;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    margin-left: 10px;
+}
+
+.deleteGroupButton:hover {
+    background-color: orangered;
+}
+
+.groupDeletePostButton {
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    background: none;
+    margin-left: auto;
+}
+
+.groupDeletePostButton:hover {
+    opacity: 0.7;
+    background-color: white;
+}

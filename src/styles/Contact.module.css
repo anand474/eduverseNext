@@ -1,0 +1,115 @@
+.contactContainer {
+  background-color: #dceade;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px #0000001a;
+  margin: 10px auto 0;
+  max-width: 600px;
+  min-height: auto;
+  padding: 20px;
+  width: 90%;
+}
+
+.heading {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.inputGroup {
+  margin-bottom: 15px;
+}
+
+.inputGroup label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.inputGroup input,
+.inputGroup textarea {
+  width: 95%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.inputGroup textarea {
+  resize: vertical;
+  min-height: 10rem;
+}
+
+.submitBtn {
+  text-align: center;
+}
+
+.submitBtn button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.errorMessage {
+  color: red;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+.successMessage {
+  text-align: center;
+  color: green;
+  font-size: 18px;
+  padding: 20px;
+}
+
+@media (max-width: 768px) {
+  .contactContainer {
+    padding: 15px;
+    margin-bottom: 10px;
+  }
+
+  .heading {
+    font-size: 24px;
+  }
+
+  .inputGroup input,
+  .inputGroup textarea {
+    font-size: 14px;
+  }
+
+  .submitButton {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+
+  .successMessage {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .contactContainer {
+    padding: 10px;
+  }
+
+  .heading {
+    font-size: 20px;
+  }
+
+  .inputGroup input,
+  .inputGroup textarea {
+    font-size: 12px;
+  }
+
+  .submitButton {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .successMessage {
+    font-size: 0.9rem;
+  }
+}

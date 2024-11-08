@@ -1,0 +1,143 @@
+/*
+Agnihotram, Anand Manohar – 1002149690
+Ankireddy, Gurusai Ravi Raja Reddy – 1002138944
+Addepalli, Sravani – 1002148407
+Konduru Balakrishna, Hanish – 1002175225
+Akepati, Prem Nandhan Reddy - 1002170918
+*/
+
+/*
+    Font: 'Jua', sans-serif;
+
+    Color Palette:
+    -- Table Header Background: #f2f2f2 (Light Gray)
+    -- Table Cell Border: #ddd (Light Gray)
+    -- Edit Button Background: #4CAF50 (Green)
+    -- Save Button Background: #007bff (Blue)
+    -- Delete Button Background: #f44336 (Red)
+    -- Delete Button Hover Background: #d32f2f (Dark Red)
+    -- Reset Button Background: #ff9800 (Orange)
+    -- Reset Button Hover Background: #e68900 (Dark Orange)
+*/
+
+.manageUsers {
+  padding: 20px;
+}
+
+.userTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.userTable th,
+.userTable td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.userTable th {
+  background-color: #f2f2f2;
+}
+
+.userTable td {
+  vertical-align: middle;
+}
+
+.actionsCell {
+  display: flex;
+  gap: 5px;
+  justify-content: flex-start;
+}
+
+.actionsCell button {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.actionsCell button:hover {
+  opacity: 0.8;
+}
+
+.editButton {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.saveButton {
+  background-color: #007bff;
+  color: white;
+}
+
+.deleteButton {
+  background-color: #f44336;
+  color: white;
+}
+
+.deleteButton:hover {
+  background-color: #d32f2f;
+}
+
+.resetButton {
+  background-color: #ff9800;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.resetButton:hover {
+  background-color: #e68900;
+}
+
+@media (max-width: 1024px) {
+  .manageUsers {
+    padding: 15px;
+  }
+
+  .userTable th,
+  .userTable td {
+    padding: 8px;
+  }
+
+  .actionsCell button {
+    padding: 4px 8px;
+  }
+}
+
+@media (max-width: 768px) {
+  .manageUsers {
+    padding: 10px;
+  }
+
+  .userTable th,
+  .userTable td {
+    padding: 5px;
+    font-size: 14px;
+  }
+
+  .actionsCell button {
+    padding: 4px 6px;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .userTable th,
+  .userTable td {
+    padding: 4px;
+    font-size: 12px;
+  }
+
+  .actionsCell button {
+    padding: 3px 5px;
+  }
+
+  .actionsCell {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

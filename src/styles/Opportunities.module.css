@@ -1,0 +1,90 @@
+.opportunityOpportunities {
+  padding: 20px;
+}
+
+.opportunityJobListings {
+  margin-top: -200px;
+  padding: 200px;
+}
+
+.createOpportunityButton {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 20px auto;
+  display: block;
+}
+
+.oppModalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.oppModalContent {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  overflow: auto;
+}
+
+.oppModalContent input,
+.oppModalContent textarea {
+  width: 100%;
+  margin: 10px 0;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.oppModalContent button {
+  background-color: #4caf50;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.oppCancelButton {
+  background-color: transparent;
+}
+
+.oppModalContent button:hover {
+  background-color: #45a049;
+}
+
+.oppCreateButton {
+  background-color: #007bff;
+}
+
+@media (max-width: 768px) {
+  .opportunityJobListings {
+    padding: 20px;
+    margin-top: 0;
+  }
+
+  .createOpportunityButton {
+    width: 50%;
+  }
+
+  .oppModalContent {
+    width: 90%;
+    padding: 15px;
+  }
+}

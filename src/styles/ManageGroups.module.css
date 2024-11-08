@@ -1,0 +1,111 @@
+/*
+    Font: 'Jua', sans-serif;
+
+    Color Palette:
+    -- Table Header Background: #f2f2f2 (Light Gray)
+    -- Table Cell Border: #ddd (Light Gray)
+    -- Delete Button Background: #f44336 (Red)
+    -- Delete Button Hover Background: #d32f2f (Dark Red)
+    -- Button Hover Opacity: 0.8 (Slightly Transparent)
+*/
+
+.manageGroups {
+  padding: 20px;
+}
+
+.groupTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.groupTable th,
+.groupTable td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.groupTable th {
+  background-color: #f2f2f2;
+}
+
+.groupTable td {
+  vertical-align: middle;
+}
+
+.actionsCell {
+  display: flex;
+  justify-content: center;
+  padding: 0;
+}
+
+.button {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.button:hover {
+  opacity: 0.8;
+}
+
+.deleteButton {
+  background-color: #f44336;
+  color: white;
+}
+
+.deleteButton:hover {
+  background-color: #d32f2f;
+}
+
+@media (max-width: 1024px) {
+  .manageGroups {
+    padding: 15px;
+  }
+
+  .groupTable th,
+  .groupTable td {
+    padding: 8px;
+  }
+
+  .groupTable {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 768px) {
+
+  .groupTable th,
+  .groupTable td {
+    padding: 6px;
+  }
+
+  .groupTable {
+    font-size: 12px;
+  }
+
+  .manageGroups {
+    padding: 10px;
+  }
+
+  .button {
+    padding: 4px 8px;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .groupTable th,
+  .groupTable td {
+    padding: 4px;
+  }
+
+  .groupTable {
+    font-size: 10px;
+  }
+
+  .manageGroups {
+    padding: 5px;
+  }
+}

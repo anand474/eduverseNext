@@ -1,0 +1,124 @@
+/*
+Agnihotram, Anand Manohar – 1002149690
+Ankireddy, Gurusai Ravi Raja Reddy – 1002138944
+Addepalli, Sravani – 1002148407
+Konduru Balakrishna, Hanish – 1002175225
+Akepati, Prem Nandhan Reddy - 1002170918
+*/
+
+/*
+    Font: 'Jua', sans-serif;
+
+    Color Palette:
+    -- Table Header Background: #f4f4f4 (Light Gray)
+    -- Table Cell Border: #ddd (Light Gray)
+    -- Delete Button Background: #ff4d4d (Bright Red)
+    -- Delete Button Hover Background: #ff1a1a (Dark Red)
+    -- View Link Background: #007bff (Blue)
+    -- View Link Hover Background: #0056b3 (Dark Blue)
+*/
+
+.manageArticles {
+    padding: 20px;
+}
+
+.articlesTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.articlesTable th,
+.articlesTable td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+}
+
+.articlesTable th {
+    background-color: #f4f4f4;
+}
+
+.actionsCell {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+}
+
+.deleteButton {
+    padding: 5px 10px;
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.deleteButton:hover {
+    background-color: #ff1a1a;
+}
+
+.viewLink {
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.viewLink:hover {
+    background-color: #0056b3;
+}
+
+@media (max-width: 1024px) {
+    .manageArticles {
+        padding: 15px;
+    }
+
+    .articlesTable th,
+    .articlesTable td {
+        padding: 8px;
+    }
+
+    .articlesTable {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 768px) {
+
+    .articlesTable th,
+    .articlesTable td {
+        padding: 6px;
+    }
+
+    .articlesTable {
+        font-size: 12px;
+    }
+
+    .manageArticles {
+        padding: 10px;
+    }
+
+    .deleteButton,
+    .viewLink {
+        padding: 4px 8px;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .articlesTable th,
+    .articlesTable td {
+        padding: 4px;
+    }
+
+    .articlesTable {
+        font-size: 10px;
+    }
+
+    .manageArticles {
+        padding: 5px;
+    }
+}

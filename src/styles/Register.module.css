@@ -1,0 +1,108 @@
+.flex {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.minHScreen {
+  min-height: 100vh;
+}
+
+.p4 {
+  padding: 16px;
+}
+
+.customImage {
+  width: 100%;
+  height: auto;
+  max-width: 550px;
+  margin-top: 20px;
+  margin-bottom: 24px;
+}
+
+.bgWhite {
+  background-color: #fff;
+  padding: 32px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.heading {
+  margin: 0;
+  text-align: center;
+  color: #2d3748;
+  font-size: 2.5rem;
+  font-weight: 700;
+  width: 100%;
+}
+
+.inputBox {
+  width: 100%;
+  height: 48px;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 1.25rem;
+  border: 1px solid #ddd;
+  text-align: center;
+  margin-bottom: 16px;
+  box-sizing: border-box;
+  font-family: 'Jua', sans-serif;
+}
+
+.submitButton {
+  width: 50%;
+  height: 40px;
+  font-size: 1rem;
+  background-color: #38a169;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  margin: 0 auto;
+  display: block;
+}
+
+.submitButton:hover {
+  background-color: #2f855a;
+}
+
+.textBlue {
+  color: #4299e1;
+  text-decoration: none;
+}
+
+.textCenter {
+  text-align: center;
+}
+
+.hoverUnderline:hover {
+  text-decoration: underline;
+}
+
+.mt4 {
+  margin-top: 16px;
+}
+
+@media (max-width: 768px) {
+  .text4xl {
+    font-size: 1.5rem;
+  }
+
+  .mdText5xl {
+    font-size: 2rem;
+  }
+
+  .inputBox {
+    font-size: 1rem;
+    width: 95%;
+  }
+
+  .submitButton {
+    font-size: 0.875rem;
+  }
+}

@@ -1,0 +1,228 @@
+.articlesPage {
+  padding: 20px;
+  text-align: center;
+}
+
+.createArticleButton {
+  background-color: #6ae485;
+  color: white;
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  z-index: 100;
+  width: calc(100% - 40px);
+  max-width: 300px;
+  margin: 10px auto;
+}
+
+.createArticleButton:hover {
+  background-color: #23e166;
+}
+
+.articlesList {
+  margin-top: 20px;
+}
+
+.articleCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 50%;
+  margin: 20px auto;
+  padding: 15px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  border: 1px solid transparent;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
+}
+
+.articleCard:hover {
+  transform: scale(1.05);
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+  border: 1px solid black;
+}
+
+.articleDetailsLeft {
+  text-align: left;
+  width: 60%;
+}
+
+.articleDetailsRight {
+  text-align: right;
+  width: 30%;
+}
+
+.readMore {
+  text-align: center;
+  margin-top: 10px;
+  width: 25%;
+}
+
+.readMore a {
+  color: blue;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.readMore a:hover {
+  text-decoration: underline;
+}
+
+.formOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.formPopup {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 400px;
+  max-height: 90%;
+  overflow-y: auto;
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+}
+
+.articleForm {
+  display: flex;
+  flex-direction: column;
+}
+
+.articleForm label {
+  width: 100%;
+  margin-bottom: 5px;
+  text-align: left;
+}
+
+.articleForm input,
+.articleForm textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+.articleForm textarea {
+  resize: vertical;
+  height: 80px;
+}
+
+.buttonContainer {
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+}
+
+.submitButton,
+.closeButton {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.submitButton {
+  background-color: #4caf50;
+  color: white;
+}
+
+.submitButton:hover {
+  background-color: #096c0b;
+}
+
+.closeButton {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.closeButton:hover {
+  background-color: #c23329;
+}
+
+.description {
+  color: #708090;
+}
+
+.deleteButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 10px;
+  display: flex; 
+}
+
+.deleteButton:hover {
+  opacity: 0.7;
+  background-color: rgb(30, 155, 213);
+}
+
+@media (max-width: 768px) {
+  .articleCard {
+    width: 90%;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .articleDetailsLeft,
+  .articleDetailsRight {
+    width: 100%;
+    text-align: left;
+  }
+
+  .createArticleButton {
+    padding: 12px 15px;
+    font-size: 18px;
+  }
+
+  .formPopup {
+    width: 90%;
+  }
+
+  .articleForm input,
+  .articleForm textarea {
+    font-size: 16px;
+  }
+
+  .buttonContainer {
+    flex-direction: column;
+  }
+
+  .submitButton,
+  .closeButton {
+    width: 100%;
+    margin: 5px 0;
+  }
+
+  .deleteButton {
+    margin-left: 5px;
+  }
+}
+
+@media (max-width: 480px) {
+  .createArticleButton {
+    font-size: 16px;
+  }
+
+  .deleteButton {
+    margin-left: 5px;
+  }
+}

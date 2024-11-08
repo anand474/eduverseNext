@@ -1,0 +1,108 @@
+/*
+Agnihotram, Anand Manohar – 1002149690
+Ankireddy, Gurusai Ravi Raja Reddy – 1002138944
+Addepalli, Sravani – 1002148407
+Konduru Balakrishna, Hanish – 1002175225
+Akepati, Prem Nandhan Reddy - 1002170918
+*/
+
+/*
+    Font: 'Jua', sans-serif;
+
+    Color Palette:
+    -- Table Header Background: #f4f4f4 (Light Gray)
+    -- Table Cell Border: #ddd (Light Gray)
+    -- Create Event Button Background: #007bff (Blue)
+    -- Delete Button Background: red (Bright Red)
+*/
+
+.manageEvents {
+    padding: 20px;
+}
+
+.eventTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.eventTable th,
+.eventTable td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+}
+
+.eventTable th {
+    background-color: #f4f4f4;
+}
+
+.actionsCell {
+    align-items: center;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.createEventButton {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 20px auto;
+    display: block;
+}
+
+.deleteButton {
+    background-color: #f44336;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    padding: 5px 10px;
+}
+
+@media (max-width: 1024px) {
+    .createEventButton {
+        width: 50%;
+    }
+
+    .eventTable th,
+    .eventTable td {
+        padding: 8px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 768px) {
+    .manageEvents {
+        padding: 15px;
+    }
+
+    .eventTable th,
+    .eventTable td {
+        padding: 6px;
+        font-size: 12px;
+    }
+
+    .createEventButton {
+        padding: 8px 16px;
+        width: 50%;
+    }
+}
+
+@media (max-width: 480px) {
+    .createEventButton {
+        padding: 6px 12px;
+        font-size: 12px;
+        width: 50%;
+    }
+
+    .eventTable th,
+    .eventTable td {
+        padding: 4px;
+        font-size: 10px;
+    }
+}
