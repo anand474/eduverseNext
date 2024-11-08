@@ -92,8 +92,6 @@ export const users = {
   }
 };
 
-
-
 export const forums = [
   { forum_id: 1, forum_name: "Machine Learning", forum_description: "A forum to discuss Machine Learning concepts, algorithms, and projects.", created_by: 1 },
   { forum_id: 2, forum_name: "Web Development", forum_description: "Explore web development trends, tools, and practices.", created_by: 2 },
@@ -106,7 +104,6 @@ export const forums = [
   { forum_id: 9, forum_name: "Game Development", forum_description: "Game design and development discussions.", created_by: 3 },
   { forum_id: 10, forum_name: "Data Structures", forum_description: "Talk about fundamental data structures and algorithms.", created_by: 1 }
 ];
-
 
 export const postsData = [
   {
@@ -176,7 +173,6 @@ export const postsData = [
     comments: []
   }
 ];
-
 
 export const comments = [
   { comment_id: 1, by: "Jake", post_id: 1, comment_content: "Check out TensorFlow!", comment_datetime: "2024-10-02 12:30" },
@@ -264,7 +260,6 @@ export const articles = [
   { id: 5, name: "Top 5 Tips for Job Interviews", postedBy: "Jane Smith", date: "10/03/2024", description: "These five tips will help you nail your next job interview and land your dream job.", link: "https://example.com/" },
   { id: 6, name: "Building an Effective Resume", postedBy: "Chris Lee", date: "10/01/2024", description: "Discover how to craft a professional resume that catches the eye of recruiters.", link: "https://example.com/" }
 ];
-
 
 export const userRequestsData = [
   {

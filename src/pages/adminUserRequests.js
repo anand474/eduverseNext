@@ -45,7 +45,7 @@ export default function AdminUserRequests() {
     <div>
       <AdminHeader />
       <div className={styles.adminRequestsContainer}>
-        <h2>User Queries</h2>
+        <h2 className="pageTitle">User Queries</h2>
         {requests.length === 0 ? (
           <p>No user queries available.</p>
         ) : (

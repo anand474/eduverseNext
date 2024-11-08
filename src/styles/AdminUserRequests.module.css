@@ -19,11 +19,11 @@ Akepati, Prem Nandhan Reddy - 1002170918
     -- Delete Button Hover Background: darkred (Dark Red)
 */
 
-.admin-requests-container {
+.adminRequestsContainer {
   padding: 20px;
 }
 
-.accordion-card {
+.accordionCard {
   border: 1px solid #ccc;
   margin-bottom: 20px;
   border-radius: 5px;
@@ -31,7 +31,7 @@ Akepati, Prem Nandhan Reddy - 1002170918
   cursor: pointer;
 }
 
-.accordion-header {
+.accordionHeader {
   padding: 20px;
   background-color: #f1f1f1;
   display: flex;
@@ -40,19 +40,19 @@ Akepati, Prem Nandhan Reddy - 1002170918
   border-bottom: 1px solid #ccc;
 }
 
-.accordion-header h3 {
+.accordionHeader h3 {
   margin: 0;
 }
 
-.accordion-header p {
+.accordionHeader p {
   margin: 0;
 }
 
-.accordion-content {
+.accordionContent {
   padding: 20px;
 }
 
-.reply-section textarea {
+.replySection textarea {
   width: 100%;
   height: 100px;
   padding: 10px;
@@ -60,9 +60,10 @@ Akepati, Prem Nandhan Reddy - 1002170918
   margin-bottom: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
+  box-sizing: border-box;
 }
 
-.reply-btn {
+.replyBtn {
   padding: 10px 20px;
   background-color: #007bff;
   color: white;
@@ -71,11 +72,11 @@ Akepati, Prem Nandhan Reddy - 1002170918
   cursor: pointer;
 }
 
-.reply-btn:hover {
+.replyBtn:hover {
   background-color: #0056b3;
 }
 
-.delete-btn {
+.deleteBtn {
   padding: 10px 20px;
   background-color: red;
   color: white;
@@ -85,81 +86,81 @@ Akepati, Prem Nandhan Reddy - 1002170918
   margin-top: 10px;
 }
 
-.delete-btn:hover {
+.deleteBtn:hover {
   background-color: darkred;
 }
 
 @media (max-width: 1024px) {
-  .admin-requests-container {
+  .adminRequestsContainer {
     padding: 15px;
   }
 
-  .accordion-card {
+  .accordionCard {
     margin-bottom: 15px;
   }
 
-  .accordion-header {
+  .accordionHeader {
     padding: 15px;
   }
 
-  .accordion-content {
+  .accordionContent {
     padding: 15px;
   }
 
-  .reply-section textarea {
+  .replySection textarea {
     height: 80px;
   }
 
-  .reply-btn, .delete-btn {
+  .replyBtn, .deleteBtn {
     padding: 8px 16px;
   }
 }
 
 @media (max-width: 768px) {
-  .admin-requests-container {
+  .adminRequestsContainer {
     padding: 10px;
   }
 
-  .accordion-card {
+  .accordionCard {
     margin-bottom: 10px;
   }
 
-  .accordion-header {
+  .accordionHeader {
     padding: 10px;
   }
 
-  .accordion-content {
+  .accordionContent {
     padding: 10px;
   }
 
-  .reply-section textarea {
+  .replySection textarea {
     height: 60px;
   }
 
-  .reply-btn, .delete-btn {
+  .replyBtn, .deleteBtn {
     padding: 6px 12px;
   }
 }
 
 @media (max-width: 480px) {
-  .admin-requests-container {
+  .adminRequestsContainer {
     padding: 5px;
   }
 
-  .accordion-header {
+  .accordionHeader {
     flex-direction: column;
     align-items: flex-start;
   }
 
-  .accordion-content {
+  .accordionContent {
     padding: 5px;
   }
 
-  .reply-section textarea {
+  .replySection textarea {
     height: 50px;
   }
 
-  .reply-btn, .delete-btn {
+  .replyBtn, .deleteBtn {
     width: 100%;
     padding: 5px 10px;
     margin-top: 5px;
