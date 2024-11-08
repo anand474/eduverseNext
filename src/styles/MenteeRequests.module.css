@@ -1,0 +1,116 @@
+/*
+Agnihotram, Anand Manohar – 1002149690
+Ankireddy, Gurusai Ravi Raja Reddy – 1002138944
+Addepalli, Sravani – 1002148407
+Konduru Balakrishna, Hanish – 1002175225
+Akepati, Prem Nandhan Reddy - 1002170918
+*/
+
+/*
+    Font: 'Jua', sans-serif;
+
+    Color Palette:
+    -- Container Background: #e5e2e2 (Light Gray)
+    -- Heading Color: #333 (Dark Gray)
+    -- Request Card Background: #fff (White)
+    -- Request Card Text Color: #333 (Dark Gray)
+    -- Accept Button Background: #4CAF50 (Green)
+    -- Accept Button Hover Background: #45a049 (Darker Green)
+    -- Delete Button Background: #f44336 (Red)
+    -- Delete Button Hover Background: #e53935 (Darker Red)
+*/
+
+.requestsContainer {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #e5e2e2;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 90%;
+}
+
+.requestsHeading {
+  text-align: center;
+  font-family: 'Jua', sans-serif;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.requestsList {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.requestCard {
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.requestCard p {
+  margin: 10px 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.requestActions {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.mentorAcceptButton,
+.mentorDeleteButton {
+  padding: 10px 20px;
+  width: 25%;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  border: none;
+  color: white;
+}
+
+.mentorAcceptButton {
+  background-color: #4CAF50;
+}
+
+.mentorAcceptButton:hover {
+  background-color: #45a049;
+}
+
+.mentorDeleteButton {
+  background-color: #f44336;
+}
+
+.mentorDeleteButton:hover {
+  background-color: #e53935;
+}
+
+@media (max-width: 768px) {
+  .requestCard p {
+    font-size: 14px;
+  }
+
+  .mentorAcceptButton,
+  .mentorDeleteButton {
+    padding: 8px 16px;
+    width: 30%;
+  }
+
+  .requestsContainer {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .requestsHeading {
+    font-size: 1.25rem;
+  }
+
+  .requestCard {
+    padding: 16px;
+  }
+}

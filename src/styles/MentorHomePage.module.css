@@ -1,25 +1,4 @@
-/*
-Agnihotram, Anand Manohar – 1002149690
-Ankireddy, Gurusai Ravi Raja Reddy – 1002138944
-Addepalli, Sravani – 1002148407
-Konduru Balakrishna, Hanish – 1002175225
-Akepati, Prem Nandhan Reddy - 1002170918
-*/
-
-/*
-    Font: 'Jua', sans-serif;
-
-    Color Palette:
-    -- Mentor Home Page Background: rgba(240, 248, 255, 0.8) (Light Blue with Opacity)
-    -- Header Text Color: #2c3e50 (Dark Blue)
-    -- Tile Background (Normal): #ffffff (White)
-    -- Tile Background (Hover): #f9f9f9 (Very Light Gray)
-    -- Blue Tile Background: #3498db (Blue)
-    -- White Tile Background: #ffffff (White)
-
-*/
-
-.mentor-home-page {
+.mentorHomePage {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 20px;
@@ -29,19 +8,18 @@ Akepati, Prem Nandhan Reddy - 1002170918
     box-sizing: border-box;
 }
 
-.mentor-header {
+.mentorHeader {
     grid-column: 1 / -1;
     text-align: center;
     padding-bottom: 40px;
 }
 
-.mentor-header h1 {
+.mentorHeader h1 {
     font-size: 2.5rem;
     color: #2c3e50;
     margin-bottom: 20px;
     font-weight: 700;
 }
-
 
 .tile {
     background: linear-gradient(145deg, #ffffff, #f9f9f9);
@@ -57,60 +35,59 @@ Akepati, Prem Nandhan Reddy - 1002170918
     box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2);
 }
 
-.tile h2 {
+.tileTitle {
     font-size: 1.8rem;
     margin-bottom: 10px;
     color: inherit;
     font-weight: 600;
 }
 
-.tile p {
+.tileText {
     font-size: 1rem;
     margin: 10px 0;
     color: inherit;
     line-height: 1.5;
 }
 
-
 @media (max-width: 1024px) {
-    .mentor-home-page {
+    .mentorHomePage {
         grid-template-columns: 1fr;
         text-align: center;
     }
 
-    .mentor-header h1 {
+    .mentorHeader h1 {
         font-size: 2rem;
     }
 
-    .tile h2 {
+    .tileTitle {
         font-size: 1.5rem;
     }
 }
 
 @media (max-width: 768px) {
-    .mentor-header h1 {
+    .mentorHeader h1 {
         font-size: 1.8rem;
     }
 
-    .tile h2 {
+    .tileTitle {
         font-size: 1.3rem;
     }
 
-    .tile p {
+    .tileText {
         font-size: 0.9rem;
     }
 
-    .mentor-home-page {
+    .mentorHomePage {
         padding: 10px;
     }
 }
 
-.blue-tile {
+.blueTile {
     background-color: #3498db;
     color: white;
 }
 
-.white-tile {
+.whiteTile {
     background-color: #ffffff;
     color: #333;
 }
