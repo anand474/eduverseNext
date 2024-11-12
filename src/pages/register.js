@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
-import GuestHeader from "./Header";
-import { users } from "./loadData"; 
-import styles from '../styles/Register.module.css';
+import GuestHeader from "@/components/Header";
+import { users } from "@/data/loadData"; 
+import styles from '@/styles/Register.module.css';
 
 export default function Register() {
   const [fullName, setFullName] = useState('');
