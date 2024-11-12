@@ -39,19 +39,38 @@ export default function ContactUs() {
     return newErrors;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validateFields();
+
     if (Object.keys(validationErrors).length === 0) {
-      setSubmissionSuccess(true);
-      setFormData({
-        firstName: "",
-        lastName: "",
-        phone: "",
-        email: "",
-        message: "",
-      });
-      setErrors({});
+      try {
+        const response = await fetch("/api/contactUs", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        });
+
+        if (response.ok) {
+          setSubmissionSuccess(true);
+          setFormData({
+            firstName: "",
+            lastName: "",
+            phone: "",
+            email: "",
+            message: "",
+          });
+          setErrors({});
+        } else {
+          const data = await response.json();
+          setErrors({ form: data.error || "Failed to submit message" });
+        }
+      } catch (error) {
+        setErrors({ form: "Failed to submit message" });
+        console.error(error);
+      }
     } else {
       setErrors(validationErrors);
     }
