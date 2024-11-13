@@ -2,7 +2,16 @@ import React, { useState, useEffect } from "react";
 import styles from "../styles/EventListing.module.css";
 import { FaTrash, FaMapMarkerAlt } from "react-icons/fa";
 
-export default function EventListing({ title, location, date, time, link, mapUrl, onDelete, index }) {
+export default function EventListing({
+  title,
+  location,
+  date,
+  time,
+  link,
+  mapUrl,
+  onDelete,
+  index
+}) {
   const [isMapOpen, setIsMapOpen] = useState(false);
 
   const toggleMap = () => {
@@ -24,6 +33,45 @@ export default function EventListing({ title, location, date, time, link, mapUrl
       setUserRole(storedUserRole);
     }
   }, []);
+
+  // Function to handle registration and send emails
+  const handleRegister = async () => {
+    try {
+      const userEmailData = {
+        to: 'anandmanohar023@gmail.com',
+        subject: `Registration Confirmation for ${title}`,
+        message: `You have successfully registered for the event: ${title} on ${date} at ${time} located at ${location}.`
+      };
+
+      const adminEmailData = {
+        to: "anandmanohar7@gmail.com", 
+        subject: `New Event Registration for ${title}`,
+        message: `User ${userId} has registered for the event: ${title} on ${date} at ${time} located at ${location}.`
+      };
+
+      // Send emails to user and admin
+      await fetch("/api/sendEmail", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userEmailData),
+      });
+
+      await fetch("/api/sendEmail", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(adminEmailData),
+      });
+
+      alert("You have successfully registered for the event. A confirmation email has been sent.");
+    } catch (error) {
+      console.error("Error sending emails:", error);
+      alert("An error occurred while registering for the event.");
+    }
+  };
 
   return (
     <div className={styles.eventCard}>
@@ -47,7 +95,7 @@ export default function EventListing({ title, location, date, time, link, mapUrl
         ) : (
           <FaMapMarkerAlt className={styles.eventMapIconHide} title="Map" />
         )}
-        <button className={styles.eventInterestedButton}>Register</button>
+        <button className={styles.eventInterestedButton} onClick={handleRegister}>Register</button>
         {(userRole !== "Student") && (
           <FaTrash onClick={() => onDelete(index)} className={styles.eventDeleteIcon} title="Delete Event" />
         )}

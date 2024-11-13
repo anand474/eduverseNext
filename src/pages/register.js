@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import GuestHeader from "@/components/Header";
+import { users } from "@/data/loadData"; 
+import styles from '@/styles/Register.module.css';
 import { users } from "@/data/loadData";
 import styles from "@/styles/Register.module.css";
 
