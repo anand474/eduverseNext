@@ -7,7 +7,7 @@ import styles from "../styles/Articles.module.css";
 
 export default function Articles() {
   const [showForm, setShowForm] = useState(false);
-  const [articles, setArticles] = useState([]); // Initialize as an empty array
+  const [articles, setArticles] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const router = useRouter();
 
@@ -94,13 +94,15 @@ export default function Articles() {
     }
   };
 
-  const filteredArticles = Array.isArray(articles)
-    ? articles.filter(
-        (article) =>
-          article.aname?.toLowerCase().includes(searchTerm) ||
-          article.description?.toLowerCase().includes(searchTerm)
-      )
-    : [];
+  const filteredArticles = articles.filter(
+    (article) =>
+      (article.aname &&
+        article.aname.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (article.description &&
+        article.description.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
+
+  console.log("filteredArticles:", filteredArticles);
 
   return (
     <>
