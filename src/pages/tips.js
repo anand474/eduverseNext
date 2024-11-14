@@ -3,13 +3,12 @@ import { useRouter } from "next/router";
 import { FaTrashAlt } from "react-icons/fa";
 import Header from "../components/Header";
 import SearchBar from "../components/SearchBar";
-import { users, tips as InitialTips } from "../data/loadData";
 import styles from "../styles/Tips.module.css";
 import Link from "next/link";
 
 export default function Tips() {
   const router = useRouter();
-  const [tips, setTips] = useState(InitialTips);
+  const [tips, setTips] = useState([]);
   const [randomTip, setRandomTip] = useState(null);
   const [newTip, setNewTip] = useState("");
   const [shortDescription, setShortDescription] = useState("");
@@ -27,34 +26,73 @@ export default function Tips() {
     } else {
       setUserId(userId);
       setUserRole(role);
+      fetchTips();
     }
   }, [router]);
 
-  useEffect(() => {
-    const randomIndex = Math.floor(Math.random() * tips.length);
-    setRandomTip(tips[randomIndex]);
-  }, [tips]);
-
-  const handleDeleteTips = (tipId) => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this tip?");
-    if (confirmDelete) {
-      setTips(tips.filter((tip) => tip.id !== tipId));
+  const fetchTips = async () => {
+    try {
+      const response = await fetch("/api/tips");
+      if (response.ok) {
+        const data = await response.json();
+        setTips(data);
+        setRandomTip(data[Math.floor(Math.random() * data.length)]);
+      } else {
+        console.error("Failed to fetch tips");
+      }
+    } catch (error) {
+      console.error("Error fetching tips:", error);
     }
   };
 
-  const handleCreateTip = () => {
+  const handleDeleteTips = async (tipId) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this tip?"
+    );
+    if (confirmDelete) {
+      try {
+        const response = await fetch(`/api/tips?id=${tipId}`, {
+          method: "DELETE",
+        });
+        if (response.ok) {
+          setTips(tips.filter((tip) => tip.tid !== tipId));
+        } else {
+          console.error("Failed to delete tip");
+        }
+      } catch (error) {
+        console.error("Error deleting tip:", error);
+      }
+    }
+  };
+
+  const handleCreateTip = async () => {
     if (newTip.trim() && shortDescription.trim()) {
       const newTipObj = {
-        id: tips.length + 1,
-        shortDescription: shortDescription.substring(0, 50),
-        content: newTip,
-        postedBy: 1,
-        postedDate: new Date().toISOString().split("T")[0],
+        title: shortDescription.substring(0, 50),
+        tip_content: newTip,
+        posted_date: new Date(),
+        postedBy: userId,
+        uid_created: userId,
       };
-      setTips([...tips, newTipObj]);
-      setNewTip("");
-      setShortDescription("");
-      setShowCreateForm(false);
+      console.log("currentDate:", new Date());
+      try {
+        const response = await fetch("/api/tips", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newTipObj),
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setTips([...tips, { tid: data.id, ...newTipObj }]);
+          setNewTip("");
+          setShortDescription("");
+          setShowCreateForm(false);
+        } else {
+          console.error("Failed to create tip");
+        }
+      } catch (error) {
+        console.error("Error creating tip:", error);
+      }
     }
   };
 
@@ -66,20 +104,19 @@ export default function Tips() {
           <div className={styles.randomTip}>
             <h2 className="pageTitle">Tip of the Day</h2>
             <div className={styles.tipCard}>
-              <p>{randomTip.content}</p>
+              <p>{randomTip.tip_content}</p>
               <div className={styles.tipPoster}>
-                {users[randomTip.postedBy] ? (
-                  <span>{`Posted by: ${users[randomTip.postedBy].user_name} on ${randomTip.postedDate}`}</span>
-                ) : (
-                  <span>User not found</span>
-                )}
+                <span>{`Posted by: ${randomTip.postedBy} on ${randomTip.posted_date}`}</span>
               </div>
             </div>
           </div>
         )}
         <h2 className="pageTitle">All Tips</h2>
         {userRole !== "Student" && (
-          <button className={styles.createTipButton} onClick={() => setShowCreateForm(true)}>
+          <button
+            className={styles.createTipButton}
+            onClick={() => setShowCreateForm(true)}
+          >
             Create Tip
           </button>
         )}
@@ -104,10 +141,18 @@ export default function Tips() {
                   required
                 />
                 <div>
-                  <button type="button" className={styles.submitTipButton} onClick={handleCreateTip}>
+                  <button
+                    type="button"
+                    className={styles.submitTipButton}
+                    onClick={handleCreateTip}
+                  >
                     Submit
                   </button>
-                  <button type="button" onClick={() => setShowCreateForm(false)} className={styles.cancelTipButton}>
+                  <button
+                    type="button"
+                    onClick={() => setShowCreateForm(false)}
+                    className={styles.cancelTipButton}
+                  >
                     Cancel
                   </button>
                 </div>
@@ -118,31 +163,34 @@ export default function Tips() {
         <SearchBar />
         <div className={styles.tipsList}>
           {tips.map((tip) => (
-            <div key={tip.id} className={styles.tipCard}>
+            <div key={tip.tid} className={styles.tipCard}>
               <div className={styles.tipContent}>
-                <h3>{tip.shortDescription}</h3>
+                <h3>{tip.title}</h3>
                 <p>
-                  {tip.content.length > 100 ? (
+                  {tip.tip_content.length > 100 ? (
                     <>
-                      {tip.content.substring(0, 100)}...
-                      <Link href={`/tips/${tip.id}`} className={styles.viewFullContent} target="_blank">
+                      {tip.tip_content.substring(0, 100)}...
+                      <Link
+                        href={`/tips/${tip.tid}`}
+                        className={styles.viewFullContent}
+                        target="_blank"
+                      >
                         View Full Content
                       </Link>
                     </>
                   ) : (
-                    tip.content
+                    tip.tip_content
                   )}
                 </p>
               </div>
               <div className={styles.tipPoster}>
-                {users[tip.postedBy] ? (
-                  <span>{`Posted by: ${users[tip.postedBy].user_name} on ${tip.postedDate}`}</span>
-                ) : (
-                  <span>User not found</span>
-                )}
+                <span>{`Posted by: ${tip.postedBy} on ${tip.posted_date}`}</span>
               </div>
               {userRole !== "Student" && (
-                <button className={styles.deleteButton} onClick={() => handleDeleteTips(tip.id)}>
+                <button
+                  className={styles.deleteButton}
+                  onClick={() => handleDeleteTips(tip.tid)}
+                >
                   <FaTrashAlt size={15} color="red" />
                 </button>
               )}
