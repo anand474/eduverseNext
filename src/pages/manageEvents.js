@@ -1,76 +1,129 @@
-// components/ManageEvents.js
 import { useState, useEffect } from "react";
 import styles from "@/styles/ManageEvents.module.css";
 import AdminHeader from "@/components/AdminHeader";
 import EventModal from "@/components/EventModal";
 
-const initialEvents = [
-    { id: 1, title: "Tech Conference", date: "2024-10-12", location: "New York", time: "09:00 AM" },
-    { id: 2, title: "Career Fair", date: "2024-11-05", location: "Dallas", time: "10:30 AM" },
-    { id: 3, title: "Workshop on AI", date: "2024-12-15", location: "Austin", time: "02:00 PM" },
-];
-
 export default function ManageEvents() {
-    const [events, setEvents] = useState(initialEvents);
-    const [isModalOpen, setModalOpen] = useState(false);
+  const [events, setEvents] = useState([]);
+  const [isModalOpen, setModalOpen] = useState(false);
 
-    useEffect(() => {
-        if (!sessionStorage.getItem("userId")) {
-            alert("Please login to continue");
-            window.location.href = "/login";
-        }
-    }, []);
+  useEffect(() => {
+    const userId = sessionStorage.getItem("userId");
+    if (!userId) {
+      alert("Please login to continue");
+      window.location.href = "/login";
+    } else {
+      fetchEvents();
+    }
+  }, []);
 
-    const handleCreateEvent = (newEvent) => {
-        const newId = events.length + 1;
-        setEvents([...events, { id: newId, ...newEvent }]);
-    };
+  const fetchEvents = async () => {
+    try {
+      const response = await fetch("/api/events");
+      if (response.ok) {
+        const data = await response.json();
+        setEvents(data);
+      } else {
+        console.error("Failed to fetch events:", await response.text());
+      }
+    } catch (error) {
+      console.error("Error fetching events:", error);
+    }
+  };
 
-    const handleDeleteClick = (id) => {
-        const updatedEvents = events.filter(event => event.id !== id);
-        setEvents(updatedEvents);
-    };
+  const handleCreateEvent = async (newEvent) => {
+    try {
+      const response = await fetch("/api/events", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...newEvent,
+          uid: sessionStorage.getItem("userId"),
+          link: newEvent.link || null,
+        }),
+      });
 
-    return (
-        <>
-            <AdminHeader />
-            <div className={styles.manageEvents}>
-                <h2 className="pageTitle">Manage Events</h2>
-                <button className={styles.createEventButton} onClick={() => setModalOpen(true)}>
-                    Create Event
-                </button>
-                <table className={styles.eventTable}>
-                    <thead>
-                        <tr>
-                            <th>Event ID</th>
-                            <th>Title</th>
-                            <th>Date</th>
-                            <th>Time</th>
-                            <th>Location</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {events.map(event => (
-                            <tr key={event.id}>
-                                <td>{event.id}</td>
-                                <td>{event.title}</td>
-                                <td>{event.date}</td>
-                                <td>{event.time}</td>
-                                <td>{event.location}</td>
-                                <td className={styles.actionsCell}>
-                                    <button className={styles.deleteButton} onClick={() => handleDeleteClick(event.id)}>Delete</button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-                <EventModal
-                    isOpen={isModalOpen}
-                    onClose={() => setModalOpen(false)}
-                    onCreate={handleCreateEvent}
-                />
-            </div>
-        </>
-    );
+      if (response.ok) {
+        const data = await response.json();
+        setEvents([...events, { eid: data.id, ...newEvent }]);
+        setModalOpen(false);
+      } else {
+        const errorData = await response.json();
+        console.error("Failed to create event:", errorData.error);
+      }
+    } catch (error) {
+      console.error("Error creating event:", error);
+    }
+  };
+
+  const handleDeleteClick = async (id) => {
+    try {
+      const response = await fetch(`/api/events?id=${id}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        setEvents(events.filter((event) => event.eid !== id));
+      } else {
+        console.error("Failed to delete event", await response.text());
+      }
+    } catch (error) {
+      console.error("Error deleting event:", error);
+    }
+  };
+
+  return (
+    <>
+      <AdminHeader />
+      <div className={styles.manageEvents}>
+        <h2 className="pageTitle">Manage Events</h2>
+        <button
+          className={styles.createEventButton}
+          onClick={() => setModalOpen(true)}
+        >
+          Create Event
+        </button>
+        <table className={styles.eventTable}>
+          <thead>
+            <tr>
+              <th>Event ID</th>
+              <th>Title</th>
+              <th>Date</th>
+              <th>Start Time</th>
+              <th>End Time</th>
+              <th>Location</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {events.map((event) => (
+              <tr key={event.eid}>
+                <td>{event.eid}</td>
+                <td>{event.ename}</td>
+                <td>{event.date}</td>
+                <td>{event.start_time}</td>
+                <td>{event.end_time}</td>
+                <td>{event.place}</td>
+                <td className={styles.actionsCell}>
+                  <button
+                    className={styles.deleteButton}
+                    onClick={() => handleDeleteClick(event.eid)}
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <EventModal
+          isOpen={isModalOpen}
+          onClose={() => setModalOpen(false)}
+          onCreate={handleCreateEvent}
+        />
+      </div>
+    </>
+  );
 }

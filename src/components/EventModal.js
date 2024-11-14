@@ -1,26 +1,35 @@
 import React, { useState } from "react";
 import styles from "../styles/Events.module.css";
 
-
 export default function EventModal({ isOpen, onClose, onCreate }) {
-  const [title, setTitle] = useState("");
-  const [location, setLocation] = useState("");
+  const [ename, setEname] = useState("");
+  const [place, setPlace] = useState("");
   const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
+  const [start_time, setStartTime] = useState("");
+  const [end_time, setEndTime] = useState("");
+  const [description, setDescription] = useState("");
   const [link, setLink] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onCreate({ title, location, date, time, link });
+
+    if (!ename || !place || !date || !start_time || !end_time || !description) {
+      alert("Please fill in all required fields.");
+      return;
+    }
+
+    onCreate({ ename, place, date, start_time, end_time, description, link });
     resetForm();
     onClose();
   };
 
   const resetForm = () => {
-    setTitle("");
-    setLocation("");
+    setEname("");
+    setPlace("");
     setDate("");
-    setTime("");
+    setStartTime("");
+    setEndTime("");
+    setDescription("");
     setLink("");
   };
 
@@ -39,15 +48,15 @@ export default function EventModal({ isOpen, onClose, onCreate }) {
           <input
             type="text"
             placeholder="Event Title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            value={ename}
+            onChange={(e) => setEname(e.target.value)}
             required
           />
           <input
             type="text"
             placeholder="Location"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
+            value={place}
+            onChange={(e) => setPlace(e.target.value)}
             required
           />
           <input
@@ -59,8 +68,23 @@ export default function EventModal({ isOpen, onClose, onCreate }) {
           />
           <input
             type="time"
-            value={time}
-            onChange={(e) => setTime(e.target.value)}
+            placeholder="Start Time (e.g., 09:00)"
+            value={start_time}
+            onChange={(e) => setStartTime(e.target.value)}
+            required
+          />
+          <input
+            type="time"
+            placeholder="End Time (e.g., 17:00)"
+            value={end_time}
+            onChange={(e) => setEndTime(e.target.value)}
+            required
+          />
+          <textarea
+            placeholder="Description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className={styles.sameSizeField}
             required
           />
           <input
@@ -68,11 +92,16 @@ export default function EventModal({ isOpen, onClose, onCreate }) {
             placeholder="Link (optional)"
             value={link}
             onChange={(e) => setLink(e.target.value)}
+            className={styles.sameSizeField}
           />
           <button type="submit" className={styles.eventModalSubmitButton}>
             Create Event
           </button>
-          <button onClick={handleClose} className={styles.eventModalCloseButton}>
+          <button
+            type="button"
+            onClick={handleClose}
+            className={styles.eventModalCloseButton}
+          >
             Close
           </button>
         </form>
