@@ -3,21 +3,17 @@ import styles from "../styles/EventListing.module.css";
 import { FaTrash, FaMapMarkerAlt } from "react-icons/fa";
 
 export default function EventListing({
+  eid,
   title,
   location,
   date,
-  time,
+  startTime,
+  endTime,
   link,
   mapUrl,
   onDelete,
-  index
 }) {
   const [isMapOpen, setIsMapOpen] = useState(false);
-
-  const toggleMap = () => {
-    setIsMapOpen(!isMapOpen);
-  };
-
   const [userId, setUserId] = useState(null);
   const [userRole, setUserRole] = useState(null);
 
@@ -34,19 +30,26 @@ export default function EventListing({
     }
   }, []);
 
-  // Function to handle registration and send emails
+  const formattedDate = date ? new Date(date).toLocaleDateString("en-GB") : "";
+
+  const timeRange = `${startTime || "N/A"} - ${endTime || "N/A"}`;
+
+  const toggleMap = () => {
+    setIsMapOpen(!isMapOpen);
+  };
+
   const handleRegister = async () => {
     try {
       const userEmailData = {
-        to: 'anandmanohar023@gmail.com',
+        to: "anandmanohar023@gmail.com",
         subject: `Registration Confirmation for ${title}`,
-        message: `You have successfully registered for the event: ${title} on ${date} at ${time} located at ${location}.`
+        message: `You have successfully registered for the event: ${title} on ${formattedDate} from ${timeRange}, located at ${location}.`,
       };
 
       const adminEmailData = {
-        to: "anandmanohar7@gmail.com", 
+        to: "anandmanohar7@gmail.com",
         subject: `New Event Registration for ${title}`,
-        message: `User ${userId} has registered for the event: ${title} on ${date} at ${time} located at ${location}.`
+        message: `User ${userId} has registered for the event: ${title} on ${formattedDate} from ${timeRange}, located at ${location}.`,
       };
 
       // Send emails to user and admin
@@ -66,7 +69,9 @@ export default function EventListing({
         body: JSON.stringify(adminEmailData),
       });
 
-      alert("You have successfully registered for the event. A confirmation email has been sent.");
+      alert(
+        "You have successfully registered for the event. A confirmation email has been sent."
+      );
     } catch (error) {
       console.error("Error sending emails:", error);
       alert("An error occurred while registering for the event.");
@@ -85,23 +90,41 @@ export default function EventListing({
             </a>
           </p>
         )}
-        <p className={styles.eventCardDate}>Date: {date}</p>
-        <p className={styles.eventCardTime}>Time: {time}</p>
+        <p className={styles.eventCardDate}>Date: {formattedDate}</p>
+        <p className={styles.eventCardTime}>Time: {timeRange}</p>
       </div>
 
       <div className={styles.eventCardButtons}>
         {mapUrl ? (
-          <FaMapMarkerAlt onClick={toggleMap} className={styles.eventMapIcon} title="Map" />
+          <FaMapMarkerAlt
+            onClick={toggleMap}
+            className={styles.eventMapIcon}
+            title="Map"
+          />
         ) : (
           <FaMapMarkerAlt className={styles.eventMapIconHide} title="Map" />
         )}
-        <button className={styles.eventInterestedButton} onClick={handleRegister}>Register</button>
-        {(userRole !== "Student") && (
-          <FaTrash onClick={() => onDelete(index)} className={styles.eventDeleteIcon} title="Delete Event" />
+        <button
+          className={styles.eventInterestedButton}
+          onClick={handleRegister}
+        >
+          Register
+        </button>
+        {userRole !== "Student" && (
+          <FaTrash
+            onClick={() => onDelete(eid)}
+            className={styles.eventDeleteIcon}
+            title="Delete Event"
+          />
         )}
       </div>
+
       {mapUrl && (
-        <div className={`${styles.eventCardMapContainer} ${isMapOpen ? styles.open : ""}`}>
+        <div
+          className={`${styles.eventCardMapContainer} ${
+            isMapOpen ? styles.open : ""
+          }`}
+        >
           <h4>Location Map</h4>
           <iframe
             title="Event Location"
