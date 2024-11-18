@@ -1,15 +1,16 @@
-// pages/mentorship.js
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
-import Header from '../components/Header';
-import styles from '../styles/MentorshipProgram.module.css';
+// Frontend: pages/mentorship.js
+import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
+import Header from "../components/Header";
+import styles from "../styles/MentorshipProgram.module.css";
 
 export default function MentorshipProgram() {
-  const [studentName, setStudentName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [mentor, setMentor] = useState('');
-  const [reason, setReason] = useState('');
+  const [studentName, setStudentName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [mentor, setMentor] = useState("");
+  const [reason, setReason] = useState("");
+  const [mentors, setMentors] = useState([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -17,11 +18,54 @@ export default function MentorshipProgram() {
       alert("Please login to continue");
       router.push("/login");
     }
+
+    const fetchMentors = async () => {
+      try {
+        const response = await fetch("/api/mentors");
+        if (response.ok) {
+          const data = await response.json();
+          setMentors(data);
+        }
+      } catch (error) {}
+    };
+
+    fetchMentors();
   }, [router]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log({ studentName, email, phone, mentor, reason });
+
+    const requestData = {
+      studentId: sessionStorage.getItem("userId"),
+      mentorId: mentor,
+      emailId: email,
+      phoneNo: phone,
+      reason,
+      isAccepted: 0,
+    };
+
+    try {
+      const response = await fetch("/api/mentorship-requests", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestData),
+      });
+
+      if (response.ok) {
+        alert("Your mentorship request has been submitted!");
+        setStudentName("");
+        setEmail("");
+        setPhone("");
+        setMentor("");
+        setReason("");
+      } else {
+        alert("Failed to submit your request. Please try again later.");
+      }
+    } catch (error) {
+      alert("An unexpected error occurred. Please try again later.");
+    }
   };
 
   return (
@@ -81,9 +125,11 @@ export default function MentorshipProgram() {
           required
         >
           <option value="">-- Select Mentor --</option>
-          <option value="Mentor 1">Mentor 1</option>
-          <option value="Mentor 2">Mentor 2</option>
-          <option value="Mentor 3">Mentor 3</option>
+          {mentors.map((mentor) => (
+            <option key={mentor.fullName} value={mentor.fullName}>
+              {mentor.fullName}
+            </option>
+          ))}
         </select>
 
         <label className={styles.mentorshipFormLabel} htmlFor="reason">Why do you want to choose this mentor? What guidance/support do you need?</label>

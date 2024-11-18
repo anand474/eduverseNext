@@ -1,27 +1,9 @@
-import { useState, useEffect } from 'react';
-import styles from '@/styles/MenteeRequests.module.css';
-import Header from '@/components/Header';
+import { useState, useEffect } from "react";
+import styles from "@/styles/MenteeRequests.module.css";
+import Header from "@/components/Header";
 
 export default function MentorshipRequests() {
-  const [requests, setRequests] = useState([
-    {
-      id: 1,
-      studentName: 'John Doe',
-      email: 'john@example.com',
-      phone: '123-456-7890',
-      mentor: 'Mentor 1',
-      reason: 'I need help with career guidance.',
-    },
-    {
-      id: 2,
-      studentName: 'Jane Smith',
-      email: 'jane@example.com',
-      phone: '987-654-3210',
-      mentor: 'Mentor 1',
-      reason: 'Looking for support in coding interviews.',
-    },
-  ]);
-
+  const [requests, setRequests] = useState([]);
   const [userId, setUserId] = useState(null);
   const [userRole, setUserRole] = useState(null);
 
@@ -36,19 +18,77 @@ export default function MentorshipRequests() {
       setUserId(storedUserId);
       setUserRole(storedUserRole);
     }
-  }, []);
 
-  const acceptRequest = (id) => {
-    const acceptedRequest = requests.find(request => request.id === id);
-    alert(`Request from ${acceptedRequest.studentName} has been accepted!`);
-    setRequests(requests.filter(request => request.id !== id));
-  };
+    const fetchRequests = async () => {
+      try {
+        const response = await fetch(`/api/mentorship-requests?mentorId=${storedUserId}`);
+        if (response.ok) {
+          const data = await response.json();
+          setRequests(data);
+        } else {
+          alert("Failed to fetch mentorship requests");
+        }
+      } catch (error) {
+        alert("An error occurred while fetching mentorship requests.");
+      }
+    };
 
-  const deleteRequest = (id) => {
-    const updatedRequests = requests.filter(request => request.id !== id);
-    setRequests(updatedRequests);
-    alert('Request has been deleted.');
+    if (storedUserId) {
+      fetchRequests();
+    }
+  }, [userId]);
+
+  const acceptRequest = async (id) => {
+    const acceptedRequest = requests.find(request => request.studentId === id);
+    try {
+      const response = await fetch(`/api/mentorship-requests`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: id,
+          isAccepted: 1,
+        }),
+      });
+      
+      if (response.ok) {
+        alert(`Request from ${acceptedRequest.studentName} has been accepted!`);
+        setRequests((prevRequests) => prevRequests.filter((req) => req.studentId !== id));
+
+      } else {
+        alert("Failed to accept request");
+      }
+    } catch (error) {
+      alert("An error occurred while accepting the request.");
+    }
   };
+  
+  const deleteRequest = async (id) => {
+    const isConfirmed = window.confirm("Are you sure you want to delete this request?");
+    if (!isConfirmed) {
+      return;
+    }
+    try {
+      const response = await fetch(`/api/mentorship-requests`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id }),
+      });
+  
+      if (response.ok) {
+        setRequests(requests.filter(request => request.studentId !== id));
+        alert("Request has been deleted.");
+      } else {
+        alert("Failed to delete request.");
+      }
+    } catch (error) {
+      alert("An error occurred while deleting the request.");
+    }
+  };
+  
 
   return (
     <>
@@ -59,22 +99,22 @@ export default function MentorshipRequests() {
         {requests.length > 0 ? (
           <div className={styles.requestsList}>
             {requests.map((request) => (
-              <div className={styles.requestCard} key={request.id}>
+              <div className={styles.requestCard} key={request.studentId}>
                 <p><strong>Student Name:</strong> {request.studentName}</p>
-                <p><strong>Email:</strong> {request.email}</p>
-                <p><strong>Phone:</strong> {request.phone}</p>
-                <p><strong>Selected Mentor:</strong> {request.mentor}</p>
+                <p><strong>Email:</strong> {request.studentEmail}</p>
+                <p><strong>Phone:</strong> {request.studentPhone}</p>
+                <p><strong>Selected Mentor:</strong> {request.mentorName}</p>
                 <p><strong>Reason:</strong> {request.reason}</p>
 
                 <div className={styles.requestActions}>
-                  <button className={styles.mentorAcceptButton} onClick={() => acceptRequest(request.id)}>Accept</button>
-                  <button className={styles.mentorDeleteButton} onClick={() => deleteRequest(request.id)}>Delete</button>
+                  <button className={styles.mentorAcceptButton} onClick={() => acceptRequest(request.studentId)}>Accept</button>
+                  <button className={styles.mentorDeleteButton} onClick={() => deleteRequest(request.studentId)}>Delete</button>
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          <p>No mentorship requests available.</p>
+          <p style={{textAlign:"center"}}>No mentorship requests available.</p>
         )}
       </div>
     </>
