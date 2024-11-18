@@ -2,9 +2,7 @@ import { useState, useEffect } from "react";
 import styles from "@/styles/Profile.module.css";
 import Header from "@/components/Header";
 import AdminHeader from "@/components/AdminHeader";
-import defaultProfileImage from "/public/assets/profileImage.jpg";
 import { FaPencilAlt } from "react-icons/fa";
-import Image from "next/image";
 import { useRouter } from "next/router";
 
 export default function ProfilePage() {
@@ -12,7 +10,6 @@ export default function ProfilePage() {
   const [userId, setUserId] = useState(null);
   const [userRole, setUserRole] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
-  const [profileImage, setProfileImage] = useState(defaultProfileImage);
   const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState({
     user_name: '',
@@ -57,9 +54,6 @@ export default function ProfilePage() {
           research_interests: data.research_interests || "Enter your research interests.",
           phone_number: data.phoneNo || '',
         });
-        if (data.profile_image) {
-          setProfileImage(data.profile_image);
-        }
       } else {
         console.error("Failed to fetch user data");
       }
@@ -71,17 +65,6 @@ export default function ProfilePage() {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-  };
-
-  const handleProfileImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setProfileImage(e.target.result);
-      };
-      reader.readAsDataURL(file);
-    }
   };
 
   const toggleEditMode = () => {
@@ -119,22 +102,15 @@ export default function ProfilePage() {
     }
   };
 
+  const firstLetter = formData.user_name ? formData.user_name.charAt(0).toUpperCase() : '';
+
   return (
     <div>
       {userRole === "Admin" ? <AdminHeader /> : <Header />}
       <div className={styles.profileCard}>
         <div className={styles.image}>
-          <Image src={profileImage} alt="Profile" width={150} height={150} />
-          <div className={styles.icon}>
-            <FaPencilAlt onClick={() => document.getElementById("imageUpload").click()} />
-          </div>
-          <input
-            type="file"
-            accept="image/*"
-            id="imageUpload"
-            onChange={handleProfileImageChange}
-            style={{ display: "none" }}
-          />
+          <div className={styles.profileIcon}>{firstLetter}</div>
+          
         </div>
 
         <div className={styles.info}>
@@ -204,4 +180,5 @@ export default function ProfilePage() {
         </div>
       </div>
     </div>
-  );}
+  );
+}
