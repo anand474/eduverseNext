@@ -2,16 +2,23 @@ import { useState, useEffect } from "react";
 import styles from "@/styles/Profile.module.css";
 import Header from "@/components/Header";
 import AdminHeader from "@/components/AdminHeader";
-import defaultProfileImage from "/public/assets/profileImage.jpg";
 import { FaPencilAlt } from "react-icons/fa";
-import { users } from "@/data/loadData";
-import Image from "next/image";
 import { useRouter } from "next/router";
 
 export default function ProfilePage() {
   const router = useRouter();
   const [userId, setUserId] = useState(null);
   const [userRole, setUserRole] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [editMode, setEditMode] = useState(false);
+  const [formData, setFormData] = useState({
+    user_name: '',
+    email: '',
+    user_type: '',
+    academic_interests: '',
+    research_interests: '',
+    phone_number: '',
+  });
 
   useEffect(() => {
     const storedUserId = sessionStorage.getItem("userId");
@@ -23,71 +30,87 @@ export default function ProfilePage() {
     } else {
       setUserId(storedUserId);
       setUserRole(storedUserRole);
+      fetchUserData(storedUserId);  
     }
   }, [router]);
 
-  const currentUser = users[userId] || {};
-  const [profileImage, setProfileImage] = useState(defaultProfileImage);
-  const [editMode, setEditMode] = useState(false);
-  const [formData, setFormData] = useState({
-    ...currentUser,
-    academic_interests: "Enter your academic interests.",
-    research_interests: "Enter your research interests."
-  });
-
-  console.log('currentUser', currentUser);
-  console.log('formData', formData);
+  const fetchUserData = async (userId) => {  
+    try {
+      const response = await fetch(`/api/profile`, {
+        method: 'POST', 
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId }),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setCurrentUser(data);
+        setFormData({
+          user_name: data.fullName || '',
+          email: data.emailId || '',
+          user_type: data.type || '',
+          academic_interests: data.academic_interests || "Enter your academic interests.",
+          research_interests: data.research_interests || "Enter your research interests.",
+          phone_number: data.phoneNo || '',
+        });
+      } else {
+        console.error("Failed to fetch user data");
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleProfileImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setProfileImage(e.target.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
   const toggleEditMode = () => {
     setEditMode(!editMode);
   };
 
-  const handleProfileEdit = (e) => {
+  const handleProfileEdit = async (e) => {
     e.preventDefault();
+
     if (!/^\d{10}$/.test(formData.phone_number)) {
       alert("Phone number must be 10 digits.");
       return;
     }
-    setEditMode(false);
-    alert("Profile saved successfully!");
+
+    try {
+      const response = await fetch(`/api/profile`, {  
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({userId,user_name: formData.user_name,
+          email: formData.email,
+          academic_interests: formData.academic_interests,
+          research_interests: formData.research_interests,
+          phone_number: formData.phone_number,}),
+      });
+      if (response.ok) {
+        setEditMode(false);
+        alert("Profile saved successfully!");
+      } else {
+        alert("Failed to save profile.");
+      }
+    } catch (error) {
+      console.error("Error updating profile:", error);
+    }
   };
+
+  const firstLetter = formData.user_name ? formData.user_name.charAt(0).toUpperCase() : '';
 
   return (
     <div>
       {userRole === "Admin" ? <AdminHeader /> : <Header />}
       <div className={styles.profileCard}>
         <div className={styles.image}>
-          <Image src={profileImage} alt="Profile" width={150} height={150} />
-
-          <div className={styles.icon}>
-            <FaPencilAlt
-              onClick={() => document.getElementById("imageUpload").click()}
-            />
-          </div>
-
-          <input
-            type="file"
-            accept="image/*"
-            id="imageUpload"
-            onChange={handleProfileImageChange}
-            style={{ display: "none" }}
-          />
+          <div className={styles.profileIcon}>{firstLetter}</div>
+          
         </div>
 
         <div className={styles.info}>
@@ -99,7 +122,6 @@ export default function ProfilePage() {
             readOnly
             className={styles.input}
           />
-
           <label>Email</label>
           <input
             type="email"
@@ -108,7 +130,6 @@ export default function ProfilePage() {
             readOnly
             className={styles.input}
           />
-
           <label>User Role</label>
           <input
             type="text"
@@ -117,7 +138,6 @@ export default function ProfilePage() {
             readOnly
             className={styles.input}
           />
-
           <label>Academic Interests</label>
           <textarea
             name="academic_interests"
@@ -127,7 +147,6 @@ export default function ProfilePage() {
             placeholder="Your academic interests"
             readOnly={!editMode}
           />
-
           <label>Research Interests</label>
           <textarea
             name="research_interests"
@@ -137,7 +156,6 @@ export default function ProfilePage() {
             placeholder="Your research interests"
             readOnly={!editMode}
           />
-
           <label>Mobile Number</label>
           <input
             type="tel"

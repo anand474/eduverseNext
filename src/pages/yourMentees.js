@@ -3,24 +3,15 @@ import styles from '@/styles/ViewYourMentees.module.css';
 import Header from '@/components/Header';
 import { FaTrashAlt } from 'react-icons/fa';
 import SearchBar from '@/components/SearchBar';
-import { useRouter } from 'next/router';
 
 export default function ViewYourMentees() {
-  const router = useRouter();
-  const [mentees, setMentees] = useState([
-    { id: 1, studentName: 'John Doe', email: 'john@example.com', phone: '123-456-7890', reason: 'Career guidance.' },
-    { id: 2, studentName: 'Jane Smith', email: 'jane@example.com', phone: '987-654-3210', reason: 'Coding interviews.' },
-    { id: 3, studentName: 'Alice Johnson', email: 'alice@example.com', phone: '555-654-7890', reason: 'Communication skills.' },
-    { id: 4, studentName: 'Emily Clark', email: 'emily@example.com', phone: '222-333-4444', reason: 'Job applications.' },
-    { id: 5, studentName: 'Michael Brown', email: 'michael@example.com', phone: '888-777-6666', reason: 'Internship guidance.' },
-    { id: 6, studentName: 'Sarah Wilson', email: 'sarah@example.com', phone: '444-555-6666', reason: 'Networking skills.' },
-  ]);
+  const [mentees, setMentees] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-
   const [userId, setUserId] = useState(null);
   const [userRole, setUserRole] = useState(null);
 
   useEffect(() => {
+    // Retrieve user details from session storage
     const storedUserId = sessionStorage.getItem("userId");
     const storedUserRole = sessionStorage.getItem("userRole");
 
@@ -30,12 +21,52 @@ export default function ViewYourMentees() {
     } else {
       setUserId(storedUserId);
       setUserRole(storedUserRole);
+
+      fetchMentees(storedUserId);
     }
   }, []);
 
-  const handleDelete = (id) => {
+  const fetchMentees = async (mentorId) => {
+    try {
+      const response = await fetch(`/api/mentees`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ mentorId }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setMentees(data);
+      } else {
+        console.error("Failed to fetch mentees");
+      }
+    } catch (error) {
+      console.error("An error occurred while fetching mentees:", error);
+    }
+  };
+
+  const handleDelete = async (id) => {
     if (confirm("Do you want to remove this student?")) {
-      setMentees(mentees.filter((mentee) => mentee.id !== id));
+      try {
+        const response = await fetch(`/api/mentorship-requests`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ id }),
+        });
+
+        if (response.ok) {
+          setMentees(mentees.filter((mentee) => mentee.studentId !== id));
+          alert("Mentee removed successfully.");
+        } else {
+          alert("Failed to remove mentee.");
+        }
+      } catch (error) {
+        alert("An error occurred while removing the mentee.");
+      }
     }
   };
 
@@ -43,33 +74,45 @@ export default function ViewYourMentees() {
     setSearchTerm(term.toLowerCase());
   };
 
+  const filteredMentees = mentees.filter((mentee) => {
+    const studentName = mentee.studentName || ''; 
+    const email = mentee.email || ''; 
+  
+    const searchTermLower = searchTerm.toLowerCase(); 
+  
+    return (
+      studentName.toLowerCase().includes(searchTermLower) ||
+      email.toLowerCase().includes(searchTermLower)
+    );
+  });
+
   return (
     <>
       <Header />
       <div className={styles.menteesContainer}>
         <h2 className={styles.menteesHeading}>Your Mentees</h2>
         <SearchBar onSearch={handleSearch} />
-        {mentees.length > 0 ? (
+        {filteredMentees.length > 0 ? (
           <div className={styles.menteesList}>
-            {mentees.map((mentee) => (
+            {filteredMentees.map((mentee) => (
               <div key={mentee.id} className={styles.menteeCard}>
                 <div className={styles.menteeCardContent}>
-                  <div className={styles.menteeLeft}>
-                    <div className={styles.menteeIcon}>
-                      {mentee.studentName.charAt(0).toUpperCase()}
-                    </div>
-                    <div className={styles.menteeInfo}>
-                      <p><strong>Name:</strong> {mentee.studentName}</p>
-                      <p><strong>Email:</strong> {mentee.email}</p>
-                    </div>
-                  </div>
+                <div className={styles.menteeLeft}>
+                <div className={styles.menteeIcon}>
+                  {mentee.fullName ? mentee.fullName.charAt(0).toUpperCase() : ''}
+                </div>
+                <div className={styles.menteeInfo}>
+                  <p><strong>Name:</strong> {mentee.fullName}</p>
+                  <p><strong>Email:</strong> {mentee.emailId}</p>
+                </div>
+              </div>
 
                   <div className={styles.menteeRight}>
-                    <p><strong>Phone:</strong> {mentee.phone}</p>
+                    <p><strong>Phone:</strong> {mentee.phoneNo}</p>
                     <div className={styles.menteeActions}>
                       <FaTrashAlt
                         className={styles.deleteIcon}
-                        onClick={() => handleDelete(mentee.id)}
+                        onClick={() => handleDelete(mentee.studentId)}
                       />
                     </div>
                   </div>
