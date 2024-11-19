@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.6.0",
+    "bcryptjs": "^2.4.3",
     "docx": "^9.0.2",
     "file-saver": "^2.0.5",
     "js-cookie": "^3.0.5",
