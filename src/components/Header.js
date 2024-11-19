@@ -3,23 +3,30 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import Image from "next/image";
 import styles from "@/styles/Header.module.css";
-import { users } from "@/data/loadData";
 
 export default function Header() {
   const router = useRouter();
   const [currentUser, setCurrentUser] = useState(null);
-  
+
+  // Define restricted paths
   const restrictedPaths = ["/login", "/register", "/forgotPassword", "/contactForm", "/"];
-  const contactPath = ["/login", "/register", "/forgotPassword", "/"];
-  
-  const isContactPage = contactPath.includes(router.pathname);
+  const contactPaths = ["/login", "/register", "/forgotPassword", "/"];
+
+  // Check if current page is restricted or contact page
   const isRestrictedPage = restrictedPaths.includes(router.pathname);
-  
+  const isContactPage = contactPaths.includes(router.pathname);
+
   useEffect(() => {
     const userId = sessionStorage.getItem("userId");
-    if (userId) {
-      const user = users[userId];
-      setCurrentUser(user || null);
+    const userRole = sessionStorage.getItem("userRole");
+    const userName = sessionStorage.getItem("userName"); // Assuming `userName` is stored
+
+    if (userId && userRole && userName) {
+      setCurrentUser({
+        userId,
+        userRole,
+        userName,
+      });
     }
   }, []);
 
@@ -45,10 +52,10 @@ export default function Header() {
             <>
               <li>
                 <Link href={
-                  currentUser.user_type === "Mentor" ? "/mentor" :
-                  currentUser.user_type === "Advisor" ? "/advisor" :
-                  currentUser.user_type === "Admin" ? "/admin" :
-                  "/home"
+                  currentUser.userRole === "Mentor" ? "/mentor" :
+                    currentUser.userRole === "Advisor" ? "/advisor" :
+                      currentUser.userRole === "Admin" ? "/admin" :
+                        "/home"
                 }>
                   Home
                 </Link>
@@ -58,7 +65,7 @@ export default function Header() {
               <li className={styles.dropdown}>
                 <a className={styles.dropdownToggle}>Resources</a>
                 <div className={styles.dropdownContent}>
-                  {currentUser.user_type === "Student" && (
+                  {currentUser.userRole === "Student" && (
                     <Link href="/mentorshipProgram">Mentorship Program</Link>
                   )}
                   <div className={styles.nestedDropdown}>
@@ -66,7 +73,7 @@ export default function Header() {
                     <div className={styles.nestedContent}>
                       <Link href="/articles">Articles</Link>
                       <Link href="/tips">Tips</Link>
-                      {currentUser.user_type === "Student" && (
+                      {currentUser.userRole === "Student" && (
                         <Link href="/buildResume">Build Your Resume</Link>
                       )}
                     </div>
@@ -81,7 +88,7 @@ export default function Header() {
                 </div>
               </li>
               <li><Link href="/chats">Chat</Link></li>
-              {currentUser.user_type === "Mentor" && (
+              {currentUser.userRole === "Mentor" && (
                 <>
                   <li><Link href="/menteeRequests">Requests</Link></li>
                   <li><Link href="/yourMentees">Your Mentees</Link></li>
@@ -89,7 +96,7 @@ export default function Header() {
               )}
               <li><Link href="/contactForm">Contact Us</Link></li>
               <li className={styles.dropdown}>
-                <a className={styles.dropdownToggle}>{currentUser.user_name}</a>
+                <a className={styles.dropdownToggle}>{currentUser.userName}</a>
                 <div className={styles.dropdownContent}>
                   <Link href="/profile">Profile</Link>
                   <Link href="/notifications">

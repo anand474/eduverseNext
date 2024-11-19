@@ -21,6 +21,10 @@
   margin-bottom: 24px;
 }
 
+.error {
+  color: coral;
+}
+
 .bgWhite {
   background-color: #fff;
   padding: 32px;

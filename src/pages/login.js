@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import styles from "../styles/Login.module.css";
-import { users } from "../data/loadData"; 
 import GuestHeader from "../components/Header";
 import Link from "next/link";
 
@@ -10,44 +9,69 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false); 
   const router = useRouter();
 
   useEffect(() => {
-    const userId = sessionStorage.getItem('userId');
-    console.log("User ID from session storage:", userId);
+    const userId = sessionStorage.getItem("userId");
+    const userRole = sessionStorage.getItem("userRole");
 
-    if (userId) {
-      const user = Object.values(users).find(user => user.user_id.toString() === userId);
-      console.log("User found:", user);
-      if (user) {
-        const routes = {
-          Admin: "/admin",
-          Advisor: "/advisor",
-          Mentor: "/mentor",
-          Student: "/home",
-        };
-        router.replace(routes[user.user_type] || "/login");
-      }
-    }
-  }, [router]);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const user = Object.values(users).find(user => user.email === email && user.password === password);
-    if (user) {
-      sessionStorage.setItem('userId', user.user_id);
-      sessionStorage.setItem('userRole', user.user_type);
-      console.log("User logged in:", user);
+    if (userId && userRole) {
       const routes = {
         Admin: "/admin",
         Advisor: "/advisor",
         Mentor: "/mentor",
         Student: "/home",
       };
-      router.replace(routes[user.user_type] || "/login");
-    } else {
-      setError('Invalid email or password');
-      console.log("Login failed: Invalid email or password");
+      router.replace(routes[userRole] || "/login");
+    }
+  }, [router]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError(''); 
+    setLoading(true);
+
+    try {
+      const response = await fetch("/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+
+        if(!data.userRole){
+          alert("Your account is being reviewed by Admin. Please wait until you get email confirmation for your access.");
+          return;
+        }
+        
+        sessionStorage.setItem("userId", data.userId);
+        sessionStorage.setItem("userRole", data.userRole);
+        sessionStorage.setItem("userName", data.name);
+
+        console.log("User logged in:", data);
+
+        const routes = {
+          Admin: "/admin",
+          Advisor: "/advisor",
+          Mentor: "/mentor",
+          Student: "/home",
+        };
+        router.replace(routes[data.userRole] || "/login");
+      } else {
+        setError(data.error || "An error occurred. Please try again.");
+        console.error("Login error:", data.error);
+      }
+    } catch (err) {
+      setError("An error occurred. Please check your connection and try again.");
+      console.error("Login failed:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -56,7 +80,14 @@ export default function Login() {
       <GuestHeader />
       <div className={styles.loginFlex}>
         <Link href="/">
-          <Image src="/assets/eduverse.jpg" alt="EduVerse" className={styles.loginCustomImage} width={550} height={100} style={{height: 'auto'}}/>
+          <Image
+            src="/assets/eduverse.jpg"
+            alt="EduVerse"
+            className={styles.loginCustomImage}
+            width={550}
+            height={100}
+            style={{ height: "auto" }}
+          />
         </Link>
         <div className={styles.loginBgWhite}>
           <h1 className={styles.loginHeader}>Login</h1>
@@ -78,11 +109,21 @@ export default function Login() {
               className={styles.loginInputBox}
               placeholder="Enter your Password"
             />
-            <button type="submit" className={styles.loginSubmitButton}>Submit</button>
+            <button
+              type="submit"
+              className={styles.loginSubmitButton}
+              disabled={loading}
+            >
+              {loading ? "Logging in..." : "Submit"}
+            </button>
             <div className={styles.loginLinks}>
-              <Link href="/forgotPassword" className={styles.loginLink}>Forgot Password?</Link>
+              <Link href="/forgotPassword" className={styles.loginLink}>
+                Forgot Password?
+              </Link>
               <br />
-              <Link href="/register" className={styles.loginLink}>New User? Create An Account</Link>
+              <Link href="/register" className={styles.loginLink}>
+                New User? Create An Account
+              </Link>
             </div>
           </form>
         </div>

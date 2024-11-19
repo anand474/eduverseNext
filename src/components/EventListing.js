@@ -85,7 +85,7 @@ export default function EventListing({
         <p className={styles.eventCardLocation}>{location}</p>
         {link && (
           <p className={styles.eventCardLink}>
-            <a href={link} target="_blank" rel="noopener noreferrer">
+            <a href={link} rel="noopener noreferrer">
               Link for meeting
             </a>
           </p>
@@ -121,9 +121,8 @@ export default function EventListing({
 
       {mapUrl && (
         <div
-          className={`${styles.eventCardMapContainer} ${
-            isMapOpen ? styles.open : ""
-          }`}
+          className={`${styles.eventCardMapContainer} ${isMapOpen ? styles.open : ""
+            }`}
         >
           <h4>Location Map</h4>
           <iframe

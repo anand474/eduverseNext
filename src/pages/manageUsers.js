@@ -1,14 +1,7 @@
 import { useState, useEffect } from "react";
-// import Select from "react-select";
 import AdminHeader from "@/components/AdminHeader";
 import SearchBar from "@/components/SearchBar";
 import styles from "@/styles/ManageUsers.module.css";
-
-const initialUsers = [
-  { id: 1, name: "John Doe", email: "A@gmail.com", phone: "123-456-7890", role: "" },
-  { id: 2, name: "Jane Smith", email: "B@gmail.com", phone: "987-654-3210", role: "Mentor" },
-  { id: 3, name: "Alice Johnson", email: "C@gmail.com", phone: "555-123-4567", role: "Advisor" },
-];
 
 const roleOptions = [
   { value: "Advisor", label: "Advisor" },
@@ -17,48 +10,124 @@ const roleOptions = [
 ];
 
 export default function ManageUsers() {
-  const [users, setUsers] = useState(initialUsers);
+  const [users, setUsers] = useState([]);
   const [editRowId, setEditRowId] = useState(null);
-
-  const [userId, setUserId] = useState(null);
-  const [userRole, setUserRole] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const storedUserId = sessionStorage.getItem("userId");
-    const storedUserRole = sessionStorage.getItem("userRole");
-
     if (!storedUserId) {
       alert("Please login to continue");
       window.location.href = "/login";
-    } else {
-      setUserId(storedUserId);
-      setUserRole(storedUserRole);
+      return;
     }
+
+    fetchUsers();
   }, []);
 
-  const handleEditClick = (id) => {
-    setEditRowId(id);
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch("/api/users");
+      if (!response.ok) throw new Error("Failed to fetch users");
+      const data = await response.json();
+      setUsers(data);
+    } catch (error) {
+      console.error(error);
+      alert("Error fetching users.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleSaveClick = () => {
-    setEditRowId(null);
+  const handleEditClick = (id) => setEditRowId(id);
+
+  const handleSaveClick = async (id, role) => {
+    try {
+      const response = await fetch("/api/users", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId: id, role: role }),
+      });
+
+      if (!response.ok) throw new Error("Failed to update role");
+
+      const updatedUsers = users.map((user) =>
+        user.uid === id ? { ...user, role } : user
+      );
+      setUsers(updatedUsers);
+      alert("User role updated successfully!");
+
+      const userEmail = users.find((user) => user.uid === id)?.emailId;
+      const loginPageUrl = "http://localhost:3000/login";
+      const emailBody = `
+      <div style="font-family: Jua, sans-serif; text-align: center; padding: 20px;">
+        <h2 style="color: #4CAF50;">Your Account is Activated!</h2>
+        <p>Dear User,</p>
+        <p>Your ${role} account has been successfully activated. You can now log in using the link below:</p>
+        <a href="${loginPageUrl}" 
+           style="display: inline-block; margin-top: 20px; padding: 10px 20px; font-size: 16px; font-weight: bold; 
+                  color: white; background-color: #4CAF50; text-decoration: none; border-radius: 5px;">
+          Login to Your Account
+        </a>
+        <p style="margin-top: 20px;">Thank you for being part of our platform!</p>
+      </div>
+    `;
+
+      const emailResponse = await fetch("/api/sendEmail", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          to: userEmail,
+          subject: "Your Eduverse Account is Activated",
+          html: emailBody,
+        }),
+      });
+
+      if (emailResponse.ok) {
+        console.log("Email sent to user successfully");
+      } else {
+        console.error("Failed to send email to the user");
+      }
+
+    } catch (error) {
+      console.error(error);
+      alert("Error updating user role.");
+    } finally {
+      setEditRowId(null);
+    }
   };
 
-  const handleRoleChange = (selectedOption, id) => {
+  const handleRoleChange = (event, id) => {
     const updatedUsers = users.map((user) =>
-      user.id === id ? { ...user, role: selectedOption.value } : user
+      user.uid === id ? { ...user, type: event.target.value } : user
     );
     setUsers(updatedUsers);
   };
 
-  const handleDeleteClick = (id) => {
-    const updatedUsers = users.filter((user) => user.id !== id);
-    setUsers(updatedUsers);
+  const handleDeleteClick = async (id) => {
+    if (confirm("Are you sure you want to delete this user?")) {
+      try {
+        const response = await fetch(`/api/users/${id}`, { method: "DELETE" });
+        if (!response.ok) throw new Error("Failed to delete user");
+        setUsers(users.filter((user) => user.uid !== id));
+      } catch (error) {
+        console.error(error);
+        alert("Error deleting user.");
+      }
+    }
   };
 
   const handleResetLinkClick = (email) => {
-    alert(`Reset link has been sent to ${email}`);
+    alert(`A password reset link has been sent to ${email}`);
   };
+
+  if (isLoading) {
+    return <p>Loading users...</p>;
+  }
 
   return (
     <>
@@ -71,7 +140,7 @@ export default function ManageUsers() {
             <tr>
               <th>User ID</th>
               <th>Name</th>
-              <th>Email ID</th>
+              <th>Email</th>
               <th>Phone Number</th>
               <th>Role</th>
               <th>Actions</th>
@@ -79,37 +148,56 @@ export default function ManageUsers() {
           </thead>
           <tbody>
             {users.map((user) => (
-              <tr key={user.id}>
-                <td>{user.id}</td>
-                <td>{user.name}</td>
-                <td>{user.email}</td>
-                <td>{user.phone}</td>
+              <tr key={user.uid}>
+                <td>{user.uid}</td>
+                <td>{user.fullName}</td>
+                <td>{user.emailId}</td>
+                <td>{user.phoneNo}</td>
                 <td>
-                  {editRowId === user.id ? (
+                  {editRowId === user.uid ? (
                     <select
-                      value={user.role || ""}
-                      onChange={(e) => handleRoleChange({ value: e.target.value }, user.id)}
+                      value={user.type || ""}
+                      onChange={(event) => handleRoleChange(event, user.uid)}
                       className={styles.selectDropdown}
                     >
-                      <option value="">Select</option>
-                      {roleOptions.map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
+                      <option value="">Select Role</option>
+                      <option value="Admin">Admin</option>
+                      <option value="Advisor">Advisor</option>
+                      <option value="Mentor">Mentor</option>
+                      <option value="Student">Student</option>
                     </select>
                   ) : (
-                    user.role || "No Role Assigned"
+                    user.type || "No Role Assigned"
                   )}
                 </td>
                 <td className={styles.actionsCell}>
-                  {editRowId === user.id ? (
-                    <button className={styles.saveButton} onClick={handleSaveClick}>Save</button>
+                  {editRowId === user.uid ? (
+                    <button
+                      className={styles.saveButton}
+                      onClick={() => handleSaveClick(user.uid, user.type)}
+                    >
+                      Save
+                    </button>
                   ) : (
-                    <button className={styles.editButton} onClick={() => handleEditClick(user.id)}>Edit</button>
+                    <button
+                      className={styles.editButton}
+                      onClick={() => handleEditClick(user.uid)}
+                    >
+                      Edit
+                    </button>
                   )}
-                  <button className={styles.deleteButton} onClick={() => handleDeleteClick(user.id)}>Delete</button>
-                  <button className={styles.resetButton} onClick={() => handleResetLinkClick(user.email)}>Reset Link</button>
+                  <button
+                    className={styles.deleteButton}
+                    onClick={() => handleDeleteClick(user.uid)}
+                  >
+                    Delete
+                  </button>
+                  <button
+                    className={styles.resetButton}
+                    onClick={() => handleResetLinkClick(user.email)}
+                  >
+                    Reset Link
+                  </button>
                 </td>
               </tr>
             ))}

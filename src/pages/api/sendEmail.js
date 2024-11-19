@@ -2,7 +2,7 @@ import nodemailer from 'nodemailer';
 
 export default async function handler(req, res) {
     if (req.method === 'POST') {
-        const { to, subject, message } = req.body;
+        const { to, subject, message, html } = req.body;
 
         const transporter = nodemailer.createTransport({
             service: 'gmail', 
@@ -12,11 +12,15 @@ export default async function handler(req, res) {
             },
         });
 
+        console.log("HTML Content Received:", html);
+        console.log("Email Body:", req.body);
+
         const mailOptions = {
             from: process.env.EMAIL_USER,
             to,
             subject,
-            text: message,
+            text: message || undefined,
+            html: html || undefined
         };
 
         try {
