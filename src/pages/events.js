@@ -23,13 +23,13 @@ export default function Events() {
     } else {
       setUserId(storedUserId);
       setUserRole(storedUserRole);
-      fetchEvents();
+      fetchEvents(storedUserId,storedUserRole);
     }
   }, []);
 
-  const fetchEvents = async () => {
+  const fetchEvents = async (userId,userRole) => {
     try {
-      const response = await fetch("/api/events");
+      const response = await fetch(`/api/events?userId=${userId}&userRole=${userRole}`);
       if (response.ok) {
         const data = await response.json();
         setEvents(data);

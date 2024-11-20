@@ -22,33 +22,38 @@ export default function Articles() {
       alert("Please login to continue");
       window.location.href = "/login";
     } else {
+      
       setUserId(storedUserId);
       setUserRole(storedUserRole);
-      fetchArticles();
+      fetchArticles(storedUserId,storedUserRole);
     }
   }, []);
 
-  const fetchArticles = async () => {
+  const fetchArticles = async (uid, urole) => {
     try {
-      const response = await fetch("/api/articles");
+      const response = await fetch('/api/articles', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ action: 'fetchArticles', uid, urole }),
+      });
+  
       if (response.ok) {
         const data = await response.json();
         setArticles(data);
       } else {
-        console.error("Failed to fetch articles");
+        console.error('Failed to fetch articles');
       }
     } catch (error) {
-      console.error("Error fetching articles:", error);
+      console.error('Error fetching articles:', error);
     }
   };
-
-  const handleSearch = (term) => {
-    setSearchTerm(term.toLowerCase());
-  };
-
+  
   const handleCreateArticle = async (event) => {
     event.preventDefault();
     const newArticle = {
+      action: 'createArticle',
       aname: event.target.name.value,
       postedBy: event.target.postedBy.value,
       description: event.target.description.value,
@@ -56,7 +61,7 @@ export default function Articles() {
       posted_date: new Date().toLocaleDateString(),
       uid: userId,
     };
-
+  
     try {
       const response = await fetch("/api/articles", {
         method: "POST",
@@ -65,7 +70,7 @@ export default function Articles() {
         },
         body: JSON.stringify(newArticle),
       });
-
+  
       if (response.ok) {
         const createdArticle = await response.json();
         setArticles([...articles, { ...newArticle, aid: createdArticle.id }]);
@@ -77,6 +82,13 @@ export default function Articles() {
       console.error("Error creating article:", error);
     }
   };
+  
+  
+  const handleSearch = (term) => {
+    setSearchTerm(term.toLowerCase());
+  };
+
+  
 
   const handleDeleteArticle = async (id) => {
     try {
