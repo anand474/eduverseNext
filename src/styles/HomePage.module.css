@@ -1,42 +1,22 @@
 .homePage {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 10px;
   background-color: rgba(168, 237, 215, 0.2);
   min-height: 100vh;
   box-sizing: border-box;
-}
-
-@media (min-width: 1024px) {
-  .homePage {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  .homeSection {
-    flex: 0 1 300px;
-    margin: 10px;
-  }
-}
-
-@media (max-width: 1024px) {
-  .homePage {
-    display: block;
-    text-align: center;
-  }
-
-  .homeSection {
-    margin: 20px 0;
-  }
+  padding: 20px;
 }
 
 .homeSection {
+  flex: 1 1 calc(33.33% - 5px);
   background: linear-gradient(145deg, #ffffff, #f9f9f9);
   border-radius: 15px;
   padding: 20px;
   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  max-width: 30%;
 }
 
 .homeSection:hover {
@@ -44,41 +24,8 @@
   box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2);
 }
 
-.homeH2 {
-  font-size: 1.6rem;
-  margin-bottom: 15px;
-  color: #333;
-  border-bottom: 2px solid #ececec;
-  padding-bottom: 10px;
-  font-weight: 600;
-}
-
-.eventCard p,
-.jobCard p,
-.linkCard p {
-  margin: 10px 0;
-  font-size: 1rem;
-  color: #555;
-  line-height: 1.5;
-}
-
-.linkCard a {
-  color: #3498db;
-  text-decoration: none;
-  font-weight: 500;
-}
-
-.textCenter {
-  text-align: center;
-}
-
-.linkCard a:hover {
-  color: #2980b9;
-  text-decoration: underline;
-}
-
 .welcomeSection {
-  grid-column: 1 / -1;
+  flex: 1 1 100%;
   text-align: center;
 }
 
@@ -111,13 +58,45 @@
   margin-bottom: 10px;
 }
 
-@media (max-width: 768px) {
+.homeH2 {
+  font-size: 1.6rem;
+  margin-bottom: 15px;
+  color: #333;
+  border-bottom: 2px solid #ececec;
+  padding-bottom: 10px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.eventCard p,
+.jobCard p,
+.linkCard p {
+  margin: 10px 0;
+  font-size: 1rem;
+  color: #555;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.linkCard a {
+  color: #3498db;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.linkCard a:hover {
+  color: #2980b9;
+  text-decoration: underline;
+}
+
+@media (max-width: 1024px) {
   .homePage {
-    grid-template-columns: 1fr;
+    justify-content: center;
   }
 
-  .homeH2 {
-    font-size: 1.5rem;
+  .homeSection {
+    flex: 1 1 300px;
+    margin: 10px;
   }
 
   .welcomeTitle {
@@ -129,9 +108,15 @@
   }
 }
 
-@media (max-width: 480px) {
-  .homeH2 {
-    font-size: 1.3rem;
+@media (max-width: 768px) {
+  .homePage {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .homeSection {
+    flex: 1 1 100%;
+    max-width: 80%;
   }
 
   .welcomeTitle {
