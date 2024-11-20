@@ -25,22 +25,22 @@ export default function Opportunities() {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const userId = sessionStorage.getItem("userId");
-      const role = sessionStorage.getItem("userRole");
+      const userRole = sessionStorage.getItem("userRole");
 
       if (!userId) {
         alert("Please login to continue");
         router.push("/login");
       } else {
         setUserId(userId);
-        setUserRole(role);
-        fetchJobListings();
+        setUserRole(userRole);
+        fetchJobListings(userId,userRole);
       }
     }
   }, [router]);
 
-  const fetchJobListings = async () => {
+  const fetchJobListings = async (userId,userRole) => {
     try {
-      const response = await fetch("/api/opportunities");
+      const response = await fetch(`/api/opportunities?userId=${userId}&userRole=${userRole}`);
 
       if (response.ok) {
         const data = await response.json();

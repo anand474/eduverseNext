@@ -4,13 +4,20 @@ export default async function handler(req, res) {
   const { id } = req.query;
 
   if (req.method === "GET") {
-    db.query("SELECT * FROM opportunities", (error, results) => {
+    const { userRole, userId } = req.query;
+    let query = "SELECT * FROM opportunities";
+    let queryParams = [];
+
+    if (userRole !== "Student") {
+      query += " WHERE uid = ?";
+      queryParams.push(userId);
+    }
+    db.query(query, queryParams, (error, results) => {
       if (error) {
-        console.error("Error fetching data:", error);
-        res.status(500).json({ error: "Failed to fetch opportunities" });
-      } else {
-        res.status(200).json(results);
+        console.error("Error fetching tips:", error);
+        return res.status(500).json({ error: "Failed to fetch tips" });
       }
+      return res.status(200).json(results);
     });
   } else if (req.method === "POST") {
     const { title, company, description, location, link, uid } = req.body;

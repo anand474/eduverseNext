@@ -15,10 +15,12 @@ export default function Tips() {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [userId, setUserId] = useState(null);
   const [userRole, setUserRole] = useState(null);
+  const [uname,setUname] = useState(null);
 
   useEffect(() => {
     const userId = sessionStorage.getItem("userId");
     const role = sessionStorage.getItem("userRole");
+    const uname = sessionStorage.getItem("userName");
 
     if (!userId) {
       alert("Please login to continue");
@@ -26,13 +28,14 @@ export default function Tips() {
     } else {
       setUserId(userId);
       setUserRole(role);
-      fetchTips();
+      setUname(uname);
+      fetchTips(userId, role);
     }
   }, [router]);
 
-  const fetchTips = async () => {
+  const fetchTips = async (userId, userRole) => {
     try {
-      const response = await fetch("/api/tips");
+      const response = await fetch(`/api/tips?userId=${userId}&userRole=${userRole}`);
       if (response.ok) {
         const data = await response.json();
         setTips(data);
@@ -71,7 +74,7 @@ export default function Tips() {
         title: shortDescription.substring(0, 50),
         tip_content: newTip,
         posted_date: new Date(),
-        postedBy: userId,
+        postedBy: uname,
         uid_created: userId,
       };
       console.log("currentDate:", new Date());
@@ -191,7 +194,7 @@ export default function Tips() {
                   className={styles.deleteButton}
                   onClick={() => handleDeleteTips(tip.tid)}
                 >
-                  <FaTrashAlt size={15} color="red" />
+                  <FaTrashAlt />
                 </button>
               )}
             </div>

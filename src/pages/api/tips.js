@@ -24,7 +24,17 @@ export default async function handler(req, res) {
         .json({ success: "Tip created successfully", id: results.insertId });
     });
   } else if (req.method === "GET") {
-    db.query("SELECT * FROM tips", (error, results) => {
+    const { userRole, userId } = req.query;
+
+    let query = "SELECT * FROM tips";
+    let queryParams = [];
+
+    if (userRole !== "Student") {
+      query += " WHERE uid_created = ?";
+      queryParams.push(userId);
+    }
+
+    db.query(query, queryParams, (error, results) => {
       if (error) {
         console.error("Error fetching tips:", error);
         return res.status(500).json({ error: "Failed to fetch tips" });
