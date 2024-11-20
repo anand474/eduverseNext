@@ -12,18 +12,19 @@ export default async function handler(req, res) {
     });
   } else if (req.method === "POST") {
     const { id, replyMessage } = req.body;
-
+    console.log("hi",id);
+    console.log("Ho",replyMessage);
     if (!id || !replyMessage) {
       return res.status(400).json({ error: "ID and reply message are required" });
     }
 
-    const query = "UPDATE user_queries SET reply_message = ?, replied = 1 WHERE id = ?";
-    db.query(query, [replyMessage, id], (error, results) => {
+    const query = "UPDATE user_queries SET reply_message = ?, replied = 1 WHERE qId = ?";
+    db.query(query, [replyMessage, id], (error) => {
       if (error) {
         console.error("Error updating query reply:", error);
         return res.status(500).json({ error: "Failed to update reply" });
       }
-      return res.status(200).json({ success: "Reply sent successfully" });
+      return res.status(200).json({ success: "Reply saved successfully" });
     });
   } else if (req.method === "DELETE") {
     const { id } = req.query;

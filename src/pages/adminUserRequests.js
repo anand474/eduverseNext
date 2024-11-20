@@ -43,7 +43,7 @@ export default function AdminUserRequests() {
     const request = requests.find((request) => request.qId === id);
 
     const replyMessage = request.replyMessage;
-    const userEmail = request.emailId; 
+    const userEmail = request.emailId;
     setRequests(
       requests.map((request) =>
         request.qId === id ? { ...request, replied: true } : request
@@ -54,7 +54,7 @@ export default function AdminUserRequests() {
 
     const emailData = {
       to: userEmail,
-      subject: `Reply to your query: ${request.query.substring(0, 50)}...`, 
+      subject: `Reply to your query: ${request.query.substring(0, 50)}...`,
       html: `
         <p>Dear ${request.name},</p>
         <p>We have received your query and here's our response:</p>
@@ -64,7 +64,7 @@ export default function AdminUserRequests() {
     };
 
     try {
-      const response = await fetch("/api/queryReply", {
+      await fetch("/api/queryReply", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -72,13 +72,26 @@ export default function AdminUserRequests() {
         body: JSON.stringify(emailData),
       });
 
+      const saveReplyData = {
+        id: request.qId,
+        replyMessage,
+      };
+
+      const response = await fetch("/api/user-queries", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(saveReplyData),
+      });
+
       if (response.ok) {
-        console.log("Reply sent via email.");
+        console.log("Reply saved to the database.");
       } else {
-        console.error("Failed to send email.");
+        console.error("Failed to save reply to the database.");
       }
     } catch (error) {
-      console.error("Error sending email:", error);
+      console.error("Error sending email or saving reply:", error);
     }
   };
 
@@ -131,7 +144,7 @@ export default function AdminUserRequests() {
                   {request.replied ? (
                     <div className={styles.replySection}>
                       <h4>Reply Sent:</h4>
-                      <p>{request.replyMessage}</p>
+                      <p>{request.reply_message}</p>
                     </div>
                   ) : (
                     <div className={styles.replySection}>
