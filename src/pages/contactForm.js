@@ -12,7 +12,7 @@ export default function ContactUs() {
   });
 
   const [errors, setErrors] = useState({});
-  const [submissionSuccess, setSubmissionSuccess] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -54,7 +54,6 @@ export default function ContactUs() {
         });
 
         if (response.ok) {
-          setSubmissionSuccess(true);
           setFormData({
             firstName: "",
             lastName: "",
@@ -63,6 +62,7 @@ export default function ContactUs() {
             message: "",
           });
           setErrors({});
+          setIsModalOpen(true);
         } else {
           const data = await response.json();
           setErrors({ form: data.error || "Failed to submit message" });
@@ -82,87 +82,90 @@ export default function ContactUs() {
 
       <div className={styles.contactContainer}>
         <h2 className="pageTitle">Contact Us</h2>
-        {submissionSuccess ? (
-          <div className={styles.successMessage}>
-            Thank you! We will get back to you soon.
+        <form onSubmit={handleSubmit}>
+          <div className={styles.inputGroup}>
+            <label>First Name</label>
+            <input
+              type="text"
+              name="firstName"
+              value={formData.firstName}
+              onChange={handleInputChange}
+              placeholder="Enter your first name"
+            />
+            {errors.firstName && (
+              <span className={styles.errorMessage}>{errors.firstName}</span>
+            )}
           </div>
-        ) : (
-          <form onSubmit={handleSubmit}>
-            <div className={styles.inputGroup}>
-              <label>First Name</label>
-              <input
-                type="text"
-                name="firstName"
-                value={formData.firstName}
-                onChange={handleInputChange}
-                placeholder="Enter your first name"
-              />
-              {errors.firstName && (
-                <span className={styles.errorMessage}>{errors.firstName}</span>
-              )}
-            </div>
 
-            <div className={styles.inputGroup}>
-              <label>Last Name</label>
-              <input
-                type="text"
-                name="lastName"
-                value={formData.lastName}
-                onChange={handleInputChange}
-                placeholder="Enter your last name"
-              />
-              {errors.lastName && (
-                <span className={styles.errorMessage}>{errors.lastName}</span>
-              )}
-            </div>
+          <div className={styles.inputGroup}>
+            <label>Last Name</label>
+            <input
+              type="text"
+              name="lastName"
+              value={formData.lastName}
+              onChange={handleInputChange}
+              placeholder="Enter your last name"
+            />
+            {errors.lastName && (
+              <span className={styles.errorMessage}>{errors.lastName}</span>
+            )}
+          </div>
 
-            <div className={styles.inputGroup}>
-              <label>Phone Number</label>
-              <input
-                type="tel"
-                name="phone"
-                value={formData.phone}
-                onChange={handleInputChange}
-                placeholder="Enter your phone number"
-              />
-              {errors.phone && (
-                <span className={styles.errorMessage}>{errors.phone}</span>
-              )}
-            </div>
+          <div className={styles.inputGroup}>
+            <label>Phone Number</label>
+            <input
+              type="tel"
+              name="phone"
+              value={formData.phone}
+              onChange={handleInputChange}
+              placeholder="Enter your phone number"
+            />
+            {errors.phone && (
+              <span className={styles.errorMessage}>{errors.phone}</span>
+            )}
+          </div>
 
-            <div className={styles.inputGroup}>
-              <label>Email</label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                placeholder="Enter your email"
-              />
-              {errors.email && (
-                <span className={styles.errorMessage}>{errors.email}</span>
-              )}
-            </div>
+          <div className={styles.inputGroup}>
+            <label>Email</label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleInputChange}
+              placeholder="Enter your email"
+            />
+            {errors.email && (
+              <span className={styles.errorMessage}>{errors.email}</span>
+            )}
+          </div>
 
-            <div className={styles.inputGroup}>
-              <label>Message</label>
-              <textarea
-                name="message"
-                value={formData.message}
-                onChange={handleInputChange}
-                placeholder="Write your message"
-              ></textarea>
-              {errors.message && (
-                <span className={styles.errorMessage}>{errors.message}</span>
-              )}
-            </div>
+          <div className={styles.inputGroup}>
+            <label>Message</label>
+            <textarea
+              name="message"
+              value={formData.message}
+              onChange={handleInputChange}
+              placeholder="Write your message"
+            ></textarea>
+            {errors.message && (
+              <span className={styles.errorMessage}>{errors.message}</span>
+            )}
+          </div>
 
-            <div className={styles.submitBtn}>
-              <button type="submit">Submit</button>
-            </div>
-          </form>
-        )}
+          <div className={styles.submitBtn}>
+            <button type="submit">Submit</button>
+          </div>
+        </form>
       </div>
+
+      {isModalOpen && (
+        <div className={styles.contactmodalOverlay}>
+          <div className={styles.contactmodal}>
+            <p>Thank you! We will get back to you soon.</p>
+            <button onClick={() => setIsModalOpen(false)}>Close</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
