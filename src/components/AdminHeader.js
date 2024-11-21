@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import styles from '@/styles/AdminHeader.module.css';
-import { users } from '@/data/loadData';
 import { useRouter } from 'next/router';
 
 export default function AdminHeader() {
   const [userId, setUserId] = useState(null);
   const [userRole, setUserRole] = useState(null);
+  const [unreadNotifications, setUnreadNotifications] = useState(0);
   const router = useRouter();
 
   useEffect(() => {
@@ -23,7 +23,29 @@ export default function AdminHeader() {
     }
   }, [router]);
 
-  const currentUser = users[userId] || {};
+  useEffect(() => {
+    if (userId) {
+      const fetchUnreadNotifications = async () => {
+        try {
+          const response = await fetch(`/api/notifications?userId=${userId}`);
+          if (response.ok) {
+            const data = await response.json();
+            const unreadCount = data.filter(notification => !notification.isRead).length;
+            setUnreadNotifications(unreadCount);
+          } else {
+            console.error("Failed to fetch notifications");
+          }
+        } catch (error) {
+          console.error("Error fetching notifications:", error);
+        }
+      };
+
+      fetchUnreadNotifications();
+
+      const intervalId = setInterval(fetchUnreadNotifications, 1000);
+      return () => clearInterval(intervalId);
+    }
+  }, [userId]);
 
   return (
     <header className={styles.header}>
@@ -60,12 +82,14 @@ export default function AdminHeader() {
             <Link href="/chats">Chat</Link>
           </li>
           <li className={styles.dropdown}>
-            <a className={styles.dropdownToggle}>{currentUser.user_name || 'User'}</a>
+            <a className={styles.dropdownToggle}>{userId ? `Admin ${userId}` : 'User'}</a>
             <div className={styles.dropdownContent}>
               <Link href="/profile">Profile</Link>
               <Link href="/notifications">
                 Notifications
-                <span className={styles.notificationBadge}>4</span>
+                <span className={styles.notificationBadge}>
+                  {unreadNotifications > 0 ? unreadNotifications : "0"}
+                </span>
               </Link>
               <Link href="/settings">Preferences</Link>
               <Link href="/logout">Logout</Link>

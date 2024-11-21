@@ -2,6 +2,7 @@ import db from "@/data/db";
 
 export default async function handler(req, res) {
     if (req.method === "POST") {
+      
       const { studentId, mentorId, emailId, phoneNo, reason } = req.body;
   
       if (!studentId || !mentorId || !emailId || !phoneNo || !reason) {
@@ -18,6 +19,8 @@ export default async function handler(req, res) {
           resolve(results);
         });
       });
+
+      
   
       if (!mentorResult) {
         return res.status(404).json({ error: "Mentor not found" });
@@ -30,6 +33,20 @@ export default async function handler(req, res) {
         VALUES (?, ?, ?, ?, ?, ?)
       `;
       const values = [studentId, mentor, emailId, phoneNo, reason, 0];
+
+      const notificationMessage = `New mentee request received.`;
+      const notificationQuery = `
+        INSERT INTO notifications (uId, message, isRead)
+        VALUES (?, ?, ?)
+      `;
+      const notificationValues = [mentor, notificationMessage, 0];
+
+      await new Promise((resolve, reject) => {
+        db.query(notificationQuery, notificationValues, (error, results) => {
+          if (error) return reject(error);
+          resolve(results);
+        });
+      });
   
       db.query(query, values, (error, results) => {
         if (error) {
@@ -51,9 +68,10 @@ export default async function handler(req, res) {
       const query = `
         SELECT 
           r.studentId, 
+          r.mentorId,
           s.fullName AS studentName, 
-          s.emailId AS studentEmail, 
-          s.phoneNo AS studentPhone, 
+          r.emailId AS studentEmail, 
+          r.phoneNo AS studentPhone, 
           m.fullName AS mentorName, 
           r.reason
         FROM 
@@ -100,6 +118,19 @@ export default async function handler(req, res) {
             resolve(results);
           });
         });
+        const notificationMessage = `Your mentee request is accepted.`;
+      const notificationQuery = `
+        INSERT INTO notifications (uId, message, isRead)
+        VALUES (?, ?, ?)
+      `;
+      const notificationValues = [id, notificationMessage, 0];
+
+      await new Promise((resolve, reject) => {
+        db.query(notificationQuery, notificationValues, (error, results) => {
+          if (error) return reject(error);
+          resolve(results);
+        });
+      });
   
         if (result.affectedRows === 0) {
           return res.status(404).json({ error: "Request not found" });
@@ -112,20 +143,33 @@ export default async function handler(req, res) {
       }
     }
     else if (req.method === "DELETE") {
-        const { id } = req.body;
+        const { id,mId } = req.body;
   
       const query = `
         DELETE FROM mentorship_requests
-        WHERE studentId = ?
+        WHERE studentId = ? and mentorId =?
       `;
       
       try {
         const result = await new Promise((resolve, reject) => {
-          db.query(query, [id], (error, results) => {
+          db.query(query, [id,mId], (error, results) => {
             if (error) return reject(error);
             resolve(results);
           });
         });
+        const notificationMessage = `Your mentee request is rejected.`;
+      const notificationQuery = `
+        INSERT INTO notifications (uId, message, isRead)
+        VALUES (?, ?, ?)
+      `;
+      const notificationValues = [id, notificationMessage, 0];
+
+      await new Promise((resolve, reject) => {
+        db.query(notificationQuery, notificationValues, (error, results) => {
+          if (error) return reject(error);
+          resolve(results);
+        });
+      });
   
         if (result.affectedRows === 0) {
           return res.status(404).json({ error: "Request not found" });

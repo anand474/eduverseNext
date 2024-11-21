@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import Image from "next/image";
@@ -7,19 +7,18 @@ import styles from "@/styles/Header.module.css";
 export default function Header() {
   const router = useRouter();
   const [currentUser, setCurrentUser] = useState(null);
+  const [unreadNotifications, setUnreadNotifications] = useState(0);
 
-  // Define restricted paths
   const restrictedPaths = ["/login", "/register", "/forgotPassword", "/contactForm", "/"];
   const contactPaths = ["/login", "/register", "/forgotPassword", "/"];
 
-  // Check if current page is restricted or contact page
   const isRestrictedPage = restrictedPaths.includes(router.pathname);
   const isContactPage = contactPaths.includes(router.pathname);
 
   useEffect(() => {
     const userId = sessionStorage.getItem("userId");
     const userRole = sessionStorage.getItem("userRole");
-    const userName = sessionStorage.getItem("userName"); // Assuming `userName` is stored
+    const userName = sessionStorage.getItem("userName");
 
     if (userId && userRole && userName) {
       setCurrentUser({
@@ -29,6 +28,27 @@ export default function Header() {
       });
     }
   }, []);
+
+  useEffect(() => {
+    if (currentUser?.userId) {
+      const fetchNotifications = async () => {
+        try {
+          const response = await fetch(`/api/notifications?userId=${currentUser.userId}`);
+          if (response.ok) {
+            const data = await response.json();
+            const unreadCount = data.filter(notification => !notification.isRead).length;
+            setUnreadNotifications(unreadCount);
+          } else {
+            console.error("Failed to fetch notifications");
+          }
+        } catch (error) {
+          console.error("Error fetching notifications:", error);
+        }
+      };
+
+      fetchNotifications();
+    }
+  }, [currentUser]);
 
   return (
     <header className={styles.header}>
@@ -53,9 +73,9 @@ export default function Header() {
               <li>
                 <Link href={
                   currentUser.userRole === "Mentor" ? "/mentor" :
-                    currentUser.userRole === "Advisor" ? "/advisor" :
-                      currentUser.userRole === "Admin" ? "/admin" :
-                        "/home"
+                  currentUser.userRole === "Advisor" ? "/advisor" :
+                  currentUser.userRole === "Admin" ? "/admin" :
+                  "/home"
                 }>
                   Home
                 </Link>
@@ -100,7 +120,7 @@ export default function Header() {
                 <div className={styles.dropdownContent}>
                   <Link href="/profile">Profile</Link>
                   <Link href="/notifications">
-                    Notifications <span className={styles.notificationBadge}>4</span>
+                    Notifications <span className={styles.notificationBadge}>{unreadNotifications}</span>
                   </Link>
                   <Link href="/settings">Settings</Link>
                   <Link href="/logout">Logout</Link>

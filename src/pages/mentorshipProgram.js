@@ -18,10 +18,9 @@ export default function MentorshipProgram() {
       alert("Please login to continue");
       router.push("/login");
     }
-
     const fetchMentors = async () => {
       try {
-        const response = await fetch("/api/mentors");
+        const response = await fetch(`/api/mentors`);
         if (response.ok) {
           const data = await response.json();
           setMentors(data);
