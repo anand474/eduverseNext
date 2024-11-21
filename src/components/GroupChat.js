@@ -3,7 +3,7 @@ import styles from "@/styles/GroupChat.module.css";
 import MemberCard from "@/components/MemberCard";
 import { FaTrashAlt } from "react-icons/fa";
 
-export default function GroupChat({ group, handleLeaveGroup, handleBack, handleDeleteGroup }) {
+export default function GroupChat({ group,  handleBack }) {
     const initialPosts = Array.from({ length: 10 }, (_, index) => {
         const usernames = ["User1", "User2", "User3", "User4"];
         const comments = [
@@ -38,6 +38,11 @@ export default function GroupChat({ group, handleLeaveGroup, handleBack, handleD
     const [userId, setUserId] = useState(null);
     const [userRole, setUserRole] = useState(null);
 
+    const [members, setMembers] = useState([]);
+    const [loadingMembers, setLoadingMembers] = useState(false);
+    const [error, setError] = useState("");
+    const [creatorId, setCreatorId] = useState(null);
+
     useEffect(() => {
         const storedUserId = sessionStorage.getItem("userId");
         const storedUserRole = sessionStorage.getItem("userRole");
@@ -48,8 +53,179 @@ export default function GroupChat({ group, handleLeaveGroup, handleBack, handleD
         } else {
             setUserId(storedUserId);
             setUserRole(storedUserRole);
+            const fetchGroupDetails = async () => {
+                try {
+                    const response = await fetch(`/api/grouphandler`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            action: "getGroupDetails",
+                            gid: group.gid,
+                        }),
+                    });
+        
+                    const data = await response.json();
+        
+                    if (response.ok) {
+                        const { created_uid } = data;
+                        setCreatorId(created_uid); 
+                    } else {
+                        alert("Failed to fetch group details");
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert("An error occurred while fetching group details.");
+                }
+            };
+        
+            fetchGroupDetails();
+        }}, [group.gid]);
+
+    useEffect(() => {
+        if (activeTab === "members") {
+            fetchGroupMembers();
         }
-    }, []);
+    }, [activeTab]);
+
+    const fetchGroupMembers = async () => {
+        setLoadingMembers(true);
+        setError("");
+
+        try {
+            const response = await fetch("/api/grouphandler", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    action: "fetchGroupMembers",
+                    gid: group.gid,
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Failed to fetch members: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            setMembers(data);
+        } catch (err) {
+            console.error(err);
+            setError(err.message);
+        } finally {
+            setLoadingMembers(false);
+        }
+    };
+    const handleLeaveGroup = async (group) => {
+        try {
+            const response = await fetch(`/api/grouphandler`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    action: "getGroupDetails",
+                    gid: group.gid,
+                }),
+            });
+    
+            const data = await response.json();
+
+    
+            if (response.ok) {
+                const { created_uid } = data;
+    
+                if (String(userId) === String(created_uid)) {
+                    alert("You cannot leave the group as you are the creator.");
+                    return;
+                }
+    
+                const leaveResponse = await fetch("/api/grouphandler", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        action: "leaveGroup",
+                        gid: group.gid,
+                        userId: userId,
+                    }),
+                });
+    
+                const leaveData = await leaveResponse.json();
+    
+                if (leaveResponse.ok) {
+                    alert("Successfully left the group!");
+                    
+                    window.location.href = '/groups';
+                } else {
+                    alert(leaveData.error || "Failed to leave the group");
+                }
+            } else {
+                alert("Failed to fetch group details");
+            }
+        } catch (error) {
+            console.error(error);
+            alert("An error occurred while leaving the group.");
+        }
+    };
+
+    const handleDeleteGroup = async (group) => {
+        try {
+            
+            const response = await fetch(`/api/grouphandler`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    action: "getGroupDetails",
+                    gid: group.gid,
+                }),
+            });
+    
+            const data = await response.json();
+    
+            if (response.ok) {
+                const { created_uid } = data;
+    
+                if (String(userId) !== String(created_uid)) {
+                    alert("You can only delete the group if you are the creator.");
+                    return;
+                }
+    
+                const deleteResponse = await fetch("/api/grouphandler", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        action: "deleteGroup",
+                        gid: group.gid,
+                        userId: userId,
+                    }),
+                });
+    
+                const deleteData = await deleteResponse.json();
+    
+                if (deleteResponse.ok) {
+                    alert("Group successfully deleted!");
+                    window.location.href = '/groups'; 
+                } else {
+                    alert(deleteData.error || "Failed to delete the group");
+                }
+            } else {
+                alert("Failed to fetch group details");
+            }
+        } catch (error) {
+            console.error(error);
+            alert("An error occurred while deleting the group.");
+        }
+    };
+    
+    
 
     const handlePostChange = (e) => {
         const { name, value } = e.target;
@@ -210,7 +386,7 @@ export default function GroupChat({ group, handleLeaveGroup, handleBack, handleD
                             name="link"
                             value={newPost.link}
                             onChange={handlePostChange}
-                            placeholder="Post Link (optional)"
+                            placeholder="Link (optional)"
                         />
                         <button onClick={handleAddPost}>Add Post</button>
                     </div>
@@ -219,17 +395,31 @@ export default function GroupChat({ group, handleLeaveGroup, handleBack, handleD
             {activeTab === "members" && (
                 <div>
                     <h3>Members:</h3>
-                    {uniqueMembers.length > 0 ? (
+                    {loadingMembers && <p>Loading members...</p>}
+                    {error && <p className={styles.errorText}>{error}</p>}
+                    {members.length > 0 ? (
                         <div className={styles.membersList}>
-                            {uniqueMembers.map((member, index) => (
-                                <MemberCard key={index} name={member} />
-                            ))}
-                        </div>
-                    ) : (
+                        {members.map((member) => {
+                            const currentUserId = sessionStorage.getItem("userId"); 
+                            const displayName = currentUserId && String(member.uid) === String(currentUserId) ? "You" : member.fullName;
+                            return (
+                                <MemberCard 
+                                    key={member.uid} 
+                                    name={displayName} 
+                                    email={member.emailId} 
+                                />
+                            );
+                        })}
+                    </div>
+                    ) : !loadingMembers && (
                         <p>No members found.</p>
                     )}
-                    <button className={styles.leaveGroupButton} onClick={handleLeaveGroup}>Leave Group</button>
-                    <button className={styles.deleteGroupButton} onClick={() => handleDeleteGroup(group)}>Delete Group</button>
+                    <button className={styles.leaveGroupButton} onClick={() => handleLeaveGroup(group)}>Leave Group</button>
+                    {String(userId) === String(creatorId) && (
+    <button className={styles.deleteGroupButton} onClick={() => handleDeleteGroup(group)}>
+        Delete Group
+    </button>
+)}
                 </div>
             )}
         </div>
