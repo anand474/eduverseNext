@@ -38,7 +38,7 @@ export default function MentorshipRequests() {
     }
   }, [userId]);
 
-  const acceptRequest = async (id) => {
+  const acceptRequest = async (id,mId) => {
     const acceptedRequest = requests.find(request => request.studentId === id);
     try {
       const response = await fetch(`/api/mentorship-requests`, {
@@ -49,6 +49,7 @@ export default function MentorshipRequests() {
         body: JSON.stringify({
           id: id,
           isAccepted: 1,
+          mId: mId,
         }),
       });
       
@@ -107,7 +108,7 @@ export default function MentorshipRequests() {
                 <p><strong>Reason:</strong> {request.reason}</p>
 
                 <div className={styles.requestActions}>
-                  <button className={styles.mentorAcceptButton} onClick={() => acceptRequest(request.studentId)}>Accept</button>
+                  <button className={styles.mentorAcceptButton} onClick={() => acceptRequest(request.studentId,request.mentorId)}>Accept</button>
                   <button className={styles.mentorDeleteButton} onClick={() => deleteRequest(request.studentId,request.mentorId)}>Delete</button>
                 </div>
               </div>
