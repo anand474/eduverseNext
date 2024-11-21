@@ -1,13 +1,19 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import { FaTrash } from "react-icons/fa";
-import styles from "../styles/JobListing.module.css"; 
+import styles from "../styles/JobListing.module.css";
 
 export default function JobListing({ title, company, location, description, link, onDelete }) {
+
+  const [userRole, setUserRole] = useState();
+  useEffect(() => {
+    const role = sessionStorage.getItem("userRole");
+    setUserRole(role);
+  }, []);
   return (
     <div className={styles.jobCard}>
       <div className={styles.buttonContainer}>
         <a href={link} target="_blank" rel="noopener noreferrer" className={styles.interestedButton}>
-          Interested
+          {(userRole == "Student" ? "Interested" : "View")}
         </a>
         {typeof window !== "undefined" && sessionStorage.getItem("userRole") !== "Student" && (
           <button className={styles.deleteButton} onClick={onDelete}>

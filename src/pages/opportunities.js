@@ -33,12 +33,12 @@ export default function Opportunities() {
       } else {
         setUserId(userId);
         setUserRole(userRole);
-        fetchJobListings(userId,userRole);
+        fetchJobListings(userId, userRole);
       }
     }
   }, [router]);
 
-  const fetchJobListings = async (userId,userRole) => {
+  const fetchJobListings = async (userId, userRole) => {
     try {
       const response = await fetch(`/api/opportunities?userId=${userId}&userRole=${userRole}`);
 
@@ -63,20 +63,23 @@ export default function Opportunities() {
   );
 
   const handleDelete = async (id) => {
-    try {
-      const response = await fetch(`/api/opportunities?id=${id}`, {
-        method: "DELETE",
-      });
+    let flag = window.confirm("Do you want to delete the opportunity ?");
+    if (flag) {
+      try {
+        const response = await fetch(`/api/opportunities?id=${id}`, {
+          method: "DELETE",
+        });
 
-      if (response.ok) {
-        setJobListings((prevListings) =>
-          prevListings.filter((job) => job.id !== id)
-        );
-      } else {
-        alert("Failed to delete opportunity");
+        if (response.ok) {
+          setJobListings((prevListings) =>
+            prevListings.filter((job) => job.id !== id)
+          );
+        } else {
+          alert("Failed to delete opportunity");
+        }
+      } catch (error) {
+        console.error("Error deleting opportunity:", error);
       }
-    } catch (error) {
-      console.error("Error deleting opportunity:", error);
     }
   };
 
@@ -151,13 +154,16 @@ export default function Opportunities() {
         <div className={styles.opportunityJobListings}>
           {filteredListings.map((job) => (
             <JobListing
-              key={job.id}
+              key={job.oid}
               title={job.title}
               company={job.company}
               location={job.location}
               description={job.description}
               link={job.link}
-              onDelete={() => handleDelete(job.id)}
+              onDelete={() => {
+                console.log(`Deleting job with ID: ${job.oid}`);
+                handleDelete(job.oid);
+              }}
             />
           ))}
         </div>

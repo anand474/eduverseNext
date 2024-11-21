@@ -8,7 +8,7 @@ export default async function handler(req, res) {
     let query = "SELECT * FROM opportunities";
     let queryParams = [];
 
-    if (userRole !== "Student") {
+    if (userRole !== "Student" || userRole !== "Mentor") {
       query += " WHERE uid = ?";
       queryParams.push(userId);
     }
@@ -44,12 +44,14 @@ export default async function handler(req, res) {
       }
     });
   } else if (req.method === "DELETE") {
+    console.log("DELTE API", id);
     if (!id) {
       return res.status(400).json({ error: "Opportunity ID is required" });
     }
 
     const query = "DELETE FROM opportunities WHERE oid = ?";
     db.query(query, [id], (error) => {
+      console.log("DELETE Query", query, id, error);
       if (error) {
         console.error("Error deleting data:", error);
         res.status(500).json({ error: "Failed to delete opportunity" });
