@@ -9,28 +9,40 @@ export default function BuildYourResume() {
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState({
     name: '',
-    email: '',
-    phone: '',
+    emailId: '',
+    phoneNo: '',
     education: [],
     experience: [],
     certifications: [],
     skills: [],
     projects: [],
     interests: '',
-    strengths: [],
-    weaknesses: [],
+    strengths: '',
+    weaknesses: '',
     summary: '',
     isEditing: false,
     editIndex: null,
   });
   const [resumes, setResumes] = useState([]);
+  const [loggedUserId, setUserId] = useState([]);
 
   useEffect(() => {
     if (!sessionStorage.getItem("userId")) {
       alert("Please login to continue");
       window.location.href = "/login";
+    } else {
+      const loggedUserId = sessionStorage.getItem("userId");
+      setUserId(loggedUserId);
+
+      const fetchData = async () => {
+        const fetchedResumes = await fetchResumes(loggedUserId);
+        setResumes(fetchedResumes);
+      };
+
+      fetchData();
     }
   }, []);
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -156,13 +168,6 @@ export default function BuildYourResume() {
     }));
   };
 
-
-  const handleDeleteResume = (indexToDelete) => {
-    setResumes((prevResumes) =>
-      prevResumes.filter((_, index) => index !== indexToDelete)
-    );
-  };
-
   const deleteSkillField = (index) => {
     const newSkills = formData.skills.filter((_, i) => i !== index);
     setFormData((prevData) => ({
@@ -171,27 +176,23 @@ export default function BuildYourResume() {
     }));
   };
 
-  const isValidEmail = (email) => {
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return emailRegex.test(email);
-  };
-
-  const isValidPhoneNumber = (phone) => {
-    const phoneRegex = /^[0-9]{10}$/;
-    return phoneRegex.test(phone);
-  };
+  const handleEditResume = (index) => {
+    setFormData({ ...resumes[index], isEditing: true, editIndex: index });
+    setCurrentStep(1);
+    setShowForm(true);
+  }
 
   const nextStep = (e) => {
     e.preventDefault();
-    if (!formData.name || !formData.email || !formData.phone || !formData.summary) {
+    if (!formData.name || !formData.emailId || !formData.phoneNo || !formData.summary) {
       alert("Please enter all the details to move forward.");
       return;
     }
-    if (!isValidEmail(formData.email)) {
+    if (!(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(formData.emailId))) {
       alert("Enter a valid email.");
       return;
     }
-    if (!isValidPhoneNumber(formData.phone)) {
+    if (!(/^[0-9]{10}$/.test(formData.phoneNo))) {
       alert("Enter a valid phone number.");
       return;
     }
@@ -203,6 +204,113 @@ export default function BuildYourResume() {
   const prevStep = () => {
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const fetchResumes = async (userId) => {
+    console.log("fetchResumes...", userId);
+    try {
+      const response = await fetch(`/api/resumes?userId=${userId}`);
+      if (response.ok) {
+        const data = await response.json();
+        console.log("fetchResumes... DONE", data);
+
+        const updatedResumes = data.map((resume) => ({
+          ...resume,
+          education: resume.education ? JSON.parse(resume.education) : null,
+          experience: resume.experience ? JSON.parse(resume.experience) : null,
+          projects: resume.projects ? JSON.parse(resume.projects) : null,
+          certifications: resume.certifications ? JSON.parse(resume.certifications) : null,
+          skills: resume.skills ? JSON.parse(resume.skills) : null
+        }));
+
+        return updatedResumes;
+      } else {
+        console.error("Failed to fetch resumes");
+        return [];
+      }
+    } catch (error) {
+      console.error("Error fetching resumes:", error);
+      return [];
+    }
+  };
+
+  const createResume = async (resumeData) => {
+    try {
+      console.log(resumeData);
+      const response = await fetch("/api/resumes", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(resumeData),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Resume created successfully:", data);
+        fetchResumes(resumeData.uId);
+      } else {
+        const errorData = await response.json();
+        console.error("Error creating resume:", errorData.error);
+      }
+    } catch (error) {
+      console.error("Error creating resume:", error);
+    }
+  };
+
+  const deleteResume = async (resumeId) => {
+    try {
+      const response = await fetch(`/api/resumes?rId=${resumeId}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Resume deleted successfully:", data);
+        const updatedResumes = await fetchResumes(loggedUserId);
+        setResumes(updatedResumes);
+      } else {
+        const errorData = await response.json();
+        console.error("Error deleting resume:", errorData.error);
+      }
+    } catch (error) {
+      console.error("Error deleting resume:", error);
+    }
+  };
+
+  const handleDeleteResume = (indexToDelete) => {
+    const isConfirmed = window.confirm("Are you sure you want to delete this resume?");
+    if (isConfirmed) {
+      setResumes((prevResumes) =>
+        prevResumes.filter((_, index) => index !== indexToDelete)
+      );
+      deleteResume(indexToDelete);
+    }
+  };
+
+  const updateResume = async (resumeId, updatedData) => {
+    console.log("updateResume...", resumeId, updatedData);
+    try {
+      const response = await fetch(`/api/resumes?rId=${resumeId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedData),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const updatedResumes = await fetchResumes(updatedData.uId);
+        setResumes(updatedResumes);
+        console.log("Resume updated successfully:", data);
+      } else {
+        const errorData = await response.json();
+        console.error("Error updating resume:", errorData.error);
+      }
+    } catch (error) {
+      console.error("Error updating resume:", error);
     }
   };
 
@@ -226,158 +334,318 @@ export default function BuildYourResume() {
 
     if (formData.isEditing) {
       setResumes((prevResumes) =>
-        prevResumes.map((resume, index) => index === formData.editIndex ? newResume : resume)
+        prevResumes.map((resume, index) =>
+          index === formData.editIndex ? { ...resume, ...newResume } : resume
+        )
       );
+      updateResume(formData.editIndex, formData);
     } else {
       setResumes((prevResumes) => [newResume, ...prevResumes]);
+      createResume({ uId: loggedUserId, ...newResume });
     }
 
     setShowForm(false);
     setFormData({
       name: "",
-      email: "",
-      phone: "",
+      emailId: "",
+      phoneNo: "",
       education: [],
       experience: [],
       certifications: [],
       projects: [],
       skills: [],
       interests: "",
-      strengths: [],
-      weaknesses: [],
+      strengths: "",
+      weaknesses: "",
       summary: "",
       isEditing: false,
       editIndex: null,
     });
   };
 
+  // const downloadResume = (resume) => {
+  //   const doc = new Document({
+  //     creator: "Your Name",
+  //     title: "Resume",
+  //     description: `Resume of ${resume.name}`,
+  //     sections: [{
+  //       properties: {},
+  //       children: [
+  //         new Paragraph({
+  //           text: resume.name,
+  //           heading: "Title",
+  //           bold: true,
+  //           size: 32,
+  //           alignment: "center",
+  //         }),
+  //         new Paragraph({
+  //           text: resume.emailId,
+  //           alignment: "center",
+  //         }),
+  //         new Paragraph({
+  //           text: resume.phoneNo,
+  //           alignment: "center",
+  //         }),
+  //         new Paragraph({
+  //           text: resume.summary,
+  //           spacing: { after: 300 },
+  //         }),
+
+  //         new Paragraph({
+  //           text: "Education",
+  //           heading: "Heading1",
+  //           bold: true,
+  //           size: 24,
+  //           spacing: { after: 200 },
+  //         }),
+  //         ...resume.education.map(edu => (
+  //           new Paragraph({
+  //             text: `${edu.degree} in ${edu.major}, ${edu.university} (${edu.fromYear} - ${edu.toYear})`,
+  //             spacing: { after: 100 },
+  //           })
+  //         )),
+
+  //         new Paragraph({
+  //           text: "Experience",
+  //           heading: "Heading1",
+  //           bold: true,
+  //           size: 24,
+  //           spacing: { after: 200 },
+  //         }),
+  //         ...resume.experience.map(exp => (
+  //           new Paragraph({
+  //             text: `${exp.jobTitle} at ${exp.company} (${exp.fromYear} - ${exp.toYear}): ${exp.description}`,
+  //             spacing: { after: 100 },
+  //           })
+  //         )),
+
+  //         new Paragraph({
+  //           text: "Certifications",
+  //           heading: "Heading1",
+  //           bold: true,
+  //           size: 24,
+  //           spacing: { after: 200 },
+  //         }),
+  //         ...resume.certifications.map(cert => (
+  //           new Paragraph({
+  //             text: `${cert.title}, Issued by ${cert.issuer} on ${cert.date}`,
+  //             spacing: { after: 100 },
+  //           })
+  //         )),
+
+  //         new Paragraph({
+  //           text: "Skills",
+  //           heading: "Heading1",
+  //           bold: true,
+  //           size: 24,
+  //           spacing: { after: 200 },
+  //         }),
+  //         new Paragraph({
+  //           text: resume.skills.join(', '),
+  //           spacing: { after: 200 },
+  //         }),
+
+  //         new Paragraph({
+  //           text: "Interests",
+  //           heading: "Heading1",
+  //           bold: true,
+  //           size: 24,
+  //           spacing: { after: 200 },
+  //         }),
+  //         new Paragraph({
+  //           text: resume.interests,
+  //           spacing: { after: 200 },
+  //         }),
+
+  //         new Paragraph({
+  //           text: "Strengths",
+  //           heading: "Heading1",
+  //           bold: true,
+  //           size: 24,
+  //           spacing: { after: 200 },
+  //         }),
+  //         new Paragraph({
+  //           text: resume.strengths,
+  //           spacing: { after: 200 },
+  //         }),
+  //         new Paragraph({
+  //           text: "Weaknesses",
+  //           heading: "Heading1",
+  //           bold: true,
+  //           size: 24,
+  //           spacing: { after: 200 },
+  //         }),
+  //         new Paragraph({
+  //           text: resume.weaknesses,
+  //           spacing: { after: 200 },
+  //         }),
+  //       ],
+  //     }],
+  //   });
+
+  //   Packer.toBlob(doc).then((blob) => {
+  //     saveAs(blob, `${resume.name}_resume.docx`);
+  //   });
+  // };
+
   const downloadResume = (resume) => {
     const doc = new Document({
       creator: "Your Name",
       title: "Resume",
       description: `Resume of ${resume.name}`,
-      sections: [{
-        properties: {},
-        children: [
-          new Paragraph({
-            text: resume.name,
-            heading: "Title",
-            bold: true,
-            size: 32,
-            alignment: "center",
-          }),
-          new Paragraph({
-            text: resume.email,
-            alignment: "center",
-          }),
-          new Paragraph({
-            text: resume.phone,
-            alignment: "center",
-          }),
-          new Paragraph({
-            text: resume.summary,
-            spacing: { after: 300 },
-          }),
-
-          new Paragraph({
-            text: "Education",
-            heading: "Heading1",
-            bold: true,
-            size: 24,
-            spacing: { after: 200 },
-          }),
-          ...resume.education.map(edu => (
-            new Paragraph({
-              text: `${edu.degree} in ${edu.major}, ${edu.university} (${edu.fromYear} - ${edu.toYear})`,
+      styles: {
+        paragraphStyles: [
+          {
+            id: "Heading1",
+            name: "Heading 1",
+            basedOn: "Normal",
+            next: "Normal",
+            quickFormat: true,
+            run: {
+              bold: true,
+              color: "2E86C1",
+              size: 28,
+            },
+            paragraph: {
+              spacing: { after: 200 },
+            },
+          },
+          {
+            id: "NormalText",
+            name: "Normal Text",
+            basedOn: "Normal",
+            next: "Normal",
+            quickFormat: true,
+            run: {
+              color: "000000",
+              size: 24,
+            },
+            paragraph: {
               spacing: { after: 100 },
-            })
-          )),
-
-          new Paragraph({
-            text: "Experience",
-            heading: "Heading1",
-            bold: true,
-            size: 24,
-            spacing: { after: 200 },
-          }),
-          ...resume.experience.map(exp => (
-            new Paragraph({
-              text: `${exp.jobTitle} at ${exp.company} (${exp.fromYear} - ${exp.toYear}): ${exp.description}`,
-              spacing: { after: 100 },
-            })
-          )),
-
-          new Paragraph({
-            text: "Certifications",
-            heading: "Heading1",
-            bold: true,
-            size: 24,
-            spacing: { after: 200 },
-          }),
-          ...resume.certifications.map(cert => (
-            new Paragraph({
-              text: `${cert.title}, Issued by ${cert.issuer} on ${cert.date}`,
-              spacing: { after: 100 },
-            })
-          )),
-
-          new Paragraph({
-            text: "Skills",
-            heading: "Heading1",
-            bold: true,
-            size: 24,
-            spacing: { after: 200 },
-          }),
-          new Paragraph({
-            text: resume.skills.join(', '),
-            spacing: { after: 200 },
-          }),
-
-          new Paragraph({
-            text: "Interests",
-            heading: "Heading1",
-            bold: true,
-            size: 24,
-            spacing: { after: 200 },
-          }),
-          new Paragraph({
-            text: resume.interests,
-            spacing: { after: 200 },
-          }),
-
-          new Paragraph({
-            text: "Strengths",
-            heading: "Heading1",
-            bold: true,
-            size: 24,
-            spacing: { after: 200 },
-          }),
-          new Paragraph({
-            text: resume.strengths.join(', '),
-            spacing: { after: 200 },
-          }),
-          new Paragraph({
-            text: "Weaknesses",
-            heading: "Heading1",
-            bold: true,
-            size: 24,
-            spacing: { after: 200 },
-          }),
-          new Paragraph({
-            text: resume.weaknesses.join(', '),
-            spacing: { after: 200 },
-          }),
+            },
+          },
+          {
+            id: "Title",
+            name: "Title",
+            basedOn: "Normal",
+            next: "Normal",
+            quickFormat: true,
+            run: {
+              bold: true,
+              size: 36,
+              color: "2C3E50",
+            },
+            paragraph: {
+              alignment: "center",
+              spacing: { after: 300 },
+            },
+          },
         ],
-      }],
+      },
+      sections: [
+        {
+          properties: {},
+          children: [
+            new Paragraph({
+              text: resume.name,
+              style: "Title",
+            }),
+            new Paragraph({
+              text: resume.emailId,
+              style: "NormalText",
+              alignment: "center",
+            }),
+            new Paragraph({
+              text: resume.phoneNo,
+              style: "NormalText",
+              alignment: "center",
+            }),
+            new Paragraph({
+              text: resume.summary,
+              style: "NormalText",
+              spacing: { after: 300 },
+            }),
+  
+            new Paragraph({
+              text: "Education",
+              style: "Heading1",
+            }),
+            ...resume.education.map((edu) =>
+              new Paragraph({
+                text: `${edu.degree} in ${edu.major}, ${edu.university} (${edu.fromYear} - ${edu.toYear})`,
+                style: "NormalText",
+              })
+            ),
+  
+            new Paragraph({
+              text: "Experience",
+              style: "Heading1",
+            }),
+            ...resume.experience.map((exp) =>
+              new Paragraph({
+                text: `${exp.jobTitle} at ${exp.company} (${exp.fromYear} - ${exp.toYear}): ${exp.description}`,
+                style: "NormalText",
+              })
+            ),
+  
+            new Paragraph({
+              text: "Certifications",
+              style: "Heading1",
+            }),
+            ...resume.certifications.map((cert) =>
+              new Paragraph({
+                text: `${cert.title}, Issued by ${cert.issuer} on ${cert.date}`,
+                style: "NormalText",
+              })
+            ),
+  
+            new Paragraph({
+              text: "Skills",
+              style: "Heading1",
+            }),
+            new Paragraph({
+              text: resume.skills.join(", "),
+              style: "NormalText",
+            }),
+  
+            new Paragraph({
+              text: "Interests",
+              style: "Heading1",
+            }),
+            new Paragraph({
+              text: resume.interests,
+              style: "NormalText",
+            }),
+  
+            new Paragraph({
+              text: "Strengths",
+              style: "Heading1",
+            }),
+            new Paragraph({
+              text: resume.strengths,
+              style: "NormalText",
+            }),
+  
+            new Paragraph({
+              text: "Weaknesses",
+              style: "Heading1",
+            }),
+            new Paragraph({
+              text: resume.weaknesses,
+              style: "NormalText",
+            }),
+          ],
+        },
+      ],
     });
-
+  
     Packer.toBlob(doc).then((blob) => {
       saveAs(blob, `${resume.name}_resume.docx`);
     });
+
+    alert("Your resume is downloaded. Feel free to edit further as per your specifications.")
   };
-
-
-
+  
   return (
     <>
       <Header />
@@ -389,16 +657,16 @@ export default function BuildYourResume() {
           setCurrentStep(0);
           setFormData({
             name: "",
-            email: "",
-            phone: "",
+            emailId: "",
+            phoneNo: "",
             education: [],
             experience: [],
             certifications: [],
             projects: [],
             skills: [],
             interests: "",
-            strengths: [],
-            weaknesses: [],
+            strengths: "",
+            weaknesses: "",
             summary: "",
           });
         }}>
@@ -446,8 +714,8 @@ export default function BuildYourResume() {
                       Email:
                       <input
                         type="email"
-                        name="email"
-                        value={formData.email}
+                        name="emailId"
+                        value={formData.emailId}
                         onChange={handleChange}
                         required
                       />
@@ -456,8 +724,8 @@ export default function BuildYourResume() {
                       Phone:
                       <input
                         type="tel"
-                        name="phone"
-                        value={formData.phone}
+                        name="phoneNo"
+                        value={formData.phoneNo}
                         onChange={handleChange}
                         required
                       />
@@ -526,10 +794,10 @@ export default function BuildYourResume() {
                           onChange={(e) => handleEducationChange(index, e)}
                           required
                         />
-                        <button type="button" style={{backgroundColor: 'lightcoral'}} className={styles.resumeFormButton} onClick={() => deleteEducationField(index)}>Delete</button>
+                        <button type="button" style={{ backgroundColor: 'lightcoral' }} className={styles.resumeFormButton} onClick={() => deleteEducationField(index+1)}>Delete</button>
                       </div>
                     ))}
-                    <button type="button" className={styles.resumeFormButton}onClick={addEducationField}>Add Education</button>
+                    <button type="button" className={styles.resumeFormButton} onClick={addEducationField}>Add Education</button>
 
                     <h3>Experience</h3>
                     {formData.experience.map((exp, index) => (
@@ -573,7 +841,7 @@ export default function BuildYourResume() {
                           onChange={(e) => handleExperienceChange(index, e)}
                           required
                         />
-                        <button type="button" style={{backgroundColor: 'lightcoral'}} className={styles.resumeFormButton} onClick={() => deleteExperienceField(index)}>Delete</button>
+                        <button type="button" style={{ backgroundColor: 'lightcoral' }} className={styles.resumeFormButton} onClick={() => deleteExperienceField(index)}>Delete</button>
                       </div>
                     ))}
                     <button type="button" className={styles.resumeFormButton} onClick={addExperienceField}>Add Experience</button>
@@ -612,7 +880,7 @@ export default function BuildYourResume() {
                           onChange={(e) => handleProjectChange(index, e)}
                           required
                         />
-                        <button type="button" style={{backgroundColor: 'lightcoral'}} className={styles.resumeFormButton} onClick={() => deleteProjectField(index)}>Delete</button>
+                        <button type="button" style={{ backgroundColor: 'lightcoral' }} className={styles.resumeFormButton} onClick={() => deleteProjectField(index)}>Delete</button>
                       </div>
                     ))}
                     <button type="button" className={styles.resumeFormButton} onClick={addProjectField}>Add Project</button>
@@ -644,7 +912,7 @@ export default function BuildYourResume() {
                           onChange={(e) => handleCertificationChange(index, e)}
                           required
                         />
-                        <button type="button" style={{backgroundColor: 'lightcoral'}} className={styles.resumeFormButton} onClick={() => deleteCertificationField(index)}>Delete</button>
+                        <button type="button" style={{ backgroundColor: 'lightcoral' }} className={styles.resumeFormButton} onClick={() => deleteCertificationField(index)}>Delete</button>
                       </div>
                     ))}
                     <button type="button" className={styles.resumeFormButton} onClick={addCertificationField}>Add Certification</button>
@@ -659,7 +927,7 @@ export default function BuildYourResume() {
                           placeholder="Skill"
                           required
                         />
-                        <button type="button" style={{backgroundColor: 'lightcoral'}} className={styles.resumeFormButton} onClick={() => deleteSkillField(index)}>Delete</button>
+                        <button type="button" style={{ backgroundColor: 'lightcoral' }} className={styles.resumeFormButton} onClick={() => deleteSkillField(index)}>Delete</button>
                       </div>
                     ))}
                     <button type="button" className={styles.resumeFormButton} onClick={addSkillField}>Add Skill</button>
@@ -677,8 +945,8 @@ export default function BuildYourResume() {
                       <input
                         type="text"
                         name="strengths"
-                        value={formData.strengths.join(', ')}
-                        onChange={(e) => setFormData({ ...formData, strengths: e.target.value.split(',') })}
+                        value={formData.strengths}
+                        onChange={handleChange}
                       />
                     </label>
                     <label className={styles.formLabel}>
@@ -686,8 +954,8 @@ export default function BuildYourResume() {
                       <input
                         type="text"
                         name="weaknesses"
-                        value={formData.weaknesses.join(', ')}
-                        onChange={(e) => setFormData({ ...formData, weaknesses: e.target.value.split(',') })}
+                        value={formData.weaknesses}
+                        onChange={handleChange}
                       />
                     </label>
                   </>
@@ -698,7 +966,7 @@ export default function BuildYourResume() {
                   {currentStep < 1 ? (
                     <button type="button" className={styles.resumeFormButton} onClick={nextStep}>Next</button>
                   ) : (
-                    <button type="submit" style={{marginLeft: 'auto', backgroundColor: 'lightgreen'}} className={styles.resumeFormButton}>Create Resume</button>
+                    <button type="submit" style={{ marginLeft: 'auto', backgroundColor: 'lightgreen' }} className={styles.resumeFormButton}>Create Resume</button>
                   )}
                 </div>
               </form>
@@ -715,12 +983,8 @@ export default function BuildYourResume() {
                   <h3>{resume.name}</h3>
                   <div className={styles.resumeActions}>
                     <button className={styles.downloadButton} onClick={() => downloadResume(resume)}>Download</button>
-                    <button className={styles.editButton} onClick={() => {
-                      setFormData({ ...resume, isEditing: true, editIndex: index });
-                      setCurrentStep(1);
-                      setShowForm(true);
-                    }}>Edit</button>
-                    <div className={styles.deleteIcon} onClick={() => handleDeleteResume(index)}>
+                    <button className={styles.editButton} onClick={() => handleEditResume(index)}>Edit</button>
+                    <div className={styles.deleteIcon} onClick={() => handleDeleteResume(resume.rId)}>
                       <i className="fas fa-trash-alt"></i>
                     </div>
                   </div>
