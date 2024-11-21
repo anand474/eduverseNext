@@ -100,7 +100,7 @@ export default async function handler(req, res) {
       }
     }
     else if (req.method === "PUT") {
-      const { id,isAccepted } = req.body;
+      const { id,isAccepted,mId } = req.body;
   
       if (isAccepted === undefined) {
         return res.status(400).json({ error: "isAccepted field is required" });
@@ -109,11 +109,12 @@ export default async function handler(req, res) {
         UPDATE mentorship_requests
         SET isAccepted = ?
         WHERE studentId = ?
+        and mentorId = ?
       `;
       
       try {
         const result = await new Promise((resolve, reject) => {
-          db.query(query, [isAccepted, id], (error, results) => {
+          db.query(query, [isAccepted, id,mId], (error, results) => {
             if (error) return reject(error);
             resolve(results);
           });
