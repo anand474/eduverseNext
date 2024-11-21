@@ -64,7 +64,7 @@ export default function MentorshipRequests() {
     }
   };
   
-  const deleteRequest = async (id) => {
+  const deleteRequest = async (id,mId) => {
     const isConfirmed = window.confirm("Are you sure you want to delete this request?");
     if (!isConfirmed) {
       return;
@@ -75,7 +75,7 @@ export default function MentorshipRequests() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ id }),
+        body: JSON.stringify({ id,mId }),
       });
   
       if (response.ok) {
@@ -108,7 +108,7 @@ export default function MentorshipRequests() {
 
                 <div className={styles.requestActions}>
                   <button className={styles.mentorAcceptButton} onClick={() => acceptRequest(request.studentId)}>Accept</button>
-                  <button className={styles.mentorDeleteButton} onClick={() => deleteRequest(request.studentId)}>Delete</button>
+                  <button className={styles.mentorDeleteButton} onClick={() => deleteRequest(request.studentId,request.mentorId)}>Delete</button>
                 </div>
               </div>
             ))}
