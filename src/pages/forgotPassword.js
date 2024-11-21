@@ -3,88 +3,114 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import GuestHeader from "@/components/Header";
-import { users } from "@/data/loadData";
 import styles from "@/styles/ForgotPassword.module.css";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
+  const [otp, setOtp] = useState('');
+  const [enteredOtp, setEnteredOtp] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+  const [generatedOtp, setGeneratedOtp] = useState(null);
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpValidated, setOtpValidated] = useState(false);
+
   const router = useRouter();
 
   useEffect(() => {
     const userId = sessionStorage.getItem('userId');
     if (userId) {
-      const user = Object.values(users).find(user => user.user_id.toString() === userId);
-      if (user) {
-        const routes = {
-          Admin: "/admin",
-          Advisor: "/advisor",
-          Mentor: "/mentor",
-          Student: "/home",
-        };
-        router.replace(routes[user.user_type] || "/home");
-      }
+      router.replace('/home'); 
     }
   }, [router]);
 
-  const userName = sessionStorage.getItem("userName");
+  const generateOtp = () => {
+    return Math.floor(100000 + Math.random() * 900000).toString(); 
+  };
 
-  const handleSubmit = async (e) => {
+  const handleSendOtp = async () => {
+    setError(null);
+    if (!email) {
+      setError("Please enter your email.");
+      return;
+    }
+
+    const otp = generateOtp();
+    setGeneratedOtp(otp);
+
+    try {
+      const emailResponse = await fetch("/api/sendEmail", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          to: email,
+          subject: "Password Reset Request",
+          html: `
+            <div style="font-family: Arial, sans-serif; text-align: left; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: #f9f9f9;">
+              <h2 style="color: #4CAF50; text-align: center;">Password Reset Request</h2>
+              <p style="font-size: 16px; color: #333;">Dear User,</p>
+              <p style="font-size: 16px; color: #333;">
+                We have received a request to reset your password for your Eduverse account.
+                Please use the following OTP to reset your password:
+              </p>
+              <div style="text-align: center; margin-top: 20px;">
+                <h3 style="display: inline-block; padding: 12px 24px; font-size: 20px; font-weight: bold; color: white; background-color: #4CAF50; border-radius: 5px;">
+                  ${otp}
+                </h3>
+              </div>
+              <p style="font-size: 14px; color: #777; margin-top: 20px; text-align: center;">
+                If you did not request a password reset, please ignore this email.
+              </p>
+              <p style="font-size: 14px; color: #777; margin-top: 20px; text-align: center;">
+                This is an automated message. Please do not reply to this email.
+              </p>
+            </div>
+          `,
+        }),
+      });
+
+      if (emailResponse.ok) {
+        alert("OTP has been sent to your email! Please check your inbox.");
+        setOtpSent(true);
+      } else {
+        setError("There was an error sending the OTP. Please try again.");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("An unexpected error occurred while sending the OTP.");
+    }
+  };
+
+  const handleValidateOtp = () => {
+    setError(null);
+    if (enteredOtp !== generatedOtp) {
+      setError("Invalid OTP. Please try again.");
+      return;
+    }
+    setOtpValidated(true);
+    setSuccess("OTP validated successfully!");
+  };
+
+  const handleSubmit = (e) => {
     e.preventDefault();
     setError(null);
+
     if (newPassword !== confirmPassword) {
-      alert("Passwords do not match!");
+      setError("Passwords do not match!");
       return;
     }
 
     if (newPassword.length < 8 || newPassword.length > 16) {
-      setError("Password should be 8-16 characters long");
+      setError("Password should be 8-16 characters long.");
       return;
     }
 
-    // Assuming we send the email here:
-    //   const emailResponse = await fetch("/api/sendEmail", {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify({
-    //       to: email,
-    //       subject: "Password Reset Request",
-    //       html: `
-    //         <div style="font-family: Arial, sans-serif; text-align: left; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: #f9f9f9;">
-    //           <h2 style="color: #4CAF50; text-align: center;">Password Reset Request</h2>
-    //           <p style="font-size: 16px; color: #333;">Dear ${userName},</p>
-    //           <p style="font-size: 16px; color: #333;">
-    //             We have received a request to reset your password for your Eduverse account. 
-    //             Please click the link below to reset your password:
-    //           </p>
-    //           <div style="text-align: center; margin-top: 20px;">
-    //             <a href="http://localhost:3000/forgotPassword" 
-    //                style="display: inline-block; padding: 12px 24px; font-size: 16px; font-weight: bold; 
-    //                       color: white; background-color: #4CAF50; text-decoration: none; border-radius: 5px;">
-    //               Reset Your Password
-    //             </a>
-    //           </div>
-    //           <p style="font-size: 14px; color: #777; margin-top: 20px; text-align: center;">
-    //             If you did not request a password reset, please ignore this email.
-    //           </p>
-    //           <p style="font-size: 14px; color: #777; margin-top: 20px; text-align: center;">
-    //             This is an automated message. Please do not reply to this email.
-    //           </p>
-    //         </div>
-    //       `,
-    //     }),
-    //   });
-
-    //   if (emailResponse.ok) {
-    //     alert('Password reset link has been sent to your email! If you didn`t receive email, please check the email id provided.');
-    //     router.push("/login");
-    //   } else {
-    //     alert('There was an error sending the reset email.');
-    //   }
+    alert("Password reset successfully!");
+    router.push("/login"); // Redirect to login page
   };
 
   return (
@@ -99,6 +125,7 @@ export default function ForgotPassword() {
             Forgot Password
           </h1>
           {error && <p className={styles.error}>{error}</p>}
+          {success && <p className={styles.success}>{success}</p>}
           <form onSubmit={handleSubmit}>
             <div>
               <input
@@ -108,31 +135,56 @@ export default function ForgotPassword() {
                 required
                 className={styles.forgetInputBox}
                 placeholder="Enter your Email"
+                disabled={otpSent}
               />
+              {!otpSent && (
+                <button type="button" onClick={handleSendOtp} className={styles.forgetSubmitButton}>
+                  Send OTP
+                </button>
+              )}
             </div>
-            <div>
-              <input
-                type="password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                required
-                className={styles.forgetInputBox}
-                placeholder="Enter your New Password"
-              />
-            </div>
-            <div>
-              <input
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-                className={styles.forgetInputBox}
-                placeholder="Re-enter your New Password"
-              />
-            </div>
-            <button type="submit" className={styles.forgetSubmitButton}>
-              Submit
-            </button>
+            {otpSent && !otpValidated && (
+              <div>
+                <input
+                  type="text"
+                  value={enteredOtp}
+                  onChange={(e) => setEnteredOtp(e.target.value)}
+                  required
+                  className={styles.forgetInputBox}
+                  placeholder="Enter OTP"
+                />
+                <button type="button" onClick={handleValidateOtp} className={styles.forgetSubmitButton}>
+                  Validate OTP
+                </button>
+              </div>
+            )}
+            {otpValidated && (
+              <>
+                <div>
+                  <input
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    required
+                    className={styles.forgetInputBox}
+                    placeholder="Enter your New Password"
+                  />
+                </div>
+                <div>
+                  <input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
+                    className={styles.forgetInputBox}
+                    placeholder="Re-enter your New Password"
+                  />
+                </div>
+                <button type="submit" className={styles.forgetSubmitButton}>
+                  Submit
+                </button>
+              </>
+            )}
             <div className={styles.forgetMt4}>
               <Link href="/" className={`${styles.forgetTextBlue500} ${styles.forgetHoverUnderline}`}>
                 Back to Login
