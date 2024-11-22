@@ -3,6 +3,7 @@ import styles from "@/styles/GroupChat.module.css";
 import MemberCard from "@/components/MemberCard";
 import { FaTrashAlt } from "react-icons/fa";
 import { useRouter } from "next/router";
+import Header from "@/components/Header";
 
 export default function GroupChat({ group,  handleBack }) {
     const initialPosts = Array.from({ length: 10 }, (_, index) => {
@@ -445,6 +446,9 @@ export default function GroupChat({ group,  handleBack }) {
     }, [chatMessages]);
 
     return (
+        <>
+        <Header/>
+
         <div className={styles.groupChat}>
             <button className={styles.backButton} onClick={handleBack}>Back</button>
             <h2 className={styles.groupTextCenter}>{gname}</h2>
@@ -576,5 +580,6 @@ export default function GroupChat({ group,  handleBack }) {
                 </div>
             )}
         </div>
+        </>
     );
 }
