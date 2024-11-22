@@ -390,8 +390,8 @@ export default function GroupChat({ group,  handleBack }) {
                 if (response.ok) {
                     const updatedPosts = [...posts];
                     updatedPosts[index].comments.push({
-                        username: userName,
-                        text: newComment[index],
+                        uname: userName,
+                        content: newComment[index],
                     });
                     setPosts(updatedPosts);
                     setNewComment((prev) => ({ ...prev, [index]: "" }));
