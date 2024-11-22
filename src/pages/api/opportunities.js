@@ -8,7 +8,7 @@ export default async function handler(req, res) {
     let query = "SELECT * FROM opportunities";
     let queryParams = [];
 
-    if (userRole !== "Student" || userRole !== "Mentor") {
+    if (userRole !== "Student" && userRole !== "Mentor") {
       query += " WHERE uid = ?";
       queryParams.push(userId);
     }

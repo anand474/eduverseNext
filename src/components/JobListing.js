@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { FaTrash } from "react-icons/fa";
 import styles from "../styles/JobListing.module.css";
 
-export default function JobListing({ title, company, location, description, link, onDelete }) {
+export default function JobListing({ oname, company, location, description, link, onDelete }) {
 
   const [userRole, setUserRole] = useState();
   useEffect(() => {
@@ -23,7 +23,7 @@ export default function JobListing({ title, company, location, description, link
       </div>
 
       <div className={styles.jobCardInfo}>
-        <h3 className={styles.jobCardTitle}>{title}</h3>
+        <h3 className={styles.jobCardTitle}>{oname}</h3>
         <a href="#" className={styles.company}>
           {company}
         </a>

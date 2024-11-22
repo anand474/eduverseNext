@@ -1,15 +1,15 @@
 .jobCard {
-  display: flex;
-  justify-content: space-between;
   align-items: flex-start;
+  background-color: #f0fdf4;
   border: 2px solid #000;
   border-radius: 10px;
-  padding: 15px;
+  box-shadow: 0 2px 4px #0000001a;
+  display: flex;
+  justify-content: space-between;
   margin-bottom: 20px;
-  background-color: #f0fdf4;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 15px;
   position: relative;
-  transition: transform 0.2s ease;
+  transition: transform .2s ease;
 }
 
 .buttonContainer {

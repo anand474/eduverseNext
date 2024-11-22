@@ -27,7 +27,7 @@ export default function Notifications() {
           const response = await fetch(`/api/notifications?userId=${userId}`);
           if (response.ok) {
             const data = await response.json();
-            setNotifications(data);
+            setNotifications(data);                 
           } else {
             console.error("Failed to fetch notifications:", await response.text());
           }
