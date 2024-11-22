@@ -1,13 +1,51 @@
-import React, { useEffect } from "react";
+import { useState, useEffect } from "react";
 import styles from "../styles/HomePage.module.css";
 import Header from "../components/Header";
 
 export default function HomePage() {
+  const [jobPostings, setJobPostings] = useState([]);
+  const [events, setEvents] = useState([]);
+  const [userId, setUserId] = useState(null);
+  const [userRole, setUserRole] = useState(null);
+
   useEffect(() => {
-    if (!sessionStorage.getItem("userId")) {
+    const userId = sessionStorage.getItem("userId");
+    const userRole = sessionStorage.getItem("userRole");
+    if (!userId) {
       alert("Please login to continue");
       window.location.href = "/login";
     }
+
+    const fetchJobs = async () => {
+      try {
+        const response = await fetch(`/api/opportunities?userId=${userId}&userRole=${userRole}`);
+        if (response.ok) {
+          const jobs = await response.json();
+          setJobPostings(jobs);
+        } else {
+          console.error("Failed to fetch job postings");
+        }
+      } catch (error) {
+        console.error("Error fetching jobs:", error);
+      }
+    };
+
+    const fetchEvents = async () => {
+      try {
+        const response = await fetch(`/api/events?userId=${userId}&userRole=${userRole}`);
+        if (response.ok) {
+          const eventData = await response.json();
+          setEvents(eventData);
+        } else {
+          console.error("Failed to fetch events");
+        }
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      }
+    };
+
+    fetchJobs();
+    fetchEvents();
   }, []);
 
   return (
@@ -34,17 +72,40 @@ export default function HomePage() {
         <div className={styles.homeSection}>
           <h2 className={styles.homeH2}>Upcoming Events</h2>
           <div className={styles.eventCard}>
-            <p>Conference on AI - Oct 12, 2024</p>
-            <p>Workshop on Web Development - Nov 8, 2024</p>
-            <p>Data Science Summit - Dec 15, 2024</p>
+            {events.length > 0 ? (
+              events.slice(0, 5).map((event) => (
+                <div key={event.eid} className={styles.eventItem}>
+                  <p>
+                    <strong>{event.ename}</strong> - {event.place} -{" "}
+                    {new Date(event.date).toLocaleDateString()} from{" "}
+                    {new Date(`1970-01-01T${event.start_time}`).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} to{" "}
+                    {new Date(`1970-01-01T${event.end_time}`).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} -{" "}
+                    <a href={event.link} target="_blank" rel="noopener noreferrer">
+                      View Details
+                    </a>
+                  </p>
+
+                </div>
+              ))
+            ) : (
+              <p>No upcoming events at the moment.</p>
+            )}
           </div>
         </div>
         <div className={styles.homeSection}>
           <h2 className={styles.homeH2}>Recent Job Postings</h2>
           <div className={styles.jobCard}>
-            <p>Full-Stack Developer at XYZ Company</p>
-            <p>Data Analyst at ABC Corp</p>
-            <p>Frontend Engineer at TechStart</p>
+            {jobPostings.length > 0 ? (
+              jobPostings.slice(0, 5).map((job) => (
+                <div key={job.oid} className={styles.jobItem}>
+                  <p>
+                    <strong>{job.oname}</strong> at {job.company} [{job.location}]
+                  </p>
+                </div>
+              ))
+            ) : (
+              <p>No job postings available at the moment.</p>
+            )}
           </div>
         </div>
         <div className={styles.homeSection}>

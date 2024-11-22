@@ -30,20 +30,30 @@ export default async function handler(req, res) {
     } else if (action === "fetchArticles") {
       const { uid, urole } = req.body;
       const query =
-      urole !== "Student"
-        ? "SELECT * FROM articles WHERE uid = ?"
-        : "SELECT * FROM articles";
+        urole !== "Student"
+          ? "SELECT * FROM articles WHERE uid = ?"
+          : "SELECT * FROM articles";
 
-    db.query(query, [uid], (error, results) => {
+      db.query(query, [uid], (error, results) => {
+        if (error) {
+          console.error("Error fetching articles:", error);
+          return res.status(500).json({ error: "Failed to fetch articles" });
+        }
+        return res.status(200).json(results);
+      });
+    } else {
+      return res.status(400).json({ error: "Invalid action" });
+    }
+  } else if (req.method === "GET") {
+    // Fetch all articles when no query parameters are provided
+    const query = "SELECT * FROM articles";
+    db.query(query, (error, results) => {
       if (error) {
         console.error("Error fetching articles:", error);
         return res.status(500).json({ error: "Failed to fetch articles" });
       }
       return res.status(200).json(results);
     });
-    } else {
-      return res.status(400).json({ error: "Invalid action" });
-    }
   } else if (req.method === "DELETE") {
     const { id } = req.query;
     if (!id) {

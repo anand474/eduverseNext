@@ -10,7 +10,7 @@ export default function Opportunities() {
   const [jobListings, setJobListings] = useState([]);
   const [isModalOpen, setModalOpen] = useState(false);
   const [newJob, setNewJob] = useState({
-    title: "",
+    oname: "",
     company: "",
     location: "",
     description: "",
@@ -44,6 +44,7 @@ export default function Opportunities() {
 
       if (response.ok) {
         const data = await response.json();
+        console.log("Opportunities fetched.", data);
         setJobListings(data);
       } else {
         const errorData = await response.json();
@@ -56,14 +57,14 @@ export default function Opportunities() {
 
   const filteredListings = jobListings.filter(
     (job) =>
-      (job.title &&
-        job.title.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (job.oname &&
+        job.oname.toLowerCase().includes(searchTerm.toLowerCase())) ||
       (job.company &&
         job.company.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   const handleDelete = async (id) => {
-    let flag = window.confirm("Do you want to delete the opportunity ?");
+    let flag = window.confirm("Are you sure you want to delete this opportunity?");
     if (flag) {
       try {
         const response = await fetch(`/api/opportunities?id=${id}`, {
@@ -87,7 +88,7 @@ export default function Opportunities() {
     e.preventDefault();
 
     if (
-      !newJob.title ||
+      !newJob.oname ||
       !newJob.company ||
       !newJob.location ||
       !newJob.description ||
@@ -105,7 +106,7 @@ export default function Opportunities() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          title: newJob.title,
+          oname: newJob.oname,
           company: newJob.company,
           location: newJob.location,
           type: newJob.type,
@@ -121,7 +122,7 @@ export default function Opportunities() {
         setJobListings((prev) => [...prev, { ...newJob, id: data.id }]);
         setModalOpen(false);
         setNewJob({
-          title: "",
+          oname: "",
           company: "",
           location: "",
           description: "",
@@ -155,7 +156,7 @@ export default function Opportunities() {
           {filteredListings.map((job) => (
             <JobListing
               key={job.oid}
-              title={job.title}
+              oname={job.oname}
               company={job.company}
               location={job.location}
               description={job.description}
@@ -175,9 +176,9 @@ export default function Opportunities() {
                 <input
                   type="text"
                   placeholder="Job Title"
-                  value={newJob.title}
+                  value={newJob.oname}
                   onChange={(e) =>
-                    setNewJob({ ...newJob, title: e.target.value })
+                    setNewJob({ ...newJob, oname: e.target.value })
                   }
                   required
                 />

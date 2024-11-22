@@ -23,11 +23,11 @@ export default function Events() {
     } else {
       setUserId(storedUserId);
       setUserRole(storedUserRole);
-      fetchEvents(storedUserId,storedUserRole);
+      fetchEvents(storedUserId, storedUserRole);
     }
   }, []);
 
-  const fetchEvents = async (userId,userRole) => {
+  const fetchEvents = async (userId, userRole) => {
     try {
       const response = await fetch(`/api/events?userId=${userId}&userRole=${userRole}`);
       if (response.ok) {
@@ -68,6 +68,13 @@ export default function Events() {
     }
   };
 
+  const handleDeleteEvent = async (eid) => {
+    let flag = window.confirm("Are you sure you want to delete this event?");
+    if (flag) {
+      alert("Delete");
+    }
+  }
+
   const filteredEvents = events.filter(
     (event) =>
       (event.ename &&
@@ -104,6 +111,7 @@ export default function Events() {
               endTime={event.end_time}
               description={event.description}
               link={event.link}
+              onDelete={() => handleDeleteEvent(event.eid)}
             />
           ))}
         </div>

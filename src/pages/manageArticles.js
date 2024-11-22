@@ -20,6 +20,7 @@ export default function ManageArticles() {
     try {
       const response = await fetch("/api/articles");
       const data = await response.json();
+      console.log("DB set", data);
       setArticles(data);
     } catch (error) {
       console.error("Failed to fetch articles:", error);
@@ -27,20 +28,24 @@ export default function ManageArticles() {
   };
 
   const handleDeleteClick = async (id) => {
-    try {
-      const response = await fetch(`/api/articles?id=${id}`, {
-        method: "DELETE",
-      });
+    let flag = window.confirm("Are you sure you want to delete this article?");
+    if (flag) {
+      try {
+        const response = await fetch(`/api/articles?id=${id}`, {
+          method: "DELETE",
+        });
 
-      if (response.ok) {
-        setArticles(articles.filter((article) => article.aid !== id));
-      } else {
-        console.error("Failed to delete article");
+        if (response.ok) {
+          setArticles(articles.filter((article) => article.aid !== id));
+        } else {
+          console.error("Failed to delete article");
+        }
+      } catch (error) {
+        console.error("Error deleting article:", error);
       }
-    } catch (error) {
-      console.error("Error deleting article:", error);
     }
   };
+
 
   return (
     <>
@@ -65,7 +70,7 @@ export default function ManageArticles() {
                 <td>{article.aname}</td>
                 <td>{article.description}</td>
                 <td>{article.postedBy}</td>
-                <td>{article.posted_date}</td>
+                <td>{new Date(article.posted_date).toLocaleDateString()}</td>
                 <td className={styles.actionsCell}>
                   <button
                     className={styles.deleteButton}

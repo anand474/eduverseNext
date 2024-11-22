@@ -2,20 +2,16 @@ import React, { useState, useEffect } from "react";
 import styles from "../styles/EventListing.module.css";
 import { FaTrash, FaMapMarkerAlt } from "react-icons/fa";
 
-export default function EventListing({
-  eid,
-  title,
-  location,
-  date,
-  startTime,
-  endTime,
-  link,
-  mapUrl,
-  onDelete,
-}) {
+export default function EventListing({ eid, title, location, date, startTime, endTime, description, link, onDelete, }) {
   const [isMapOpen, setIsMapOpen] = useState(false);
   const [userId, setUserId] = useState(null);
   const [userRole, setUserRole] = useState(null);
+  var mapUrl = "";
+
+  if(location.toLowerCase() !== 'remote'){
+    mapUrl = link;
+    link = "";
+  }
 
   useEffect(() => {
     const storedUserId = sessionStorage.getItem("userId");
@@ -52,7 +48,6 @@ export default function EventListing({
         message: `User ${userId} has registered for the event: ${title} on ${formattedDate} from ${timeRange}, located at ${location}.`,
       };
 
-      // Send emails to user and admin
       await fetch("/api/sendEmail", {
         method: "POST",
         headers: {

@@ -7,7 +7,6 @@ import styles from "@/styles/ForgotPassword.module.css";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
-  const [otp, setOtp] = useState('');
   const [enteredOtp, setEnteredOtp] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -20,14 +19,14 @@ export default function ForgotPassword() {
   const router = useRouter();
 
   useEffect(() => {
-    const userId = sessionStorage.getItem('userId');
+    let userId = sessionStorage.getItem('userId');
     if (userId) {
-      router.replace('/home'); 
+      router.replace('/home');
     }
   }, [router]);
 
   const generateOtp = () => {
-    return Math.floor(100000 + Math.random() * 900000).toString(); 
+    return Math.floor(100000 + Math.random() * 900000).toString();
   };
 
   const handleSendOtp = async () => {
@@ -95,7 +94,7 @@ export default function ForgotPassword() {
     setSuccess("OTP validated successfully!");
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
 
@@ -109,8 +108,52 @@ export default function ForgotPassword() {
       return;
     }
 
-    alert("Password reset successfully!");
-    router.push("/login"); // Redirect to login page
+    try {
+      const usersResponse = await fetch(`/api/users`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!usersResponse.ok) {
+        setError("Unable to fetch users. Please try again later.");
+        return;
+      }
+
+      const users = await usersResponse.json();
+
+      const user = users.find((u) => u.emailId === email); 
+
+      if (!user) {
+        setError("Email not found. Please enter a valid registered email.");
+        return;
+      }
+      console.log(user.uid);
+
+      const response = await fetch(`/api/users`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: user.uid,
+          updates: { password: newPassword },
+        }),
+      });
+
+      if (response.ok) {
+        setSuccess("Password reset successfully!");
+        alert("Password reset successfully!");
+        router.push("/login");
+      } else {
+        const result = await response.json();
+        setError(result.error || "An error occurred while resetting the password.");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("An unexpected error occurred while resetting the password.");
+    }
   };
 
   return (
