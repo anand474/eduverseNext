@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import styles from "@/styles/ManageForums.module.css"; // Import CSS module
+import styles from "@/styles/ManageForums.module.css";
 import { forums as initialForums, users } from "@/data/loadData";
 import AdminHeader from "@/components/AdminHeader";
 
@@ -19,13 +19,53 @@ export default function ManageForums() {
     } else {
       setUserId(storedUserId);
       setUserRole(storedUserRole);
+      fetchForums();
     }
   }, []);
 
-  const handleDeleteClick = (id) => {
-    if (window.confirm("Are you sure you want to delete this forum?")) {
-      const updatedForums = forums.filter((forum) => forum.forum_id !== id);
-      setForums(updatedForums);
+  const fetchForums = async () => {
+    try {
+      const response = await fetch("/api/admin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "getForums" }),
+      });
+  
+      if (response.ok) {
+        const data = await response.json();
+        setForums(data);
+      } else {
+        const error = await response.json();
+        console.error("Error fetching forums:", error);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  const handleDeleteClick = async (id) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this forum?");
+    if (!confirmDelete) return;
+  
+    try {
+      const response = await fetch("/api/admin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "deleteForum", fid: id }),
+      });
+  
+      if (response.ok) {
+        const updatedForums = forums.filter((forum) => forum.fid !== id);
+        setForums(updatedForums);
+        alert("Forum deleted successfully.");
+      } else {
+        const errorData = await response.json();
+        console.error("Failed to delete forum:", errorData.error);
+        alert(errorData.error || "Failed to delete the forum.");
+      }
+    } catch (error) {
+      console.error("Error deleting forum:", error);
+      alert("An error occurred while deleting the forum. Please try again.");
     }
   };
 
@@ -40,21 +80,19 @@ export default function ManageForums() {
               <th>Forum ID</th>
               <th>Forum Name</th>
               <th>Forum Description</th>
-              <th>Created By</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {forums.map((forum) => (
-              <tr key={forum.forum_id}>
-                <td>{forum.forum_id}</td>
-                <td>{forum.forum_name}</td>
-                <td>{forum.forum_description}</td>
-                <td>{users[forum.created_by].user_name}</td>
+              <tr key={forum.fid}>
+                <td>{forum.fid}</td>
+                <td>{forum.fname}</td>
+                <td>{forum.description}</td>
                 <td className={styles.actionsCell}>
                   <button
                     className={styles.deleteButton}
-                    onClick={() => handleDeleteClick(forum.forum_id)}
+                    onClick={() => handleDeleteClick(forum.fid)}
                   >
                     Delete
                   </button>
