@@ -130,12 +130,7 @@ export default function ManageOpportunities() {
       <AdminHeader />
       <div className={styles.manageOpportunities}>
         <h2 className="pageTitle">Manage Opportunities</h2>
-        <button
-          className={styles.createOpportunityButton}
-          onClick={() => setModalOpen(true)}
-        >
-          Create Opportunity
-        </button>
+
         <table className={styles.opportunityTable}>
           <thead>
             <tr>
