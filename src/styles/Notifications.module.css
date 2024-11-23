@@ -166,3 +166,108 @@ Akepati, Prem Nandhan Reddy - 1002170918
         width: 80%;
     }
 }
+body[data-theme="dark"] .notificationsPage {
+    background-color: #1c1c1c;
+    color: #f0f0f0;
+}
+
+body[data-theme="dark"] .notificationsList {
+    text-align: center;
+}
+
+body[data-theme="dark"] .listItems {
+    color: #f0f0f0;
+}
+
+body[data-theme="dark"] .notificationsCard {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid #444444;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+body[data-theme="dark"] .notificationText {
+    color: #f0f0f0;
+}
+
+body[data-theme="dark"] .notificationActions {
+    justify-content: center;
+}
+
+body[data-theme="dark"] .markReadButton {
+    background-color: #3498db;
+    color: white;
+}
+
+body[data-theme="dark"] .markReadButton:hover {
+    background-color: #2980b9;
+}
+
+body[data-theme="dark"] .clearAllButton {
+    background-color: #e74c3c;
+    color: white;
+}
+
+body[data-theme="dark"] .clearAllButton:hover {
+    background-color: #c0392b;
+}
+
+@media (max-width: 768px) {
+    body[data-theme="dark"] .notificationsCard {
+        padding: 10px;
+    }
+
+    body[data-theme="dark"] .notificationText {
+        font-size: 14px;
+    }
+
+    body[data-theme="dark"] .notificationsList {
+        width: 80%;
+    }
+}
+
+@media (min-width: 1024px) and (max-width: 1366px) {
+    body[data-theme="dark"] .notificationsCard {
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 15px;
+    }
+
+    body[data-theme="dark"] .notificationText {
+        font-size: 18px;
+    }
+
+    body[data-theme="dark"] .notificationActions {
+        margin-left: auto;
+    }
+
+    body[data-theme="dark"] .markReadButton {
+        padding: 6px 12px;
+    }
+
+    body[data-theme="dark"] .notificationsList {
+        width: 80%;
+    }
+}
+
+@media (max-width: 480px) {
+    body[data-theme="dark"] .notificationsPage {
+        padding: 10px;
+    }
+
+    body[data-theme="dark"] .notificationsCard {
+        padding: 8px;
+    }
+
+    body[data-theme="dark"] .markReadButton {
+        padding: 4px 8px;
+        font-size: 12px;
+    }
+
+    body[data-theme="dark"] .clearAllButton {
+        padding: 8px 16px;
+    }
+
+    body[data-theme="dark"] .notificationsList {
+        width: 80%;
+    }
+}
