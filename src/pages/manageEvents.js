@@ -101,12 +101,6 @@ export default function ManageEvents() {
       <AdminHeader />
       <div className={styles.manageEvents}>
         <h2 className="pageTitle">Manage Events</h2>
-        <button
-          className={styles.createEventButton}
-          onClick={() => setModalOpen(true)}
-        >
-          Create Event
-        </button>
         <table className={styles.eventTable}>
           <thead>
             <tr>
