@@ -226,3 +226,83 @@
     margin-left: 5px;
   }
 }
+body[data-theme="dark"] .articlesPage {
+  background-color: #2c3e50;
+  color: #ecf0f1;
+}
+
+body[data-theme="dark"] .createArticleButton {
+  background-color: #007bff;
+  color: #ffffff;
+}
+
+body[data-theme="dark"] .createArticleButton:hover {
+  background-color: #0056b3;
+}
+
+body[data-theme="dark"] .articleCard {
+  background-color: #34495e;
+  color: #ecf0f1;
+  border: 1px solid #2c3e50;
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+}
+
+body[data-theme="dark"] .articleCard:hover {
+  transform: scale(1.05);
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.4);
+  border: 1px solid #007bff;
+}
+
+body[data-theme="dark"] .articleDetailsLeft,
+body[data-theme="dark"] .articleDetailsRight {
+  color: #bdc3c7;
+}
+
+body[data-theme="dark"] .readMore a {
+  color: #1abc9c;
+}
+
+body[data-theme="dark"] .readMore a:hover {
+  color: #16a085;
+}
+
+body[data-theme="dark"] .formOverlay {
+  background-color: rgba(44, 62, 80, 0.9);
+}
+
+body[data-theme="dark"] .formPopup {
+  background-color: #34495e;
+  color: #ecf0f1;
+}
+
+body[data-theme="dark"] .articleForm input,
+body[data-theme="dark"] .articleForm textarea {
+  background-color: #2c3e50;
+  color: #ecf0f1;
+  border: 1px solid #007bff;
+}
+
+body[data-theme="dark"] .submitButton {
+  background-color: #16a085;
+  color: #ffffff;
+}
+
+body[data-theme="dark"] .submitButton:hover {
+  background-color: #0e786c;
+}
+
+body[data-theme="dark"] .closeButton {
+  background-color: #c0392b;
+}
+
+body[data-theme="dark"] .closeButton:hover {
+  background-color: #992d22;
+}
+
+body[data-theme="dark"] .description {
+  color: #bdc3c7;
+}
+
+body[data-theme="dark"] .deleteButton:hover {
+  background-color: #2980b9;
+}

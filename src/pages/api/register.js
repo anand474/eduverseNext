@@ -36,7 +36,20 @@ export default async function handler(req, res) {
           return res.status(500).json({ error: "Failed to register user" });
         }
 
-        res.status(200).json({ success: ("User registered successfully with UserID: " + results.insertId) });
+        const userId = results.insertId;
+        const preferencesQuery = `
+          INSERT INTO preferences (uid, isLightTheme, enableEmail)
+          VALUES (?, ?, ?)
+        `;
+        const preferencesValues = [userId, 0, 1];
+
+        db.query(preferencesQuery, preferencesValues, (preferencesError) => {
+          if (preferencesError) {
+            return res.status(500).json({ error: "Failed to set user preferences" });
+          }
+
+          res.status(200).json({ success: `User registered successfully with UserID: ${userId}` });
+        });
       });
     });
   } catch (error) {

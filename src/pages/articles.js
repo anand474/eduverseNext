@@ -13,15 +13,18 @@ export default function Articles() {
 
   const [userId, setUserId] = useState(null);
   const [userRole, setUserRole] = useState(null);
+  const [lightTheme, setLightTheme] = useState(null);
 
   useEffect(() => {
     const storedUserId = sessionStorage.getItem("userId");
     const storedUserRole = sessionStorage.getItem("userRole");
+    const theme = sessionStorage.getItem("lightTheme");
 
     if (!storedUserId) {
       alert("Please login to continue");
       window.location.href = "/login";
     } else {
+      setLightTheme(theme);
       
       setUserId(storedUserId);
       setUserRole(storedUserRole);

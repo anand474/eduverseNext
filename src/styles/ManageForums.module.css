@@ -113,3 +113,97 @@ Akepati, Prem Nandhan Reddy - 1002170918
     padding: 5px;
   }
 }
+body[data-theme="dark"] .manageForums {
+  padding: 20px;
+  background-color: #2c3e50; 
+  color: #ecf0f1;
+}
+
+body[data-theme="dark"] .forumTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+body[data-theme="dark"] .forumTable th,
+body[data-theme="dark"] .forumTable td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #555; 
+  background-color: #34495e; 
+  color: #ecf0f1; 
+}
+
+body[data-theme="dark"] .forumTable th {
+  background-color: #3e4a50; 
+}
+
+body[data-theme="dark"] .actionsCell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+}
+
+body[data-theme="dark"] .deleteButton {
+  background-color: #e74c3c; 
+  color: #ecf0f1; 
+  padding: 5px 10px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+
+body[data-theme="dark"] .deleteButton:hover {
+  background-color: #c0392b; 
+  opacity: 0.8;
+}
+
+@media (max-width: 1024px) {
+  body[data-theme="dark"] .manageForums {
+    padding: 15px;
+  }
+
+  body[data-theme="dark"] .forumTable th,
+  body[data-theme="dark"] .forumTable td {
+    padding: 8px;
+  }
+
+  body[data-theme="dark"] .forumTable {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 768px) {
+  body[data-theme="dark"] .forumTable th,
+  body[data-theme="dark"] .forumTable td {
+    padding: 6px;
+  }
+
+  body[data-theme="dark"] .forumTable {
+    font-size: 12px;
+  }
+
+  body[data-theme="dark"] .manageForums {
+    padding: 10px;
+  }
+
+  body[data-theme="dark"] .deleteButton {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  body[data-theme="dark"] .forumTable th,
+  body[data-theme="dark"] .forumTable td {
+    padding: 4px;
+  }
+
+  body[data-theme="dark"] .forumTable {
+    font-size: 10px;
+  }
+
+  body[data-theme="dark"] .manageForums {
+    padding: 5px;
+  }
+}
