@@ -48,14 +48,17 @@ export default async function handler(req, res) {
     let query = "SELECT * FROM events";
     let queryParams = [];
 
+    console.log("events.js userRole:", userRole);
+    console.log("Received query:", req.query);
+
     if (userRole !== "Student") {
       query += " WHERE uid = ?";
       queryParams.push(userId);
     }
     db.query(query, queryParams, (error, results) => {
       if (error) {
-        console.error("Error fetching tips:", error);
-        return res.status(500).json({ error: "Failed to fetch tips" });
+        console.error("Error fetching events:", error);
+        return res.status(500).json({ error: "Failed to fetch events" });
       }
       return res.status(200).json(results);
     });

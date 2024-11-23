@@ -6,9 +6,15 @@ import EventModal from "@/components/EventModal";
 export default function ManageEvents() {
   const [events, setEvents] = useState([]);
   const [isModalOpen, setModalOpen] = useState(false);
+  const [userRole, setRole] = useState(null);
+  const [userId, setUserId] = useState(null);
 
   useEffect(() => {
     const userId = sessionStorage.getItem("userId");
+    const userRole = sessionStorage.getItem("userRole");
+    console.log("userRole:", userRole);
+    setRole(userRole);
+    setUserId(userId);
     if (!userId) {
       alert("Please login to continue");
       window.location.href = "/login";
@@ -18,10 +24,17 @@ export default function ManageEvents() {
   }, []);
 
   const fetchEvents = async () => {
+    console.log("in fetch events");
+    console.log("28===userRole:", `${userRole}`);
+    console.log("29===userId:", `${userId}`);
     try {
-      const response = await fetch("/api/events");
+      const response = await fetch(
+        `/api/events?userRole=${userRole}&userId=${userId}`
+      );
+
       if (response.ok) {
         const data = await response.json();
+        console.log("26===data:", JSON.stringify(data));
         setEvents(data);
       } else {
         console.error("Failed to fetch events:", await response.text());
@@ -47,6 +60,7 @@ export default function ManageEvents() {
 
       if (response.ok) {
         const data = await response.json();
+        console.log("fetch:", JSON.stringify(data));
         setEvents([...events, { eid: data.id, ...newEvent }]);
         setModalOpen(false);
       } else {
