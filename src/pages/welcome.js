@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "@/styles/Welcome.module.css";
 import GuestHeader from "@/components/Header";
-import Link from "next/link"; 
+import Link from "next/link"; // Import Link component for navigation
 
 export default function WelcomePage({ onProceedToLogin }) {
     return (

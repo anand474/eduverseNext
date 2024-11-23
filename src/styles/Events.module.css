@@ -143,3 +143,157 @@
     padding: 5px;
   }
 }
+body[data-theme="dark"] .events {
+  padding: 20px;
+  background-color: #383838;
+  color: #ecf0f1;
+}
+
+body[data-theme="dark"] .eventListings {
+  margin-top: -200px;
+  padding: 200px;
+  background-color: #283848;
+  color: #ecf0f1;
+}
+
+body[data-theme="dark"] .buttonCenter {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+body[data-theme="dark"] .createEventButton {
+  margin-bottom: 7px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+body[data-theme="dark"] .createEventButton:hover {
+  background-color: #1e7db1;
+}
+
+body[data-theme="dark"] .eventCenterEvent {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 40px;
+  color: #ecf0f1;
+}
+
+body[data-theme="dark"] .eventModalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+body[data-theme="dark"] .eventModalContent {
+  background-color: #34495e;
+  padding: 20px;
+  width: 400px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.7);
+  position: relative;
+  color: #ecf0f1;
+}
+
+body[data-theme="dark"] .eventModalContent input {
+  width: 95%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #5c6e79;
+  border-radius: 4px;
+  font-size: 16px;
+  background-color: #3e5361;
+  color: #ecf0f1;
+}
+
+body[data-theme="dark"] .eventCenter {
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 20px;
+  font-weight: bold;
+  color: #ecf0f1;
+}
+
+body[data-theme="dark"] .eventModalSubmitButton {
+  background-color: #27ae60;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  width: 100%;
+  margin-top: 10px;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+body[data-theme="dark"] .eventModalSubmitButton:hover {
+  background-color: #1e8449;
+}
+
+body[data-theme="dark"] .eventModalCloseButton {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  width: 100%;
+  margin-top: 10px;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+body[data-theme="dark"] .eventModalCloseButton:hover {
+  background-color: #c0392b;
+}
+
+@media (max-width: 768px) {
+  body[data-theme="dark"] .createEventButton {
+    width: 50%;
+    padding: 12px;
+  }
+
+  body[data-theme="dark"] .events {
+    padding: 10px;
+  }
+
+  body[data-theme="dark"] .eventListings {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  body[data-theme="dark"] .eventCenterEvent {
+    font-size: 30px;
+  }
+}
+
+@media (max-width: 480px) {
+  body[data-theme="dark"] .createEventButton {
+    width: 80%;
+    padding: 10px;
+  }
+
+  body[data-theme="dark"] .eventCenterEvent {
+    font-size: 24px;
+  }
+
+  body[data-theme="dark"] .eventListings {
+    padding: 10px;
+    margin-top: auto;
+  }
+
+  body[data-theme="dark"] .events {
+    padding: 5px;
+  }
+}
