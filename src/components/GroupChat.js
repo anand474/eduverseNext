@@ -270,10 +270,9 @@ export default function GroupChat({ group,  handleBack }) {
     
                 const data = await response.json();
                 if (response.ok) {
-                    setPosts([...posts, data.post]);
+                    fetchGroupPosts();
                     setNewPost({ title: "", description: "", link: "" });
                     alert("Post added successfully!");
-                    
                 } else {
                     alert(data.error || "Failed to add the post.");
                 }
@@ -495,7 +494,7 @@ export default function GroupChat({ group,  handleBack }) {
                                     )}
                                 </div>
                                 <button onClick={() => toggleComments(index)}> Comments </button>
-                                {(userId == post.uid) &&
+                                {((userId == post.uid || !post.uid)) &&
                                     <button
                                         className={styles.groupDeletePostButton}
                                         onClick={() => handleDeletePost(post.gpid)}
