@@ -9,7 +9,7 @@
 
 .createOpportunityButton {
   padding: 10px 20px;
-  background-color: #2fad40;
+  background-color: #007bff;
   color: white;
   border: none;
   border-radius: 5px;
@@ -84,72 +84,6 @@
   }
 
   .oppModalContent {
-    width: 90%;
-    padding: 15px;
-  }
-}
-body[data-theme="dark"] .opportunityOpportunities {
-  background-color: #383838;
-  color: #ecf0f1;
-}
-
-body[data-theme="dark"] .opportunityJobListings {
-  background-color: #383838;
-  color: #ecf0f1;
-}
-
-
-body[data-theme="dark"] .oppModalOverlay {
-  background-color: rgba(0, 0, 0, 0.9);
-}
-
-body[data-theme="dark"] .oppModalContent {
-  background-color: #34495e;
-  color: #ecf0f1;
-  box-shadow: 0 2px 10px rgba(255, 255, 255, 0.2);
-}
-
-body[data-theme="dark"] .oppModalContent input,
-body[data-theme="dark"] .oppModalContent textarea {
-  background-color: #2c3e50;
-  border: 1px solid #555;
-  color: #ecf0f1;
-}
-
-body[data-theme="dark"] .oppModalContent button {
-  background-color: #4caf50;
-  color: #ecf0f1;
-}
-
-body[data-theme="dark"] .oppModalContent button:hover {
-  background-color: #45a049;
-}
-
-body[data-theme="dark"] .oppCancelButton {
-  background-color: transparent;
-  color: #ecf0f1;
-}
-
-body[data-theme="dark"] .oppCreateButton {
-  background-color: #3498db;
-  color: #ecf0f1;
-}
-
-body[data-theme="dark"] .oppCreateButton:hover {
-  background-color: #2980b9;
-}
-
-@media (max-width: 768px) {
-  body[data-theme="dark"] .opportunityJobListings {
-    padding: 20px;
-    margin-top: 0;
-  }
-
-  body[data-theme="dark"] .createOpportunityButton {
-    width: 50%;
-  }
-
-  body[data-theme="dark"] .oppModalContent {
     width: 90%;
     padding: 15px;
   }

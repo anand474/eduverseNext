@@ -13,22 +13,19 @@ export default function Articles() {
 
   const [userId, setUserId] = useState(null);
   const [userRole, setUserRole] = useState(null);
-  const [lightTheme, setLightTheme] = useState(null);
 
   useEffect(() => {
     const storedUserId = sessionStorage.getItem("userId");
     const storedUserRole = sessionStorage.getItem("userRole");
-    const theme = sessionStorage.getItem("lightTheme");
 
     if (!storedUserId) {
       alert("Please login to continue");
       window.location.href = "/login";
     } else {
-      setLightTheme(theme);
-      
+
       setUserId(storedUserId);
       setUserRole(storedUserRole);
-      fetchArticles(storedUserId,storedUserRole);
+      fetchArticles(storedUserId, storedUserRole);
     }
   }, []);
 
@@ -41,7 +38,7 @@ export default function Articles() {
         },
         body: JSON.stringify({ action: 'fetchArticles', uid, urole }),
       });
-  
+
       if (response.ok) {
         const data = await response.json();
         setArticles(data);
@@ -52,7 +49,7 @@ export default function Articles() {
       console.error('Error fetching articles:', error);
     }
   };
-  
+
   const handleCreateArticle = async (event) => {
     event.preventDefault();
     const newArticle = {
@@ -64,7 +61,7 @@ export default function Articles() {
       posted_date: new Date().toLocaleDateString(),
       uid: userId,
     };
-  
+
     try {
       const response = await fetch("/api/articles", {
         method: "POST",
@@ -73,7 +70,7 @@ export default function Articles() {
         },
         body: JSON.stringify(newArticle),
       });
-  
+
       if (response.ok) {
         const createdArticle = await response.json();
         setArticles([...articles, { ...newArticle, aid: createdArticle.id }]);
@@ -85,13 +82,13 @@ export default function Articles() {
       console.error("Error creating article:", error);
     }
   };
-  
-  
+
+
   const handleSearch = (term) => {
     setSearchTerm(term.toLowerCase());
   };
 
-  
+
 
   const handleDeleteArticle = async (id) => {
     try {
@@ -184,7 +181,7 @@ export default function Articles() {
                 <p>
                   <strong>Posted By:</strong> {article.postedBy}
                 </p>
-                <p>{article.posted_date}</p>
+                <p>{new Date(article.posted_date).toLocaleDateString()}</p>
               </div>
               <div className={styles.readMore}>
                 <a

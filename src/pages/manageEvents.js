@@ -6,36 +6,20 @@ import EventModal from "@/components/EventModal";
 export default function ManageEvents() {
   const [events, setEvents] = useState([]);
   const [isModalOpen, setModalOpen] = useState(false);
-  const [userRole, setRole] = useState(null);
-  const [userId, setUserId] = useState(null);
-  const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
-    const storedUserId = sessionStorage.getItem("userId");
-    const storedUserRole = sessionStorage.getItem("userRole");
-
-    if (!storedUserId || !storedUserRole) {
+    const userId = sessionStorage.getItem("userId");
+    if (!userId) {
       alert("Please login to continue");
       window.location.href = "/login";
-      return;
-    }
-
-    setRole(storedUserRole);
-    setUserId(storedUserId);
-  }, []);
-
-  useEffect(() => {
-    if (userRole && userId) {
+    } else {
       fetchEvents();
     }
-  }, [userRole, userId]);
+  }, []);
 
-  async function fetchEvents() {
+  const fetchEvents = async () => {
     try {
-      const response = await fetch(
-        `/api/events?userRole=${userRole}&userId=${userId}`
-      );
-
+      const response = await fetch("/api/events");
       if (response.ok) {
         const data = await response.json();
         setEvents(data);
@@ -44,10 +28,8 @@ export default function ManageEvents() {
       }
     } catch (error) {
       console.error("Error fetching events:", error);
-    } finally {
-      setLoading(false);
     }
-  }
+  };
 
   const handleCreateEvent = async (newEvent) => {
     try {
@@ -58,7 +40,7 @@ export default function ManageEvents() {
         },
         body: JSON.stringify({
           ...newEvent,
-          uid: userId,
+          uid: sessionStorage.getItem("userId"),
           link: newEvent.link || null,
         }),
       });
@@ -85,22 +67,24 @@ export default function ManageEvents() {
       if (response.ok) {
         setEvents(events.filter((event) => event.eid !== id));
       } else {
-        console.error("Failed to delete event:", await response.text());
+        console.error("Failed to delete event", await response.text());
       }
     } catch (error) {
       console.error("Error deleting event:", error);
     }
   };
 
-  if (isLoading) {
-    return <p>Loading...</p>;
-  }
-
   return (
     <>
       <AdminHeader />
       <div className={styles.manageEvents}>
         <h2 className="pageTitle">Manage Events</h2>
+        <button
+          className={styles.createEventButton}
+          onClick={() => setModalOpen(true)}
+        >
+          Create Event
+        </button>
         <table className={styles.eventTable}>
           <thead>
             <tr>

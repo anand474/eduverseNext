@@ -85,7 +85,7 @@ export default async function handler(req, res) {
         });
       }else if(action === "getGroupDetails"){
         const { gid } = req.body;
-        const groupQuery = "SELECT gname,created_uid FROM groups WHERE gid = ?";
+        const groupQuery = "SELECT created_uid FROM groups WHERE gid = ?";
         db.query(groupQuery, [gid], (groupError, groupResults) => {
             if (groupError) {
                 console.error("Error fetching group data:", groupError);
@@ -97,8 +97,8 @@ export default async function handler(req, res) {
             }
 
             const groupData = groupResults[0];
-            const { gname,created_uid} = groupData;
-            return res.status(200).json({ created_uid,gname });
+            const { created_uid} = groupData;
+            return res.status(200).json({ created_uid });
         });
       } else if (action === "deleteGroup") {
         const { gid, userId } = req.body;
@@ -121,11 +121,13 @@ export default async function handler(req, res) {
           const groupData = groupResults[0];
           const creatorId = groupData.created_uid;
       
+          // Check if the user is the creator of the group
           if (String(userId) !== String(creatorId)) {
             console.log(userId,creatorId)
             return res.status(403).json({ error: "You can only delete the group if you are the creator" });
           }
       
+          // Proceed to delete the group
           const deleteGroupQuery = "DELETE FROM groups WHERE gid = ?";
           db.query(deleteGroupQuery, [gid], (deleteError, deleteResult) => {
             if (deleteError) {
@@ -133,6 +135,7 @@ export default async function handler(req, res) {
               return res.status(500).json({ error: "Failed to delete the group" });
             }
       
+            // Optionally, you can also remove the group from the users' list if needed
             const usersList = JSON.parse(groupData.users_list);
             const removeGroupFromUsersQuery = "UPDATE users SET groups = JSON_REMOVE(groups, ?) WHERE uid IN (?)";
             db.query(removeGroupFromUsersQuery, [gid, usersList], (removeGroupError) => {
@@ -144,120 +147,7 @@ export default async function handler(req, res) {
             return res.status(200).json({ message: "Group successfully deleted" });
           });
         });
-      }else if (action === "addPost") {
-        const { gid, title, description, link, userId,userName } = req.body;
-  
-        if (!gid || !title || !description || !userId) {
-          return res.status(400).json({ error: "Missing required fields" });
-        }
-  
-        const groupQuery = "SELECT gid FROM groups WHERE gid = ?";
-        db.query(groupQuery, [gid], (groupError, groupResults) => {
-          if (groupError) {
-            console.error("Error fetching group data:", groupError);
-            return res.status(500).json({ error: "Failed to fetch group data" });
-          }
-  
-          if (groupResults.length === 0) {
-            return res.status(404).json({ error: "Group not found" });
-          }
-  
-          const addPostQuery = `
-            INSERT INTO group_posts (gid, posttitle, description, link, uid, uname, timestamp)
-            VALUES (?, ?, ?, ?, ?, ?,NOW())
-          `;
-  
-          db.query(addPostQuery, [gid, title, description, link, userId,userName], (postError, postResult) => {
-            if (postError) {
-              console.error("Error adding post:", postError);
-              return res.status(500).json({ error: "Failed to add post" });
-            }
-  
-            return res.status(201).json({message: "Post added successfully",
-                post: {
-                    gid,
-                    title,
-                    description,
-                    link,
-                    userId,
-                    userName,
-                    postId: postResult.insertId,
-                    timestamp: new Date().toISOString()
-                } });
-          });
-        });
-      } else if (action === "fetchGroupPosts") {
-        const { gid } = req.body;
-      
-        if (!gid) {
-          return res.status(400).json({ error: "Group ID is required" });
-        }
-      
-        const query = "SELECT * FROM group_posts WHERE gid = ? ORDER BY timestamp ASC";
-        db.query(query, [gid], (error, results) => {
-          if (error) {
-            console.error("Error fetching posts:", error);
-            return res.status(500).json({ error: "Failed to fetch posts" });
-          }
-      
-          return res.status(200).json(results);
-        });
       }
-      else if (action === "deletePost") {
-        const { postId } = req.body;
-    
-        if (!postId) {
-            return res.status(400).json({ error: "Post ID is required" });
-        }
-    
-        const query = "DELETE FROM group_posts WHERE gpid = ?";
-        db.query(query, [postId], (error, results) => {
-            if (error) {
-                console.error("Error deleting post:", error);
-                return res.status(500).json({ error: "Failed to delete post" });
-            }
-    
-            if (results.affectedRows === 0) {
-                return res.status(404).json({ error: "Post not found" });
-            }
-    
-            return res.status(200).json({ message: "Post deleted successfully" });
-        });
-    }
-    else if (action === "addComment") {
-        const { postId, userId, userName, comment } = req.body;
-    
-        if (!postId || !userId || !comment) {
-            return res.status(400).json({ error: "Post ID, User ID, and comment are required" });
-        }
-    
-        const addCommentQuery = "INSERT INTO comments (pid, uname, content,timestamp) VALUES (?, ?, ?, NOW())";
-        db.query(addCommentQuery, [postId,userName, comment], (err, results) => {
-            if (err) {
-                console.error("Error adding comment:", err);
-                return res.status(500).json({ error: "Failed to add comment" });
-            }
-    
-            return res.status(200).json({ message: "Comment added successfully" });
-        });
-    }
-    else if (action === "fetchComments") {
-        const { postId } = req.body;
-    
-        if (!postId) {
-            return res.status(400).json({ error: "Post ID is required" });
-        }
-    
-        const commentQuery = "SELECT uname,content FROM comments WHERE pid = ?";
-        db.query(commentQuery, [postId], (err, results) => {
-            if (err) {
-                console.error("Error fetching comments:", err);
-                return res.status(500).json({ error: "Failed to fetch comments" });
-            }
-    
-            return res.status(200).json(results);
-        });
-    }
       
       else {
         return res.status(400).json({ error: "Invalid action" });

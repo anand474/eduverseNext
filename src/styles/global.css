@@ -12,15 +12,3 @@ body {
   text-align: center;
   font-size: 2.5rem;
 }
-body {
-  background-color: #ffffff;
-  color: #000000;
-}
-body[data-theme="dark"] {
-  background-color: #363838;
-  color: #ffffff;
-}
-body[data-theme="light"] {
-  background-color: #ffffff;
-  color: #000000;
-}

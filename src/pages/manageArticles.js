@@ -1,54 +1,29 @@
 import { useState, useEffect } from "react";
-import { useRouter } from "next/router";
 import AdminHeader from "@/components/AdminHeader";
 import styles from "@/styles/ManageArticles.module.css";
+import { useRouter } from "next/router";
 
 export default function ManageArticles() {
   const [articles, setArticles] = useState([]);
-  const [userId, setUserId] = useState(null);
-  const [userRole, setUserRole] = useState(null);
-  const [isLoading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
-    const storedUserId = sessionStorage.getItem("userId");
-    const storedUserRole = sessionStorage.getItem("userRole");
-
-    if (!storedUserId || !storedUserRole) {
+    if (!sessionStorage.getItem("userId")) {
       alert("Please login to continue");
       router.push("/login");
-      return;
-    }
-
-    setUserId(storedUserId);
-    setUserRole(storedUserRole);
-  }, [router]);
-
-  useEffect(() => {
-    if (userId && userRole) {
+    } else {
       fetchArticles();
     }
-  }, [userId, userRole]);
+  }, [router]);
 
   const fetchArticles = async () => {
-    console.log("Fetching articles...");
-    console.log("UserRole:", userRole, "UserId:", userId);
-
     try {
-      const response = await fetch(
-        `/api/articles?userId=${userId}&userRole=${userRole}`
-      );
-      if (response.ok) {
-        const data = await response.json();
-        console.log("Fetched articles:", data);
-        setArticles(data);
-      } else {
-        console.error("Failed to fetch articles:", await response.text());
-      }
+      const response = await fetch("/api/articles");
+      const data = await response.json();
+      console.log("DB set", data);
+      setArticles(data);
     } catch (error) {
-      console.error("Error fetching articles:", error);
-    } finally {
-      setLoading(false);
+      console.error("Failed to fetch articles:", error);
     }
   };
 
@@ -61,7 +36,7 @@ export default function ManageArticles() {
         });
 
         if (response.ok) {
-          setArticles((prev) => prev.filter((article) => article.aid !== id));
+          setArticles(articles.filter((article) => article.aid !== id));
         } else {
           console.error("Failed to delete article");
         }
@@ -71,9 +46,6 @@ export default function ManageArticles() {
     }
   };
 
-  if (isLoading) {
-    return <p>Loading...</p>;
-  }
 
   return (
     <>

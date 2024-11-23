@@ -3,25 +3,19 @@ import styles from "../styles/HomePage.module.css";
 import Header from "../components/Header";
 
 export default function HomePage() {
-  
   const [jobPostings, setJobPostings] = useState([]);
   const [events, setEvents] = useState([]);
   const [userId, setUserId] = useState(null);
   const [userRole, setUserRole] = useState(null);
-  const [lightTheme, setLightTheme] = useState(null);
 
   useEffect(() => {
     const userId = sessionStorage.getItem("userId");
     const userRole = sessionStorage.getItem("userRole");
-    const isLightTheme = sessionStorage.getItem("lightTheme");
-    const enableEmail = sessionStorage.getItem("enableEmail");
-  
     if (!userId) {
       alert("Please login to continue");
       window.location.href = "/login";
     }
-    alert(`${enableEmail}`);
-    document.body.setAttribute("data-theme", isLightTheme);
+
     const fetchJobs = async () => {
       try {
         const response = await fetch(`/api/opportunities?userId=${userId}&userRole=${userRole}`);
