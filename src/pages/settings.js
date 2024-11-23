@@ -34,6 +34,34 @@ export default function SettingsPage() {
     } else {
       setUserId(storedUserId);
       setUserRole(storedUserRole);
+      document.body.setAttribute("data-theme", sessionStorage.getItem("lightTheme"));
+      const savedTheme = sessionStorage.getItem("theme") || "light"; 
+      setThemeData({ theme: savedTheme });
+      document.body.setAttribute("data-theme", savedTheme);
+
+      const fetchTheme = async () => {
+        const response = await fetch("/api/settings", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "getTheme",
+            userId: storedUserId,
+          }),
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          const theme = data.theme.isLightTheme === 1 ? "dark" : "light";
+          const enableEmail = data.theme.enableEmail === 1 ? true : false;
+          setThemeData({ theme });
+          setEmailNotificationsEnabled(enableEmail)
+          document.body.setAttribute("data-theme", theme);
+        } else {
+          console.error("Failed to fetch theme");
+        }
+      };
+
+      fetchTheme();
     }
   }, [router]);
 
@@ -45,14 +73,54 @@ export default function SettingsPage() {
     }));
   };
 
-  const handleThemeChange = (e) => {
+  const handleThemeChange = async (e) => {
     const theme = e.target.value;
     setThemeData({ theme });
     document.body.setAttribute("data-theme", theme);
+    sessionStorage.setItem("lightTheme", theme); 
+
+    const response = await fetch("/api/settings", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: "updateTheme",
+        theme: theme === "dark" ? 1 : 0,
+        userId: userId,
+      }),
+    });
+
+    const data = await response.json();
+    if (response.ok) {
+      setThemeSuccess(true);
+    } else {
+      alert(data.error || "Failed to update theme");
+    }
   };
 
-  const handleEmailToggleChange = () => {
-    setEmailNotificationsEnabled((prev) => !prev);
+  const handleEmailToggleChange = async () => {
+    const newEmailPreference = !emailNotificationsEnabled;
+   
+
+    setEmailNotificationsEnabled(newEmailPreference);
+    sessionStorage.setItem("enableEmail",newEmailPreference);
+
+    const response = await fetch("/api/settings", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: "updateEmail",
+        theme: newEmailPreference === false ? "0" : "1",
+        userId: userId,
+      }),
+    });
+
+    const data = await response.json();
+    if (response.ok) {
+      setThemeSuccess(true);
+    } else {
+      alert(data.error || "Failed to update theme");
+    }
+    
   };
 
   const validatePasswordFields = () => {
@@ -93,6 +161,7 @@ export default function SettingsPage() {
       setPasswordErrors(validationErrors);
     }
   };
+
 
   return (
     <div>
@@ -148,7 +217,6 @@ export default function SettingsPage() {
 
         <div className={styles.card}>
           <h3>Change Theme</h3>
-          {themeSuccess && <div className={styles.successMessage}>Theme has been updated successfully!</div>}
           <form onSubmit={(e) => { e.preventDefault(); setThemeSuccess(true); }}>
             <div className={styles.inputGroup}>
               <label>Theme</label>
@@ -156,9 +224,6 @@ export default function SettingsPage() {
                 <option value="light">Light</option>
                 <option value="dark">Dark</option>
               </select>
-            </div>
-            <div className={styles.submitBtn}>
-              <button type="submit">Save Theme</button>
             </div>
           </form>
         </div>

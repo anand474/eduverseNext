@@ -140,3 +140,103 @@ Akepati, Prem Nandhan Reddy - 1002170918
     font-size: 16px;
   }
 }
+body[data-theme="dark"] .mentorshipMessage {
+  background-color: #2c3e50;
+  color: #ecf0f1;
+}
+
+body[data-theme="dark"] .mentorshipMessage h2 {
+  color: #3498db;
+}
+
+body[data-theme="dark"] .mentorshipMessage p {
+  color: #bdc3c7;
+}
+
+body[data-theme="dark"] .mentorshipFormContainer {
+  background-color: #34495e;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+body[data-theme="dark"] .mentorshipFormHeading {
+  color: #ecf0f1;
+}
+
+body[data-theme="dark"] .mentorshipFormLabel {
+  color: #ecf0f1;
+}
+
+body[data-theme="dark"] .mentorshipFormInput,
+body[data-theme="dark"] .mentorshipFormTextarea,
+body[data-theme="dark"] .mentorshipFormSelect {
+  background-color: #3e5361;
+  color: #ecf0f1;
+  border: 1px solid #5c6e79;
+}
+
+body[data-theme="dark"] .mentorshipFormInput::placeholder,
+body[data-theme="dark"] .mentorshipFormTextarea::placeholder {
+  color: #95a5a6;
+}
+
+body[data-theme="dark"] .mentorshipFormSubmit {
+  background-color: #3498db;
+  color: #ecf0f1;
+}
+
+body[data-theme="dark"] .mentorshipFormSubmit:hover {
+  background-color: #2980b9;
+}
+
+@media (max-width: 768px) {
+  body[data-theme="dark"] .mentorshipFormContainer {
+    padding: 20px;
+    width: 90%;
+  }
+
+  body[data-theme="dark"] .mentorshipMessage h2 {
+    font-size: 22px;
+  }
+
+  body[data-theme="dark"] .mentorshipFormHeading {
+    font-size: 22px;
+  }
+
+  body[data-theme="dark"] .mentorshipFormInput,
+  body[data-theme="dark"] .mentorshipFormTextarea,
+  body[data-theme="dark"] .mentorshipFormSelect {
+    font-size: 16px;
+    width: 95%;
+  }
+
+  body[data-theme="dark"] .mentorshipFormSubmit {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  body[data-theme="dark"] .mentorshipMessage {
+    padding: 15px;
+  }
+
+  body[data-theme="dark"] .mentorshipMessage h2 {
+    font-size: 18px;
+  }
+
+  body[data-theme="dark"] .mentorshipFormContainer {
+    padding: 15px;
+    width: 90%;
+  }
+
+  body[data-theme="dark"] .mentorshipFormInput,
+  body[data-theme="dark"] .mentorshipFormTextarea,
+  body[data-theme="dark"] .mentorshipFormSelect {
+    font-size: 14px;
+    width: 95%;
+    max-width: 100%;
+  }
+
+  body[data-theme="dark"] .mentorshipFormSubmit {
+    font-size: 16px;
+  }
+}

@@ -13,8 +13,9 @@ export default async function handler(req, res) {
   }
 
   try {
-    const query = "SELECT * FROM users WHERE emailId = ?";
-    db.query(query, [email], async (error, results) => {
+    const queryUser = "SELECT * FROM users WHERE emailId = ?";
+    
+    db.query(queryUser, [email], async (error, results) => {
       if (error) {
         return res.status(500).json({ error: "Database error" });
       }
@@ -30,10 +31,26 @@ export default async function handler(req, res) {
         return res.status(401).json({ error: "Invalid email or password" });
       }
 
-      res.status(200).json({
-        userId: user.uid,
-        userRole: user.type,
-        name: user.fullName,
+      const queryPreferences = "SELECT isLightTheme, enableEmail FROM preferences WHERE uid = ?";
+      
+      db.query(queryPreferences, [user.uid], (prefError, prefResults) => {
+        if (prefError) {
+          return res.status(500).json({ error: "Error fetching preferences" });
+        }
+
+        if (prefResults.length === 0) {
+          return res.status(404).json({ error: "Preferences not found for this user" });
+        }
+
+        const preferences = prefResults[0];
+
+        res.status(200).json({
+          userId: user.uid,
+          userRole: user.type,
+          name: user.fullName,
+          isLightTheme: preferences.isLightTheme,
+          enableEmail: preferences.enableEmail,
+        });
       });
     });
   } catch (err) {

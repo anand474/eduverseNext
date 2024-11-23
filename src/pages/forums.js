@@ -5,7 +5,7 @@ import { forums as initialForums, users } from "@/data/loadData";
 import styles from "@/styles/Forums.module.css";
 
 export default function Forums() {
-    const [forumList, setForumList] = useState(initialForums);
+    const [forumList, setForumList] = useState([]);
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [newForum, setNewForum] = useState({ forum_name: "", forum_description: "" });
     const [userId, setUserId] = useState(null);
@@ -24,22 +24,74 @@ export default function Forums() {
         }
     }, []);
 
-    const handleCreateForum = (e) => {
+    useEffect(() => {
+        const fetchForums = async () => {
+            const response = await fetch("/api/forums", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ action: "fetchForums" }),
+            });
+            const data = await response.json();
+            setForumList(data);
+        };
+        fetchForums();
+    }, []);
+    
+    const [newUser, setNewUserId]=useState(null);
+    const handleCreateForum = async (e) => {
         e.preventDefault();
-        const newId = forumList.length ? forumList[forumList.length - 1].forum_id + 1 : 1;
-        const createdForum = { forum_id: newId, ...newForum };
-        setForumList([...forumList, createdForum]);
-        setNewForum({ forum_name: "", forum_description: "" });
-        setShowCreateForm(false);
-    };
-
-    const handleDelete = (forumId) => {
-        const confirmDelete = window.confirm("Are you sure you want to delete this forum?");
-        if (confirmDelete) {
-            setForumList(forumList.filter(forum => forum.forum_id !== forumId));
-            console.log("Forum deleted:", forumId);
+        const response = await fetch("/api/forums", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                action: "createForum",
+                forum_name: newForum.forum_name,
+                forum_description: newForum.forum_description,
+                userId,
+            }),
+        });
+        const data = await response.json();
+        if (response.ok) {
+            alert(`Forum Created Successfully!`);
+            setNewUserId(data.created_uid);
+            setForumList([...forumList, { forum_id: data.forum_id, ...newForum }]);
+            setNewForum({ forum_name: "", forum_description: "" });
+            setShowCreateForm(false);
+        } else {
+            alert(data.error || "Failed to create forum");
         }
     };
+    
+
+    const handleDelete = async (forumId) => {
+        const confirmDelete = window.confirm("Are you sure you want to delete this forum?");
+        if (!confirmDelete) return;
+    
+        try {
+            const response = await fetch("/api/forums", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    action: "deleteForum",
+                    forum_id: forumId,
+                    
+                }),
+            });
+    
+            const data = await response.json();
+    
+            if (response.ok) {
+                setForumList(forumList.filter((forum) => forum.fid !== forumId));
+                console.log("Forum deleted successfully:", forumId);
+            } else {
+                alert(data.error || "Failed to delete forum");
+            }
+        } catch (error) {
+            console.error("Error deleting forum:", error);
+            alert("An error occurred while deleting the forum.");
+        }
+    };
+    
 
     return (
         <>
@@ -76,17 +128,17 @@ export default function Forums() {
 
                 <div className={styles.forumsGrid}>
                     {forumList.map((forum) => (
-                        <div className={styles.forumBox} key={forum.forum_id}>
-                            <h3>{forum.forum_name}</h3>
-                            <p>{forum.forum_description}</p>
+                        <div className={styles.forumBox} key={forum.fid}>
+                            <h3>{forum.fname || forum.forum_name}</h3>
+                            <p>{forum.description || forum.forum_description}</p>
                             <div className={styles.buttonGroup}>
                                 <button className={styles.goToForumBtn}
-                                    onClick={() => window.location.href = `/forums/${forum.forum_id}`}
+                                    onClick={() => window.location.href = `/forums/${forum.fid}`}
                                 >
                                     Go to Forum
                                 </button>
-                                {userRole !== "Student" && (
-                                    <button className={styles.deleteForumBtn} onClick={() => handleDelete(forum.forum_id)}>
+                                {((String(userId)===String(forum.created_uid)) || newUser) && (
+                                    <button className={styles.deleteForumBtn} onClick={() => handleDelete(forum.fid)}>
                                         Delete Forum
                                     </button>
                                 )}

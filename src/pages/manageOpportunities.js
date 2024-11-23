@@ -13,27 +13,48 @@ export default function ManageOpportunities() {
     description: "",
     link: "",
   });
+  const [userId, setUserId] = useState(null);
+  const [userRole, setUserRole] = useState(null);
+  const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!sessionStorage.getItem("userId")) {
+    const storedUserId = sessionStorage.getItem("userId");
+    const storedUserRole = sessionStorage.getItem("userRole");
+
+    if (!storedUserId || !storedUserRole) {
       alert("Please login to continue");
       window.location.href = "/login";
-    } else {
-      fetchOpportunities();
+      return;
     }
+
+    setUserId(storedUserId);
+    setUserRole(storedUserRole);
   }, []);
 
+  useEffect(() => {
+    if (userId && userRole) {
+      fetchOpportunities();
+    }
+  }, [userId, userRole]);
+
   const fetchOpportunities = async () => {
+    console.log("Fetching opportunities...");
+    console.log("UserRole:", userRole, "UserId:", userId);
+
     try {
-      const response = await fetch("/api/opportunities");
+      const response = await fetch(
+        `/api/opportunities?userId=${userId}&userRole=${userRole}`
+      );
       if (response.ok) {
         const data = await response.json();
         setOpportunities(data);
       } else {
-        console.error("Failed to fetch opportunities");
+        console.error("Failed to fetch opportunities:", await response.text());
       }
     } catch (error) {
       console.error("Error fetching opportunities:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -75,13 +96,8 @@ export default function ManageOpportunities() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          title: newJob.title,
-          company: newJob.company,
-          location: newJob.location,
-          type: newJob.type,
-          description: newJob.description,
-          link: newJob.link,
-          uid: sessionStorage.getItem("userId") || null,
+          ...newJob,
+          uid: userId,
         }),
       });
 
@@ -104,6 +120,10 @@ export default function ManageOpportunities() {
       console.error("Error creating opportunity:", error);
     }
   };
+
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
 
   return (
     <>
@@ -135,8 +155,7 @@ export default function ManageOpportunities() {
                     className={styles.deleteButton}
                     onClick={() => handleDeleteClick(opportunity.oid)}
                   >
-                    {" "}
-                    Delete{" "}
+                    Delete
                   </button>
                 </td>
               </tr>

@@ -53,6 +53,8 @@ export default function Login() {
         sessionStorage.setItem("userId", data.userId);
         sessionStorage.setItem("userRole", data.userRole);
         sessionStorage.setItem("userName", data.name);
+        sessionStorage.setItem("lightTheme",data.isLightTheme===1?"dark":"light");
+        
 
         console.log("User logged in:", data);
 
@@ -63,6 +65,8 @@ export default function Login() {
           Student: "/home",
         };
         router.replace(routes[data.userRole] || "/login");
+        
+        document.body.setAttribute("data-theme", sessionStorage.getItem("lightTheme"));
       } else {
         setError(data.error || "An error occurred. Please try again.");
         console.error("Login error:", data.error);
