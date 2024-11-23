@@ -8,25 +8,29 @@ export default function ManageEvents() {
   const [isModalOpen, setModalOpen] = useState(false);
   const [userRole, setRole] = useState(null);
   const [userId, setUserId] = useState(null);
+  const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
-    const userId = sessionStorage.getItem("userId");
-    const userRole = sessionStorage.getItem("userRole");
-    console.log("userRole:", userRole);
-    setRole(userRole);
-    setUserId(userId);
-    if (!userId) {
+    const storedUserId = sessionStorage.getItem("userId");
+    const storedUserRole = sessionStorage.getItem("userRole");
+
+    if (!storedUserId || !storedUserRole) {
       alert("Please login to continue");
       window.location.href = "/login";
-    } else {
-      fetchEvents();
+      return;
     }
+
+    setRole(storedUserRole);
+    setUserId(storedUserId);
   }, []);
 
-  const fetchEvents = async () => {
-    console.log("in fetch events");
-    console.log("28===userRole:", `${userRole}`);
-    console.log("29===userId:", `${userId}`);
+  useEffect(() => {
+    if (userRole && userId) {
+      fetchEvents();
+    }
+  }, [userRole, userId]);
+
+  async function fetchEvents() {
     try {
       const response = await fetch(
         `/api/events?userRole=${userRole}&userId=${userId}`
@@ -34,15 +38,16 @@ export default function ManageEvents() {
 
       if (response.ok) {
         const data = await response.json();
-        console.log("26===data:", JSON.stringify(data));
         setEvents(data);
       } else {
         console.error("Failed to fetch events:", await response.text());
       }
     } catch (error) {
       console.error("Error fetching events:", error);
+    } finally {
+      setLoading(false);
     }
-  };
+  }
 
   const handleCreateEvent = async (newEvent) => {
     try {
@@ -53,14 +58,13 @@ export default function ManageEvents() {
         },
         body: JSON.stringify({
           ...newEvent,
-          uid: sessionStorage.getItem("userId"),
+          uid: userId,
           link: newEvent.link || null,
         }),
       });
 
       if (response.ok) {
         const data = await response.json();
-        console.log("fetch:", JSON.stringify(data));
         setEvents([...events, { eid: data.id, ...newEvent }]);
         setModalOpen(false);
       } else {
@@ -81,12 +85,15 @@ export default function ManageEvents() {
       if (response.ok) {
         setEvents(events.filter((event) => event.eid !== id));
       } else {
-        console.error("Failed to delete event", await response.text());
+        console.error("Failed to delete event:", await response.text());
       }
     } catch (error) {
       console.error("Error deleting event:", error);
     }
   };
+
+  if (isLoading) {
+    return <p>Loading...</p>;
 
   return (
     <>
