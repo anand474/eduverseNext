@@ -6,20 +6,36 @@ import EventModal from "@/components/EventModal";
 export default function ManageEvents() {
   const [events, setEvents] = useState([]);
   const [isModalOpen, setModalOpen] = useState(false);
+  const [userRole, setRole] = useState(null);
+  const [userId, setUserId] = useState(null);
+  const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
-    const userId = sessionStorage.getItem("userId");
-    if (!userId) {
+    const storedUserId = sessionStorage.getItem("userId");
+    const storedUserRole = sessionStorage.getItem("userRole");
+
+    if (!storedUserId || !storedUserRole) {
       alert("Please login to continue");
       window.location.href = "/login";
-    } else {
-      fetchEvents();
+      return;
     }
+
+    setRole(storedUserRole);
+    setUserId(storedUserId);
   }, []);
 
-  const fetchEvents = async () => {
+  useEffect(() => {
+    if (userRole && userId) {
+      fetchEvents();
+    }
+  }, [userRole, userId]);
+
+  async function fetchEvents() {
     try {
-      const response = await fetch("/api/events");
+      const response = await fetch(
+        `/api/events?userRole=${userRole}&userId=${userId}`
+      );
+
       if (response.ok) {
         const data = await response.json();
         setEvents(data);
@@ -28,8 +44,10 @@ export default function ManageEvents() {
       }
     } catch (error) {
       console.error("Error fetching events:", error);
+    } finally {
+      setLoading(false);
     }
-  };
+  }
 
   const handleCreateEvent = async (newEvent) => {
     try {
@@ -40,7 +58,7 @@ export default function ManageEvents() {
         },
         body: JSON.stringify({
           ...newEvent,
-          uid: sessionStorage.getItem("userId"),
+          uid: userId,
           link: newEvent.link || null,
         }),
       });
@@ -67,12 +85,16 @@ export default function ManageEvents() {
       if (response.ok) {
         setEvents(events.filter((event) => event.eid !== id));
       } else {
-        console.error("Failed to delete event", await response.text());
+        console.error("Failed to delete event:", await response.text());
       }
     } catch (error) {
       console.error("Error deleting event:", error);
     }
   };
+
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
 
   return (
     <>
