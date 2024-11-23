@@ -20,7 +20,6 @@ export default function HomePage() {
       alert("Please login to continue");
       window.location.href = "/login";
     }
-    alert(`${enableEmail}`);
     document.body.setAttribute("data-theme", isLightTheme);
     const fetchJobs = async () => {
       try {

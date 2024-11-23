@@ -123,44 +123,7 @@ export default function SettingsPage() {
     
   };
 
-  const validatePasswordFields = () => {
-    const newErrors = {};
-    const { currentPassword, newPassword, confirmNewPassword } = passwordData;
-
-    if (!currentPassword.trim()) {
-      newErrors.currentPassword = "Current password is required";
-    }
-
-    if (!newPassword.trim()) {
-      newErrors.newPassword = "New password is required";
-    } else if (newPassword === currentPassword) {
-      newErrors.newPassword = "New password cannot be the same as the current password";
-    } else if (!/^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,}$/.test(newPassword)) {
-      newErrors.newPassword = "Password must be at least 8 characters long and include a number and a special character";
-    }
-
-    if (newPassword !== confirmNewPassword) {
-      newErrors.confirmNewPassword = "Passwords do not match";
-    }
-
-    return newErrors;
-  };
-
-  const handlePasswordSubmit = (e) => {
-    e.preventDefault();
-    const validationErrors = validatePasswordFields();
-    if (Object.keys(validationErrors).length === 0) {
-      setPasswordSuccess(true);
-      setPasswordData({
-        currentPassword: "",
-        newPassword: "",
-        confirmNewPassword: "",
-      });
-      setPasswordErrors({});
-    } else {
-      setPasswordErrors(validationErrors);
-    }
-  };
+  
 
 
   return (
@@ -168,52 +131,7 @@ export default function SettingsPage() {
       {userRole === "Admin" ? <AdminHeader /> : <Header />}
       <div className={styles.settingsContainer}>
         <h2 className="pageTitle">Settings</h2>
-
-        <div className={styles.card}>
-          <h3>Reset Password</h3>
-          {passwordSuccess && <div className={styles.successMessage}>Password has been updated successfully!</div>}
-          <form onSubmit={handlePasswordSubmit}>
-            <div className={styles.inputGroup}>
-              <label>Current Password</label>
-              <input
-                type="password"
-                name="currentPassword"
-                value={passwordData.currentPassword}
-                onChange={handlePasswordInputChange}
-                placeholder="Enter current password"
-              />
-              {passwordErrors.currentPassword && <span className={styles.errorMessage}>{passwordErrors.currentPassword}</span>}
-            </div>
-
-            <div className={styles.inputGroup}>
-              <label>New Password</label>
-              <input
-                type="password"
-                name="newPassword"
-                value={passwordData.newPassword}
-                onChange={handlePasswordInputChange}
-                placeholder="Enter new password"
-              />
-              {passwordErrors.newPassword && <span className={styles.errorMessage}>{passwordErrors.newPassword}</span>}
-            </div>
-
-            <div className={styles.inputGroup}>
-              <label>Confirm New Password</label>
-              <input
-                type="password"
-                name="confirmNewPassword"
-                value={passwordData.confirmNewPassword}
-                onChange={handlePasswordInputChange}
-                placeholder="Confirm new password"
-              />
-              {passwordErrors.confirmNewPassword && <span className={styles.errorMessage}>{passwordErrors.confirmNewPassword}</span>}
-            </div>
-
-            <div className={styles.submitBtn}>
-              <button type="submit">Save Password</button>
-            </div>
-          </form>
-        </div>
+          
 
         <div className={styles.card}>
           <h3>Change Theme</h3>
