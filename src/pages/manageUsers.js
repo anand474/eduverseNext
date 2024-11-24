@@ -108,12 +108,15 @@ export default function ManageUsers() {
   const handleDeleteClick = async (id) => {
     if (confirm("Are you sure you want to delete this user?")) {
       try {
-        const response = await fetch(`/api/users/${id}`, { method: "DELETE" });
+        setLoading(true);
+        const response = await fetch(`/api/users?userId=${id}`, { method: "DELETE" });
         if (!response.ok) throw new Error("Failed to delete user");
         setUsers(users.filter((user) => user.uid !== id));
       } catch (error) {
         console.error(error);
         alert("Error deleting user.");
+      } finally {
+        setLoading(false);
       }
     }
   };
