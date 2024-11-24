@@ -13,6 +13,7 @@ export default function ContactUs() {
 
   const [errors, setErrors] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -45,6 +46,7 @@ export default function ContactUs() {
 
     if (Object.keys(validationErrors).length === 0) {
       try {
+        setLoading(true);
         const response = await fetch("/api/contactUs", {
           method: "POST",
           headers: {
@@ -54,6 +56,23 @@ export default function ContactUs() {
         });
 
         if (response.ok) {
+          // console.log(process.env.ADMIN_ID, process.env.ADMINID);
+          const notificationResponse = await fetch("/api/notifications", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              userId: process.env.NEXT_PUBLIC_ADMIN_ID,
+              message: `New Contact Us message from ${formData.firstName} ${formData.lastName} (${formData.email}): ${formData.message}`,
+            }),
+          });
+
+          const notificationData = await notificationResponse.json();
+          if (!notificationResponse.ok) {
+            console.error(notificationData.error || "Failed to send notification");
+          }
+
           setFormData({
             firstName: "",
             lastName: "",
@@ -63,13 +82,18 @@ export default function ContactUs() {
           });
           setErrors({});
           setIsModalOpen(true);
+          setLoading(false);
         } else {
           const data = await response.json();
           setErrors({ form: data.error || "Failed to submit message" });
+          setLoading(false);
         }
       } catch (error) {
         setErrors({ form: "Failed to submit message" });
         console.error(error);
+        setLoading(false);
+      } finally {
+        setLoading(false);
       }
     } else {
       setErrors(validationErrors);
@@ -92,6 +116,7 @@ export default function ContactUs() {
               onChange={handleInputChange}
               placeholder="Enter your first name"
             />
+            {loading && <div className="loadingSpinner"></div>}
             {errors.firstName && (
               <span className={styles.errorMessage}>{errors.firstName}</span>
             )}
