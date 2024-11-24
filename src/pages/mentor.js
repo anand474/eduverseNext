@@ -113,15 +113,17 @@ export default function MentorHomePage() {
             <p>Loading events...</p>
           ) : events.length > 0 ? (
             <div className={styles.eventCard}>
-              {events.map((event) => (
-                <p key={event.eid}>{`${event.ename} - ${event.date}`}</p>
-              ))}
+              {events.map((event) => {
+                const formattedDate = new Date(event.date)
+                  .toISOString()
+                  .split("T")[0];
+                return (
+                  <p key={event.eid}>{`${event.ename} - ${formattedDate}`}</p>
+                );
+              })}
             </div>
           ) : (
-            <p>
-              No events have been created yet. You'll soon see them as they are
-              added.
-            </p>
+            <p>No events available at the moment</p>
           )}
         </div>
 
@@ -136,7 +138,7 @@ export default function MentorHomePage() {
               ))}
             </div>
           ) : (
-            <p>No job postings yet. You'll soon see them as they are added.</p>
+            <p>No job postings available at the moment</p>
           )}
         </div>
 
