@@ -424,8 +424,7 @@ export default function GroupChat({ group,  handleBack }) {
             const data = await response.json();
     
             if (response.ok) {
-                const updatedPosts = posts.filter(post => post.gpid !== postId);
-                setPosts(updatedPosts);
+                fetchGroupPosts();
                 alert("Post deleted successfully!");
             } else {
                 alert(data.error || "Failed to delete post.");
