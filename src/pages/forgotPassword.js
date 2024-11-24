@@ -15,6 +15,8 @@ export default function ForgotPassword() {
   const [generatedOtp, setGeneratedOtp] = useState(null);
   const [otpSent, setOtpSent] = useState(false);
   const [otpValidated, setOtpValidated] = useState(false);
+  const [userId, setUserId] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const router = useRouter();
 
@@ -29,17 +31,44 @@ export default function ForgotPassword() {
     return Math.floor(100000 + Math.random() * 900000).toString();
   };
 
-  const handleSendOtp = async () => {
+  const handleSendOtp = async (e) => {
+    e.preventDefault();
     setError(null);
+    setLoading(true);
     if (!email) {
       setError("Please enter your email.");
+      setLoading(false);
       return;
     }
 
-    const otp = generateOtp();
-    setGeneratedOtp(otp);
-
     try {
+      const usersResponse = await fetch(`/api/users`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!usersResponse.ok) {
+        setError("Unable to verify email. Please try again later.");
+        setLoading(false);
+        return;
+      }
+
+      const users = await usersResponse.json();
+      const user = users.find((u) => u.emailId === email);
+
+      if (!user) {
+        setError("Email not found. Please enter a valid registered email.");
+        setLoading(false);
+        return;
+      }
+
+      setUserId(user.uid);
+
+      const otp = generateOtp();
+      setGeneratedOtp(otp);
+
       const emailResponse = await fetch("/api/sendEmail", {
         method: "POST",
         headers: {
@@ -81,6 +110,8 @@ export default function ForgotPassword() {
     } catch (err) {
       console.error(err);
       setError("An unexpected error occurred while sending the OTP.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -97,47 +128,29 @@ export default function ForgotPassword() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
+    setSuccess(null);
+    setLoading(true);
 
     if (newPassword !== confirmPassword) {
       setError("Passwords do not match!");
+      setLoading(false);
       return;
     }
 
     if (newPassword.length < 8 || newPassword.length > 16) {
       setError("Password should be 8-16 characters long.");
+      setLoading(false);
       return;
     }
 
     try {
-      const usersResponse = await fetch(`/api/users`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!usersResponse.ok) {
-        setError("Unable to fetch users. Please try again later.");
-        return;
-      }
-
-      const users = await usersResponse.json();
-
-      const user = users.find((u) => u.emailId === email); 
-
-      if (!user) {
-        setError("Email not found. Please enter a valid registered email.");
-        return;
-      }
-      console.log(user.uid);
-
       const response = await fetch(`/api/users`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          userId: user.uid,
+          userId,
           updates: { password: newPassword },
         }),
       });
@@ -153,8 +166,11 @@ export default function ForgotPassword() {
     } catch (err) {
       console.error(err);
       setError("An unexpected error occurred while resetting the password.");
+    } finally {
+      setLoading(false);
     }
   };
+
 
   return (
     <>
@@ -167,6 +183,7 @@ export default function ForgotPassword() {
           <h1 className={`${styles.forgetTextCenter} ${styles.forgetTextGray800} ${styles.forgetText4xl} ${styles.forgetFontBold}`}>
             Forgot Password
           </h1>
+          {loading && <div className="loadingSpinner"></div>}
           {error && <p className={styles.error}>{error}</p>}
           {success && <p className={styles.success}>{success}</p>}
           <form onSubmit={handleSubmit}>
@@ -181,7 +198,7 @@ export default function ForgotPassword() {
                 disabled={otpSent}
               />
               {!otpSent && (
-                <button type="button" onClick={handleSendOtp} className={styles.forgetSubmitButton}>
+                <button type="submit" onClick={handleSendOtp} className={styles.forgetSubmitButton}>
                   Send OTP
                 </button>
               )}
