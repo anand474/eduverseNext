@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { io } from 'socket.io-client';
 import ChatList from '@/components/ChatList';
 import ChatWindow from '@/components/ChatWindow';
-import SearchBar from '@/components/SearchBar';
 import Header from '@/components/Header';
 import AdminHeader from '@/components/AdminHeader';
 import styles from '@/styles/ChatApp.module.css';
@@ -10,13 +9,14 @@ import styles from '@/styles/ChatApp.module.css';
 const socket = io('http://localhost:3001');
 
 export default function ChatApp() {
-  const [users, setUsers] = useState([]); 
-  const [chats, setChats] = useState([]); 
-  const [selectedChat, setSelectedChat] = useState(null); 
-  const [messageText, setMessageText] = useState(''); 
-  const [userId, setUserId] = useState(null); 
+  const [users, setUsers] = useState([]);
+  const [chats, setChats] = useState([]);
+  const [selectedChat, setSelectedChat] = useState(null);
+  const [messageText, setMessageText] = useState('');
+  const [userId, setUserId] = useState(null);
   const [userName, setUserName] = useState(null);
-  const [userRole, setUserRole] = useState(null); 
+  const [userRole, setUserRole] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const storedUserId = sessionStorage.getItem('userId');
@@ -46,7 +46,7 @@ export default function ChatApp() {
       }
     }
 
-    async function fetchChats() {
+    const fetchChats = async () => {
       try {
         const response = await fetch(`/api/chats?userId=${userId}`);
         if (!response.ok) throw new Error('Failed to fetch chats');
@@ -63,6 +63,8 @@ export default function ChatApp() {
           const receiverName = msg.receiver_name;
           const timestamp = msg.timestamp;
           const message = msg.message;
+
+          console.log(message, timestamp);
 
           const isCurrentUserSender = senderId == userId;
           const otherUserId = isCurrentUserSender ? receiverId : senderId;
@@ -94,32 +96,28 @@ export default function ChatApp() {
 
         const processedChats = Array.from(chatsMap.values());
 
-        setChats(processedChats); 
+        setChats(processedChats);
         console.log(processedChats);
       } catch (error) {
         console.error('Error fetching chats:', error);
       }
     }
     if (userId) {
+      setLoading(true);
       fetchUsers();
       fetchChats();
+      setLoading(false);
     }
 
     socket.on('receiveMessage', (data) => {
       if (selectedChat && selectedChat.chatId === data.chatId) {
+        let msg = data.message;
+        let isCurrentUserSender = msg.sender_id == userId;
+        msg.type = isCurrentUserSender ? 'sent' : 'received';
         setSelectedChat((prevChat) => ({
           ...prevChat,
-          messages: [...prevChat.messages, data.message],
+          messages: [...prevChat.messages, msg],
         }));
-      } else {
-        setChats((prevChats) => {
-          const updatedChats = [...prevChats];
-          const chatIndex = updatedChats.findIndex((chat) => chat.chatId === data.chatId);
-          if (chatIndex !== -1) {
-            updatedChats[chatIndex].lastMessage = data.message.text;
-          }
-          return updatedChats;
-        });
       }
     });
 
@@ -128,8 +126,8 @@ export default function ChatApp() {
     };
   }, [userId, selectedChat]);
 
-  const handleSendMessage = async () => {
-    console.log(messageText, selectedChat);
+  async function handleSendMessage() {
+    console.log("handleSendMessage outside", messageText, selectedChat);
 
     if (selectedChat && messageText.trim()) {
       const newMessage = {
@@ -139,32 +137,25 @@ export default function ChatApp() {
         receiver_id: selectedChat.receiver_id,
         receiver_name: selectedChat.receiver_name,
         message: messageText,
-        timestamp: new Date().toISOString()
+        timestamp: (new Date().toISOString()).slice(0, -1) + "-06:00"
       };
 
       console.log('Message to send:', newMessage);
 
       socket.emit('sendMessage', newMessage);
 
-      setSelectedChat((prevChat) => ({
-        ...prevChat,
-        messages: [
-          ...prevChat.messages,
-          { ...newMessage, type: 'sent' },
-        ],
-      }));
-
       setMessageText('');
     }
-  };
 
+    console.log("handleSendMessage outside DONE");
+  };
 
   return (
     <>
       {userRole === 'Admin' ? <AdminHeader /> : <Header />}
       <div className={styles.chatApp}>
+        {loading && <div className="loadingSpinner"></div>}
         <div className={styles.chatListSection}>
-          {/* <SearchBar onSearch={handleSearch} /> */}
           <ChatList chats={chats} setSelectedChat={setSelectedChat} />
         </div>
         <div className={styles.chatWindowSection}>

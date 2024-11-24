@@ -109,6 +109,7 @@ export default function Events() {
             <button
               className={styles.createEventButton}
               onClick={() => setIsModalOpen(true)}
+              title="Use the Embedded code option for the Google Maps link when adding a location."
             >
               Create Event
             </button>
