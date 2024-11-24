@@ -10,15 +10,13 @@ import styles from '@/styles/ChatApp.module.css';
 const socket = io('http://localhost:3001');
 
 export default function ChatApp() {
-  const [users, setUsers] = useState([]); // List of all users
-  const [chats, setChats] = useState([]); // Custom chat structure
-  // const [filteredUsers, setFilteredUsers] = useState([]); // Filtered list of users based on search term
-  const [selectedChat, setSelectedChat] = useState(null); // Currently selected chat
-  // const [searchTerm, setSearchTerm] = useState(''); // Search term for filtering users
-  const [messageText, setMessageText] = useState(''); // Text of the new message to send
-  const [userId, setUserId] = useState(null); // Logged-in user's ID
-  const [userName, setUserName] = useState(null); // Logged-in user's name
-  const [userRole, setUserRole] = useState(null); // Logged-in user's role (Admin or User)
+  const [users, setUsers] = useState([]); 
+  const [chats, setChats] = useState([]); 
+  const [selectedChat, setSelectedChat] = useState(null); 
+  const [messageText, setMessageText] = useState(''); 
+  const [userId, setUserId] = useState(null); 
+  const [userName, setUserName] = useState(null);
+  const [userRole, setUserRole] = useState(null); 
 
   useEffect(() => {
     const storedUserId = sessionStorage.getItem('userId');
@@ -36,7 +34,6 @@ export default function ChatApp() {
   }, []);
 
   useEffect(() => {
-    // Fetch users
     async function fetchUsers() {
       try {
         const response = await fetch('/api/users');
@@ -44,13 +41,11 @@ export default function ChatApp() {
         const data = await response.json();
         console.log("Fetched all users", data);
         setUsers(data);
-        // setFilteredUsers(data);
       } catch (error) {
         console.error('Error fetching users:', error);
       }
     }
 
-    // Fetch chats and process them into the custom structure
     async function fetchChats() {
       try {
         const response = await fetch(`/api/chats?userId=${userId}`);
@@ -59,11 +54,9 @@ export default function ChatApp() {
 
         console.log("Fetched all chats", data);
 
-        // Create a Map to group the messages by unique pairs of (sender_id, receiver_id)
         const chatsMap = new Map();
 
         data.forEach((msg) => {
-          // Extract sender and receiver details
           const senderId = msg.sender_id;
           const receiverId = msg.receiver_id;
           const senderName = msg.sender_name;
@@ -71,15 +64,12 @@ export default function ChatApp() {
           const timestamp = msg.timestamp;
           const message = msg.message;
 
-          // Check if the current message is between the current user and another user
           const isCurrentUserSender = senderId == userId;
           const otherUserId = isCurrentUserSender ? receiverId : senderId;
           const otherUserName = isCurrentUserSender ? receiverName : senderName;
 
-          // Create a unique key for the chat (this key will be the combination of both user ids)
           const chatKey = [Math.min(senderId, receiverId), Math.max(senderId, receiverId)].join('-');
 
-          // If this chatKey is not in the map, add a new chat object
           if (!chatsMap.has(chatKey)) {
             chatsMap.set(chatKey, {
               id: chatKey,
@@ -90,7 +80,6 @@ export default function ChatApp() {
             });
           }
 
-          // Push the message to the chat object's messages array
           const chat = chatsMap.get(chatKey);
           chat.messages.push({
             sender_id: senderId,
@@ -103,10 +92,9 @@ export default function ChatApp() {
           });
         });
 
-        // Convert Map values to an array and set it to the state
         const processedChats = Array.from(chatsMap.values());
 
-        setChats(processedChats); // Update the state with processed chats
+        setChats(processedChats); 
         console.log(processedChats);
       } catch (error) {
         console.error('Error fetching chats:', error);
@@ -151,7 +139,7 @@ export default function ChatApp() {
         receiver_id: selectedChat.receiver_id,
         receiver_name: selectedChat.receiver_name,
         message: messageText,
-        timestamp: new Date().toTimeString()
+        timestamp: new Date().toISOString()
       };
 
       console.log('Message to send:', newMessage);

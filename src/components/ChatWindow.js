@@ -42,7 +42,7 @@ export default function ChatWindow({ chat, messageText, setMessageText, onSendMe
             <div key={index} className={`${styles.chatMessage} ${styles[msg.type]}`}>
               <p className={styles.messageText}>{msg.message}</p>
               <span className={styles.messageTime}>
-                {msg.timestamp}
+                {new Date(msg.timestamp).toLocaleString()}
               </span>
             </div>
           );

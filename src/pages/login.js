@@ -54,6 +54,7 @@ export default function Login() {
         sessionStorage.setItem("userRole", data.userRole);
         sessionStorage.setItem("userName", data.name);
         sessionStorage.setItem("lightTheme",data.isLightTheme===1?"dark":"light");
+        sessionStorage.setItem("enableEmail",data.enableEmail);
         
 
         console.log("User logged in:", data);
