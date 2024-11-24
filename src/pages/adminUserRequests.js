@@ -44,13 +44,9 @@ export default function AdminUserRequests() {
 
     const replyMessage = request.replyMessage;
     const userEmail = request.emailId;
-    setRequests(
-      requests.map((request) =>
-        request.qId === id ? { ...request, replied: true } : request
-      )
-    );
+    
 
-    setActiveAccordion(null);
+    
 
     const emailData = {
       to: userEmail,
@@ -93,6 +89,8 @@ export default function AdminUserRequests() {
     } catch (error) {
       console.error("Error sending email or saving reply:", error);
     }
+    fetchRequests();
+    
   };
 
   const handleDeleteRequest = async (id) => {

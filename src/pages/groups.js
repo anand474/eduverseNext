@@ -226,13 +226,6 @@ export default function GroupsPage() {
                   required
                 />
                 <label htmlFor="members">Select Members:</label>
-                <input
-                  type="text"
-                  placeholder="Search People"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className={styles.groupModalInput}
-                />
                 <select
                   id="members"
                   multiple
