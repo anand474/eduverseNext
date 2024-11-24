@@ -116,8 +116,6 @@ export default function Articles() {
         article.description.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
-  console.log("filteredArticles:", filteredArticles);
-
   return (
     <>
       <Header />

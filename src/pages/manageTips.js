@@ -27,9 +27,6 @@ export default function ManageTips() {
   }, [userId, userRole]);
 
   const fetchTips = async () => {
-    console.log("Fetching tips...");
-    console.log("UserRole:", userRole, "UserId:", userId);
-
     try {
       const response = await fetch(
         `/api/tips?userId=${userId}&userRole=${userRole}`

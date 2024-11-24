@@ -31,16 +31,12 @@ export default function ManageArticles() {
   }, [userId, userRole]);
 
   const fetchArticles = async () => {
-    console.log("Fetching articles...");
-    console.log("UserRole:", userRole, "UserId:", userId);
-
     try {
       const response = await fetch(
         `/api/articles?userId=${userId}&userRole=${userRole}`
       );
       if (response.ok) {
         const data = await response.json();
-        console.log("Fetched articles:", data);
         setArticles(data);
       } else {
         console.error("Failed to fetch articles:", await response.text());

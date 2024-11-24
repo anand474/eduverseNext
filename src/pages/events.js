@@ -97,7 +97,6 @@ export default function Events() {
       (event.place &&
         event.place.toLowerCase().includes(searchTerm.toLowerCase()))
   );
-  console.log("filteredEvents:", filteredEvents);
 
   return (
     <>

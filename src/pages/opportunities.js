@@ -46,7 +46,6 @@ export default function Opportunities() {
 
       if (response.ok) {
         const data = await response.json();
-        console.log("Opportunities fetched.", data);
         setJobListings(data);
       } else {
         const errorData = await response.json();
@@ -167,7 +166,6 @@ export default function Opportunities() {
               description={job.description}
               link={job.link}
               onDelete={() => {
-                console.log(`Deleting job with ID: ${job.oid}`);
                 handleDelete(job.oid);
               }}
             />
