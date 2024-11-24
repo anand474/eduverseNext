@@ -1,18 +1,11 @@
 import { useState, useEffect } from "react";
 import AdminHeader from "@/components/AdminHeader";
-import SearchBar from "@/components/SearchBar";
 import styles from "@/styles/ManageUsers.module.css";
-
-const roleOptions = [
-  { value: "Advisor", label: "Advisor" },
-  { value: "Mentor", label: "Mentor" },
-  { value: "Student", label: "Student" },
-];
 
 export default function ManageUsers() {
   const [users, setUsers] = useState([]);
   const [editRowId, setEditRowId] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const storedUserId = sessionStorage.getItem("userId");
@@ -35,7 +28,7 @@ export default function ManageUsers() {
       console.error(error);
       alert("Error fetching users.");
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
@@ -43,12 +36,13 @@ export default function ManageUsers() {
 
   const handleSaveClick = async (id, role) => {
     try {
+      setLoading(true);
       const response = await fetch("/api/users", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ userId: id, role: role }),
+        body: JSON.stringify({ userId: id, updates: { type: role } }),
       });
 
       if (!response.ok) throw new Error("Failed to update role");
@@ -58,6 +52,7 @@ export default function ManageUsers() {
       );
       setUsers(updatedUsers);
       alert("User role updated successfully!");
+      setLoading(false);
 
       const userEmail = users.find((user) => user.uid === id)?.emailId;
       const loginPageUrl = "http://localhost:3000/login";
@@ -95,9 +90,11 @@ export default function ManageUsers() {
 
     } catch (error) {
       console.error(error);
+      setLoading(false);
       alert("Error updating user role.");
     } finally {
       setEditRowId(null);
+      setLoading(false);
     }
   };
 
@@ -121,20 +118,61 @@ export default function ManageUsers() {
     }
   };
 
-  const handleResetLinkClick = (email) => {
-    alert(`A password reset link has been sent to ${email}`);
+  const handleResetLinkClick = async (email, name) => {
+    try {
+      setLoading(true);
+      const resetLink = "http://localhost:3000/forgotPassword";
+      const emailBody = `
+          <div style="font-family: Jua, sans-serif; text-align: center; padding: 20px;">
+            <h2 style="color: #4CAF50;">Password Reset Request</h2>
+            <p>Dear ${name},</p>
+            <p>We received a request to reset your password. You can reset your password by clicking the link below:</p>
+            <a href="${resetLink}" 
+               style="display: inline-block; margin-top: 20px; padding: 10px 20px; font-size: 16px; font-weight: bold; 
+                      color: white; background-color: #4CAF50; text-decoration: none; border-radius: 5px;">
+              Reset Password
+            </a>
+            <p style="margin-top: 20px;">If you did not request a password reset, please ignore this email.</p>
+          </div>
+        `;
+
+      const emailResponse = await fetch("/api/sendEmail", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          to: email,
+          subject: "Password Reset Request",
+          html: emailBody,
+        }),
+      });
+
+      if (emailResponse.ok) {
+        setLoading(false);
+        alert(`A password reset link has been sent to ${email}`);
+        console.log("Password reset email sent successfully.");
+      } else {
+        setLoading(false);
+        console.error("Failed to send password reset email.");
+        alert("Error sending password reset link.");
+      }
+    } catch (error) {
+      setLoading(false);
+      console.error(error);
+      alert("Error sending password reset link.");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  if (isLoading) {
-    return <p>Loading users...</p>;
-  }
 
   return (
     <>
       <AdminHeader />
       <div className={styles.manageUsers}>
         <h2 className="pageTitle">Manage Users</h2>
-        <SearchBar />
+        {loading && <div className="loadingSpinner"></div>}
         <table className={styles.userTable}>
           <thead>
             <tr>
@@ -194,7 +232,7 @@ export default function ManageUsers() {
                   </button>
                   <button
                     className={styles.resetButton}
-                    onClick={() => handleResetLinkClick(user.email)}
+                    onClick={() => handleResetLinkClick(user.emailId, user.fullName)}
                   >
                     Reset Link
                   </button>
