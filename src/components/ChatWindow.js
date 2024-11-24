@@ -1,53 +1,60 @@
 import { useState, useEffect, useRef } from 'react';
 import styles from '@/styles/ChatWindow.module.css';
 
-export default function ChatWindow({ chat }) {
-  const [messages, setMessages] = useState([
-    { sender: 'Alice', text: 'Hi there!', time: '10:01 AM', type: 'received' },
-    { sender: 'You', text: 'Hello!', time: '10:02 AM', type: 'sent' },
-    { sender: 'Alice', text: 'How are you?', time: '10:03 AM', type: 'received' },
-  ]);
-
-  const [newMessage, setNewMessage] = useState('');
+export default function ChatWindow({ chat, messageText, setMessageText, onSendMessage }) {
   const messagesEndRef = useRef(null);
+  const [userId, setUser] = useState(null);
+
+  console.log("in Chat", chat);
 
   const handleSendMessage = () => {
-    if (newMessage.trim()) {
-      const newMsg = {
-        sender: 'You',
-        text: newMessage,
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        type: 'sent',
-      };
-      setMessages([...messages, newMsg]);
-      setNewMessage('');
+    if (messageText.trim()) {
+      onSendMessage();
     }
   };
+
+  useEffect(() => {
+    let logged = sessionStorage.getItem("userId");
+    if (logged) {
+      setUser(logged);
+    }
+  }, []);
 
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [messages]);
+  }, [chat.messages]);
+
+  const sortedMessages = chat.messages.slice().sort((a, b) => {
+    return new Date(a.timestamp) - new Date(b.timestamp);
+  });
+
+  console.log("Unsorted messages:", chat.messages);
+  console.log("Sorted messages:", sortedMessages);
 
   return (
     <div className={styles.chatWindow}>
-      <h2 style={{borderBottom: '1px solid gray'}}>Chat with {chat.name}</h2>
+      <h2 style={{ borderBottom: '1px solid gray' }}>Chat with {chat.name}</h2>
       <div className={styles.pmChatMessages}>
-        {messages.map((msg, index) => (
-          <div key={index} className={`${styles.chatMessage} ${styles[msg.type]}`}>
-            <p className={styles.messageText}>{msg.text}</p>
-            <span className={styles.messageTime}>{msg.time}</span>
-          </div>
-        ))}
+        {sortedMessages.map((msg, index) => {
+          return (
+            <div key={index} className={`${styles.chatMessage} ${styles[msg.type]}`}>
+              <p className={styles.messageText}>{msg.message}</p>
+              <span className={styles.messageTime}>
+                {msg.timestamp}
+              </span>
+            </div>
+          );
+        })}
         <div ref={messagesEndRef} />
       </div>
       <div className={styles.messageInputSection}>
         <input
           type="text"
           placeholder="Type a message..."
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
+          value={messageText}
+          onChange={(e) => setMessageText(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
               handleSendMessage();
