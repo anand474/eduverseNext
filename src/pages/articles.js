@@ -25,38 +25,38 @@ export default function Articles() {
       window.location.href = "/login";
     } else {
       setLightTheme(theme);
-      
+
       setUserId(storedUserId);
       setUserRole(storedUserRole);
-      fetchArticles(storedUserId,storedUserRole);
+      fetchArticles(storedUserId, storedUserRole);
     }
   }, []);
 
   const fetchArticles = async (uid, urole) => {
     try {
-      const response = await fetch('/api/articles', {
-        method: 'POST',
+      const response = await fetch("/api/articles", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ action: 'fetchArticles', uid, urole }),
+        body: JSON.stringify({ action: "fetchArticles", uid, urole }),
       });
-  
+
       if (response.ok) {
         const data = await response.json();
         setArticles(data);
       } else {
-        console.error('Failed to fetch articles');
+        console.error("Failed to fetch articles");
       }
     } catch (error) {
-      console.error('Error fetching articles:', error);
+      console.error("Error fetching articles:", error);
     }
   };
-  
+
   const handleCreateArticle = async (event) => {
     event.preventDefault();
     const newArticle = {
-      action: 'createArticle',
+      action: "createArticle",
       aname: event.target.name.value,
       postedBy: event.target.postedBy.value,
       description: event.target.description.value,
@@ -64,7 +64,7 @@ export default function Articles() {
       posted_date: new Date().toLocaleDateString(),
       uid: userId,
     };
-  
+
     try {
       const response = await fetch("/api/articles", {
         method: "POST",
@@ -73,10 +73,11 @@ export default function Articles() {
         },
         body: JSON.stringify(newArticle),
       });
-  
+
       if (response.ok) {
         const createdArticle = await response.json();
-        setArticles([...articles, { ...newArticle, aid: createdArticle.id }]);
+        // setArticles([...articles, { ...newArticle, aid: createdArticle.id }]);
+        fetchArticles(userId, userRole);
         setShowForm(false);
       } else {
         console.error("Failed to create article");
@@ -85,13 +86,10 @@ export default function Articles() {
       console.error("Error creating article:", error);
     }
   };
-  
-  
+
   const handleSearch = (term) => {
     setSearchTerm(term.toLowerCase());
   };
-
-  
 
   const handleDeleteArticle = async (id) => {
     try {
@@ -100,7 +98,8 @@ export default function Articles() {
       });
 
       if (response.ok) {
-        setArticles(articles.filter((article) => article.aid !== id));
+        // setArticles(articles.filter((article) => article.aid !== id));
+        fetchArticles(userId, userRole);
       } else {
         console.error("Failed to delete article");
       }

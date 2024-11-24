@@ -15,7 +15,8 @@ export default function Tips() {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [userId, setUserId] = useState(null);
   const [userRole, setUserRole] = useState(null);
-  const [uname,setUname] = useState(null);
+  const [uname, setUname] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const userId = sessionStorage.getItem("userId");
@@ -35,7 +36,9 @@ export default function Tips() {
 
   const fetchTips = async (userId, userRole) => {
     try {
-      const response = await fetch(`/api/tips?userId=${userId}&userRole=${userRole}`);
+      const response = await fetch(
+        `/api/tips?userId=${userId}&userRole=${userRole}`
+      );
       if (response.ok) {
         const data = await response.json();
         setTips(data);
@@ -58,7 +61,7 @@ export default function Tips() {
           method: "DELETE",
         });
         if (response.ok) {
-          setTips(tips.filter((tip) => tip.tid !== tipId));
+          fetchTips(userId, userRole);
         } else {
           console.error("Failed to delete tip");
         }
@@ -77,7 +80,6 @@ export default function Tips() {
         postedBy: uname,
         uid_created: userId,
       };
-      console.log("currentDate:", new Date());
       try {
         const response = await fetch("/api/tips", {
           method: "POST",
@@ -85,10 +87,7 @@ export default function Tips() {
           body: JSON.stringify(newTipObj),
         });
         if (response.ok) {
-          const data = await response.json();
-          setTips([...tips, { tid: data.id, ...newTipObj }]);
-          setNewTip("");
-          setShortDescription("");
+          fetchTips(userId, userRole);
           setShowCreateForm(false);
         } else {
           console.error("Failed to create tip");
@@ -98,6 +97,16 @@ export default function Tips() {
       }
     }
   };
+
+  const handleSearch = (term) => {
+    setSearchTerm(term.toLowerCase());
+  };
+
+  const filteredTips = tips.filter(
+    (tip) =>
+      (tip.title && tip.title.toLowerCase().includes(searchTerm)) ||
+      (tip.tip_content && tip.tip_content.toLowerCase().includes(searchTerm))
+  );
 
   return (
     <>
@@ -115,6 +124,7 @@ export default function Tips() {
           </div>
         )}
         <h2 className="pageTitle">All Tips</h2>
+        <SearchBar onSearch={handleSearch} />
         {userRole !== "Student" && (
           <button
             className={styles.createTipButton}
@@ -163,9 +173,8 @@ export default function Tips() {
             </div>
           </div>
         )}
-        <SearchBar />
         <div className={styles.tipsList}>
-          {tips.map((tip) => (
+          {filteredTips.map((tip) => (
             <div key={tip.tid} className={styles.tipCard}>
               <div className={styles.tipContent}>
                 <h3>{tip.title}</h3>
