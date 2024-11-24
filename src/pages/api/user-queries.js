@@ -12,8 +12,6 @@ export default async function handler(req, res) {
     });
   } else if (req.method === "POST") {
     const { id, replyMessage } = req.body;
-    console.log("hi",id);
-    console.log("Ho",replyMessage);
     if (!id || !replyMessage) {
       return res.status(400).json({ error: "ID and reply message are required" });
     }
