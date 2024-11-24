@@ -13,11 +13,13 @@ export default function Events() {
   const [userId, setUserId] = useState(null);
   const [userRole, setUserRole] = useState(null);
   const [userName,setUserName] = useState(null);
+  const [enableEmail,setEnableEmail] = useState(null);
 
   useEffect(() => {
     const storedUserId = sessionStorage.getItem("userId");
     const storedUserRole = sessionStorage.getItem("userRole");
     const userName = sessionStorage.getItem("userName");
+    const enableEmail = sessionStorage.getItem("enableEmail");
 
     if (!storedUserId) {
       alert("Please login to continue");
@@ -26,6 +28,7 @@ export default function Events() {
       setUserId(storedUserId);
       setUserRole(storedUserRole);
       setUserName(userName);
+      setEnableEmail(enableEmail);
       fetchEvents(storedUserId, storedUserRole);
     }
   }, []);
@@ -80,7 +83,12 @@ export default function Events() {
       const adminId=eventuid;
       const emailResponse1 = await fetch(`/api/registerEvent?userId=${adminId}`);
       const emailData1 = await emailResponse1.json();
-  
+      alert(
+        "You have successfully registered for the event. A confirmation email has been sent."
+      );
+      const emailResponse2 = await fetch(`/api/advisor?userId=${adminId}`);
+      const emailData2 = await emailResponse2.json();
+      const enableEmaila=emailData2.emailId;
       if (emailResponse.ok && emailResponse1.ok) {
         const userEmail = emailData.emailId;
         const adminEmail = emailData1.emailId;
@@ -95,7 +103,7 @@ export default function Events() {
         subject: `New Event Registration for ${title}`,
         message: `User ${userName} has registered for the event: ${title} on ${formattedDate} from ${timeRange}, located at ${location}.`,
       };
-
+      if(enableEmail==="true"){
       await fetch("/api/sendEmail", {
         method: "POST",
         headers: {
@@ -103,7 +111,8 @@ export default function Events() {
         },
         body: JSON.stringify(userEmailData),
       });
-
+    }
+    if(enableEmaila === 1){
       await fetch("/api/sendEmail", {
         method: "POST",
         headers: {
@@ -111,10 +120,8 @@ export default function Events() {
         },
         body: JSON.stringify(adminEmailData),
       });
-
-      alert(
-        "You have successfully registered for the event. A confirmation email has been sent."
-      );
+    }
+      
       const response = await fetch("/api/registerEvent", {
         method: "POST",
         headers: {
