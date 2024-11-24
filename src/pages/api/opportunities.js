@@ -22,8 +22,6 @@ export default async function handler(req, res) {
   } else if (req.method === "POST") {
     const { oname, company, description, location, link, type, uid } = req.body;
 
-    console.log(JSON.stringify(req.body));
-
     if (!oname || !company || !description || !location || !link || !type) {
       return res.status(400).json({ error: "All fields are required" });
     }
@@ -55,14 +53,12 @@ export default async function handler(req, res) {
     });
   } else if (req.method === "DELETE") {
     const { id } = req.query;
-    console.log("DELTE API", id);
     if (!id) {
       return res.status(400).json({ error: "Opportunity ID is required" });
     }
 
     const query = "DELETE FROM opportunities WHERE oid = ?";
     db.query(query, [id], (error) => {
-      console.log("DELETE Query", query, id, error);
       if (error) {
         console.error("Error deleting data:", error);
         res.status(500).json({ error: "Failed to delete opportunity" });

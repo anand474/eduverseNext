@@ -38,9 +38,6 @@ export default function ManageOpportunities() {
   }, [userId, userRole]);
 
   const fetchOpportunities = async () => {
-    console.log("Fetching opportunities...");
-    console.log("UserRole:", userRole, "UserId:", userId);
-
     try {
       const response = await fetch(
         `/api/opportunities?userId=${userId}&userRole=${userRole}`
