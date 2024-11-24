@@ -38,11 +38,10 @@ export default function GroupsPage() {
       setUserId(storedUserId);
       setUserRole(storedUserRole);
 
-      
       const fetchUserGroups = async (storedUserId) => {
         const res = await fetch(`/api/mygroups?userId=${storedUserId}`);
         const data = await res.json();
-        
+
         if (data.groups) {
           setJoinedGroups(data.groups);
         }
@@ -50,10 +49,10 @@ export default function GroupsPage() {
         const availableData = await availableRes.json();
 
         if (availableData.groups) {
-          setAvailableGroups(availableData.groups); 
+          setAvailableGroups(availableData.groups);
         }
       };
-  
+
       fetchUserGroups(storedUserId);
     }
   }, []);
@@ -102,7 +101,7 @@ export default function GroupsPage() {
         description: newGroup.description,
         academicInterest: newGroup.academicInterest,
         createdUid: userId,
-        members: [...newGroup.members, userId], 
+        members: [...newGroup.members, userId],
       };
 
       const res = await fetch("/api/groups", {
@@ -118,7 +117,7 @@ export default function GroupsPage() {
         setJoinedGroups([...joinedGroups, data.newGroup]);
         setAvailableGroups(availableGroups.filter(group => group.id !== data.newGroup.id));
         toggleModal();
-        window.location.reload(); 
+        window.location.reload();
       } else {
         alert("Failed to create group");
       }
@@ -164,10 +163,10 @@ export default function GroupsPage() {
               ) : (
                 joinedGroups.map(group => (
                   <div
-                key={group.id}
-                className={styles.groupTile}
-                onClick={() => handleGroupClick(group)}
-              >
+                    key={group.id}
+                    className={styles.groupTile}
+                    onClick={() => handleGroupClick(group)}
+                  >
                     <h2>{group.name}</h2>
                     <p>{group.description}</p>
                     <p><strong>Academic Interest:</strong> {group.academicInterest}</p>

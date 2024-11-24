@@ -7,9 +7,10 @@ export default function ChatWindow({ chat, messageText, setMessageText, onSendMe
 
   console.log("in Chat", chat);
 
-  const handleSendMessage = () => {
+  function handleSendMessage() {
     if (messageText.trim()) {
-      onSendMessage();
+      console.log("handleSendMessage inside", messageText);
+      onSendMessage(messageText);
     }
   };
 
@@ -27,8 +28,14 @@ export default function ChatWindow({ chat, messageText, setMessageText, onSendMe
   }, [chat.messages]);
 
   const sortedMessages = chat.messages.slice().sort((a, b) => {
-    return new Date(a.timestamp) - new Date(b.timestamp);
+    return Date(a.timestamp) - Date(b.timestamp);
   });
+
+  const adjustTimestamp = (timestamp) => {
+    const date = new Date(timestamp);
+    date.setHours(date.getHours() - 6);
+    return date.toLocaleString(); 
+  };
 
   console.log("Unsorted messages:", chat.messages);
   console.log("Sorted messages:", sortedMessages);
@@ -38,11 +45,12 @@ export default function ChatWindow({ chat, messageText, setMessageText, onSendMe
       <h2 style={{ borderBottom: '1px solid gray' }}>Chat with {chat.name}</h2>
       <div className={styles.pmChatMessages}>
         {sortedMessages.map((msg, index) => {
+          console.log("printing the Timestamp : ", msg, msg.timestamp);
           return (
             <div key={index} className={`${styles.chatMessage} ${styles[msg.type]}`}>
               <p className={styles.messageText}>{msg.message}</p>
               <span className={styles.messageTime}>
-                {new Date(msg.timestamp).toLocaleString()}
+                {adjustTimestamp(msg.timestamp)}
               </span>
             </div>
           );
@@ -57,6 +65,7 @@ export default function ChatWindow({ chat, messageText, setMessageText, onSendMe
           onChange={(e) => setMessageText(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
+              console.log("Send clicked");
               handleSendMessage();
             }
           }}
