@@ -40,7 +40,7 @@ export default async function handler(req, res) {
     const query = `
       SELECT uid, fullName
       FROM users
-      WHERE academic_interests = ?
+      WHERE academic_interests LIKE CONCAT('%', ?, '%')
     `;
 
     db.query(query, [academicInterest], (error, results) => {
