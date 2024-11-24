@@ -20,17 +20,27 @@ export default async function handler(req, res) {
       return res.status(200).json(results);
     });
   } else if (req.method === "POST") {
-    const { title, company, description, location, link, uid } = req.body;
+    const { oname, company, description, location, link, type, uid } = req.body;
 
-    if (!title || !company || !description || !location || !link) {
+    console.log(JSON.stringify(req.body));
+
+    if (!oname || !company || !description || !location || !link || !type) {
       return res.status(400).json({ error: "All fields are required" });
     }
 
     const query = `
-      INSERT INTO opportunities (oname, company, description, location, link, uid)
-      VALUES (?, ?, ?, ?, ?, ?)
+      INSERT INTO opportunities (oname, company, description, location, link, type, uid)
+      VALUES (?, ?, ?, ?, ?, ?,?)
     `;
-    const values = [title, company, description, location, link, uid || null];
+    const values = [
+      oname,
+      company,
+      description,
+      location,
+      link,
+      type,
+      uid || null,
+    ];
 
     db.query(query, values, (error, results) => {
       if (error) {
@@ -44,6 +54,7 @@ export default async function handler(req, res) {
       }
     });
   } else if (req.method === "DELETE") {
+    const { id } = req.query;
     console.log("DELTE API", id);
     if (!id) {
       return res.status(400).json({ error: "Opportunity ID is required" });

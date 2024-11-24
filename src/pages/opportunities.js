@@ -40,7 +40,9 @@ export default function Opportunities() {
 
   const fetchJobListings = async (userId, userRole) => {
     try {
-      const response = await fetch(`/api/opportunities?userId=${userId}&userRole=${userRole}`);
+      const response = await fetch(
+        `/api/opportunities?userId=${userId}&userRole=${userRole}`
+      );
 
       if (response.ok) {
         const data = await response.json();
@@ -64,7 +66,9 @@ export default function Opportunities() {
   );
 
   const handleDelete = async (id) => {
-    let flag = window.confirm("Are you sure you want to delete this opportunity?");
+    let flag = window.confirm(
+      "Are you sure you want to delete this opportunity?"
+    );
     if (flag) {
       try {
         const response = await fetch(`/api/opportunities?id=${id}`, {
@@ -72,9 +76,10 @@ export default function Opportunities() {
         });
 
         if (response.ok) {
-          setJobListings((prevListings) =>
-            prevListings.filter((job) => job.id !== id)
-          );
+          // setJobListings((prevListings) =>
+          //   prevListings.filter((job) => job.id !== id)
+          // );
+          fetchJobListings(userId, userRole);
         } else {
           alert("Failed to delete opportunity");
         }
@@ -86,7 +91,6 @@ export default function Opportunities() {
 
   const handleCreateOpportunity = async (e) => {
     e.preventDefault();
-
     if (
       !newJob.oname ||
       !newJob.company ||
@@ -119,7 +123,8 @@ export default function Opportunities() {
       const data = await response.json();
 
       if (response.ok) {
-        setJobListings((prev) => [...prev, { ...newJob, id: data.id }]);
+        // setJobListings((prev) => [...prev, { ...newJob, id: data.id }]);
+        fetchJobListings(userId, userRole);
         setModalOpen(false);
         setNewJob({
           oname: "",
