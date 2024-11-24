@@ -9,7 +9,7 @@ export default async function handler(req, res) {
     }
 
     const query = "SELECT * FROM notifications WHERE uId = ? and isRead=? ORDER BY nId DESC";
-    db.query(query, [userId,0], (error, results) => {
+    db.query(query, [userId, 0], (error, results) => {
       if (error) {
         console.error("Error fetching notifications:", error);
         return res.status(500).json({ error: "Failed to fetch notifications" });
@@ -46,8 +46,23 @@ export default async function handler(req, res) {
       }
       res.status(200).json({ success: "All notifications cleared" });
     });
+  } else if (req.method === "POST") {
+    const { userId, message } = req.body;
+
+    if (!userId || !message) {
+      return res.status(400).json({ error: "User ID and message are required" });
+    }
+
+    const query = "INSERT INTO notifications (uId, message, isRead) VALUES (?, ?, ?)";
+    db.query(query, [userId, message, 0], (error) => {
+      if (error) {
+        console.error("Error inserting notification:", error);
+        return res.status(500).json({ error: "Failed to insert notification" });
+      }
+      res.status(200).json({ success: "Notification sent successfully" });
+    });
   } else {
-    res.setHeader("Allow", ["GET", "PUT", "DELETE"]);
+    res.setHeader("Allow", ["GET", "POST", "PUT", "DELETE"]);
     res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }
