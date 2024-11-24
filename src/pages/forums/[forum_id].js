@@ -47,24 +47,7 @@ export default function ForumPage() {
                         alert(data.error || "Failed to fetch forum details");
                     }
                 };
-                const fetchPosts = async () => {
-                    const response = await fetch("/api/forums", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ action: "fetchPosts", forum_id: forumId }),
-                    });
-    
-                    const data = await response.json();
-                    if (response.ok) {
-                        const updatedPosts = data.map((post) => ({
-                            ...post,
-                            comments: post.comments || [],
-                        }));
-                        setPosts(updatedPosts); 
-                    } else {
-                        alert(data.error || "Failed to fetch forum details");
-                    }
-                };
+                
                 
                 
     
@@ -73,6 +56,25 @@ export default function ForumPage() {
             }
         }
     }, [forumId]);
+
+    const fetchPosts = async () => {
+        const response = await fetch("/api/forums", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "fetchPosts", forum_id: forumId }),
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+            const updatedPosts = data.map((post) => ({
+                ...post,
+                comments: post.comments || [],
+            }));
+            setPosts(updatedPosts); 
+        } else {
+            alert(data.error || "Failed to fetch forum details");
+        }
+    };
 
 
     const currentUser = userId;
@@ -95,7 +97,7 @@ export default function ForumPage() {
             });
             const data = await response.json();
             if (response.ok) {
-                setPosts([...posts, { post_id: data.post_id, ...newPost, comments: [] }]);
+                fetchPosts();
                 setNewPost({ title: "", content: "", link: "" });
             } else {
                 alert(data.error || "Failed to add post");
@@ -118,8 +120,7 @@ export default function ForumPage() {
     
         const data = await response.json();
         if (response.ok) {
-            const updatedPosts = posts.filter((post) => post.pid !== postId);
-            setPosts(updatedPosts);
+            fetchPosts();
         } else {
             alert(data.error || "Failed to delete post");
         }

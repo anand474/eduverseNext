@@ -98,7 +98,6 @@ export default function Forums() {
             <Header />
             <div className={styles.forumsList}>
                 <h2 className="pageTitle">Forums</h2>
-                <SearchBar />
                 {userRole !== "Student" && (
                     <button className={styles.createForumBtn} onClick={() => setShowCreateForm(!showCreateForm)}>
                         {showCreateForm ? "Cancel" : "Create Forum"}
