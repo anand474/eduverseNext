@@ -29,7 +29,9 @@ export default function Events() {
 
   const fetchEvents = async (userId, userRole) => {
     try {
-      const response = await fetch(`/api/events?userId=${userId}&userRole=${userRole}`);
+      const response = await fetch(
+        `/api/events?userId=${userId}&userRole=${userRole}`
+      );
       if (response.ok) {
         const data = await response.json();
         setEvents(data);
@@ -57,7 +59,8 @@ export default function Events() {
 
       if (response.ok) {
         const data = await response.json();
-        setEvents([...events, { eid: data.id, ...newEvent }]);
+        // setEvents([...events, { eid: data.id, ...newEvent }]);
+        fetchEvents(userId, userRole);
         setIsModalOpen(false);
       } else {
         const errorData = await response.json();
@@ -68,12 +71,24 @@ export default function Events() {
     }
   };
 
-  const handleDeleteEvent = async (eid) => {
+  const handleDeleteEvent = async (id) => {
     let flag = window.confirm("Are you sure you want to delete this event?");
     if (flag) {
-      alert("Delete");
+      try {
+        const response = await fetch(`/api/events?id=${id}`, {
+          method: "DELETE",
+        });
+
+        if (response.ok) {
+          fetchEvents(userId, userRole);
+        } else {
+          alert("Failed to delete event");
+        }
+      } catch (error) {
+        console.error("Error deleting event:", error);
+      }
     }
-  }
+  };
 
   const filteredEvents = events.filter(
     (event) =>
