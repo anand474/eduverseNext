@@ -15,24 +15,19 @@ export default function Register() {
   const [error, setError] = useState(null);
   const router = useRouter();
 
-  const userName = sessionStorage.getItem("userName");
   useEffect(() => {
     const userId = sessionStorage.getItem("userId");
+    const userRole = sessionStorage.getItem("userRole");
     if (userId) {
-      const user = Object.values(users).find(
-        (user) => user.user_id.toString() === userId
-      );
-      if (user) {
-        const routes = {
-          Admin: "/admin",
-          Advisor: "/advisor",
-          Mentor: "/mentor",
-          Student: "/home",
-        };
-        router.replace(routes[user.user_type] || "/home");
-      }
+      const routes = {
+        Admin: "/admin",
+        Advisor: "/advisor",
+        Mentor: "/mentor",
+        Student: "/home",
+      };
+      router.replace(routes[userRole] || "/home");
     }
-  }, [router]);
+  },[router]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -54,6 +49,7 @@ export default function Register() {
     }
 
     try {
+      const adminId=process.env.NEXT_PUBLIC_ADMIN_ID;
       const response = await fetch("/api/register", {
         method: "POST",
         headers: {
@@ -67,6 +63,7 @@ export default function Register() {
           type: "",
           academicInterests,
           researchInterests,
+          adminId,
         }),
       });
 
@@ -88,7 +85,7 @@ export default function Register() {
             html: `
               <div style="font-family: Arial, sans-serif; text-align: left; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: #f9f9f9;">
                 <h2 style="color: #4CAF50; text-align: center;">New User Registration</h2>
-                <p style="font-size: 16px; color: #333;">Dear ${userName},</p>
+                <p style="font-size: 16px; color: #333;">Dear ${fullName},</p>
                 <p style="font-size: 16px; color: #333;">
                   A new user has just registered on the platform. Below are their details:
                 </p>
