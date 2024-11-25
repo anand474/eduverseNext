@@ -7,20 +7,6 @@
   Akepati, Prem Nandhan Reddy - 1002170918
 */
 
-/*
-  Font: 'Jua', sans-serif;
-
-  Color Palette:
-  -- Mentees Container Background: #f9f9f9 (Light Gray)
-  -- Mentees Heading Color: #333 (Dark Gray)
-  -- Mentee Card Background: white
-  -- Mentee Card Shadow: rgba(0, 0, 0, 0.1) (Light Shadow)
-  -- Mentee Icon Background: #73c2ef (Sky Blue)
-  -- Mentee Icon Text Color: white
-  -- Mentee Actions Delete Icon Color: #ff4d4f (Red)
-  -- No Mentees Message Color: #888 (Gray)
-*/
-
 .menteesContainer {
     max-width: 900px;
     margin: 20px auto;

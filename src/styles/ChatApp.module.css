@@ -6,20 +6,6 @@ Konduru Balakrishna, Hanish – 1002175225
 Akepati, Prem Nandhan Reddy - 1002170918
 */
 
-/*
-    Font: 'Jua', sans-serif;
-
-    Color Palette:
-    -- Chat List Section Background: #f4f4f9 (Light Gray)
-    -- Search Bar Background: #ffffff (White)
-    -- Button Background: #6ae485 (Soft Green)
-    -- Button Hover Background: #23e166 (Bright Green)
-    -- Chat List Item Background: #fff (White)
-    -- Chat List Hover Background: #e0e0e0 (Light Gray)
-    -- Chat Name Text: #333 (Dark Gray)
-    -- Chat Subtext: #777 (Medium Gray)
-*/
-
 .chatApp {
   display: flex;
   height: 100vh;

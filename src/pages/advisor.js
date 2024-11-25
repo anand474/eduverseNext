@@ -93,7 +93,7 @@ export default function AdvisorHomePage() {
                     ) : events.length > 0 ? (
                         <div className={styles.eventCard}>
                             {events.map((event) => {
-                                const adjustTimestamp = date.setHours(new Date(event.date).getHours() - 6).toLocaleString(); 
+                                const adjustTimestamp = new Date(new Date(event.date).setHours(new Date(event.date).getHours() - 6)).toDateString() ;
                                 return (
                                     <p key={event.eid}>{`${event.ename} - ${adjustTimestamp}`}</p>
                                 );

@@ -2,25 +2,13 @@ import React, { useState, useEffect } from "react";
 import styles from "../styles/EventListing.module.css";
 import { FaTrash, FaMapMarkerAlt } from "react-icons/fa";
 
-export default function EventListing({
-  eid,
-  title,
-  location,
-  date,
-  startTime,
-  endTime,
-  description,
-  link,
-  uid,
-  onDelete,
-  onRegister,
-}) {
+export default function EventListing({ eid, title, location, date, startTime, endTime, description, link, onDelete, }) {
   const [isMapOpen, setIsMapOpen] = useState(false);
   const [userId, setUserId] = useState(null);
   const [userRole, setUserRole] = useState(null);
   var mapUrl = "";
 
-  if (location.toLowerCase() !== "remote") {
+  if (location.toLowerCase() !== 'remote') {
     mapUrl = link;
     link = "";
   }
@@ -46,13 +34,49 @@ export default function EventListing({
     setIsMapOpen(!isMapOpen);
   };
 
+  const handleRegister = async () => {
+    try {
+      const userEmailData = {
+        to: "anandmanohar023@gmail.com",
+        subject: `Registration Confirmation for ${title}`,
+        message: `You have successfully registered for the event: ${title} on ${formattedDate} from ${timeRange}, located at ${location}.`,
+      };
+
+      const adminEmailData = {
+        to: "anandmanohar7@gmail.com",
+        subject: `New Event Registration for ${title}`,
+        message: `User ${userId} has registered for the event: ${title} on ${formattedDate} from ${timeRange}, located at ${location}.`,
+      };
+
+      await fetch("/api/sendEmail", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userEmailData),
+      });
+
+      await fetch("/api/sendEmail", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(adminEmailData),
+      });
+
+      alert(
+        "You have successfully registered for the event. A confirmation email has been sent."
+      );
+    } catch (error) {
+      console.error("Error sending emails:", error);
+      alert("An error occurred while registering for the event.");
+    }
+  };
+
   return (
     <div className={styles.eventCard}>
       <div className={styles.eventCardInfo}>
-        <h3 className={styles.eventCardTitle}>
-          {title}
-          {eid}
-        </h3>
+        <h3 className={styles.eventCardTitle}>{title}</h3>
         <p className={styles.eventCardLocation}>{location}</p>
         {link && (
           <p className={styles.eventCardLink}>
@@ -78,17 +102,7 @@ export default function EventListing({
         {userRole === "Student" && (
           <button
             className={styles.eventInterestedButton}
-            onClick={() =>
-              onRegister(
-                eid,
-                title,
-                formattedDate,
-                timeRange,
-                location,
-                userId,
-                uid
-              )
-            }
+            onClick={handleRegister}
           >
             Register
           </button>
@@ -104,9 +118,8 @@ export default function EventListing({
 
       {mapUrl && (
         <div
-          className={`${styles.eventCardMapContainer} ${
-            isMapOpen ? styles.open : ""
-          }`}
+          className={`${styles.eventCardMapContainer} ${isMapOpen ? styles.open : ""
+            }`}
         >
           <h4>Location Map</h4>
           <iframe

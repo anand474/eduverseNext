@@ -1,3 +1,11 @@
+/*
+Agnihotram, Anand Manohar – 1002149690
+Ankireddy, Gurusai Ravi Raja Reddy – 1002138944
+Addepalli, Sravani – 1002148407
+Konduru Balakrishna, Hanish – 1002175225
+Akepati, Prem Nandhan Reddy - 1002170918
+*/
+
 .memberCard {
     display: flex;
     align-items: center;
@@ -30,6 +38,7 @@
     font-weight: bold;
     font-size: 16px;
 }
+
 body[data-theme="dark"] .memberCard {
     background-color: #2c3e50;
     border: 1px solid #34495e;

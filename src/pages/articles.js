@@ -180,7 +180,7 @@ export default function Articles() {
                 <p>
                   <strong>Posted By:</strong> {article.postedBy}
                 </p>
-                <p>{date.setHours(new Date(article.posted_date).getHours() - 6).toLocaleString()}</p>
+                <p>{(new Date(new Date(article.posted_date).setHours(new Date(article.posted_date).getHours() - 6)).toDateString())}</p>
               </div>
               <div className={styles.readMore}>
                 <a

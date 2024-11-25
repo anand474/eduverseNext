@@ -7,12 +7,14 @@ import { useRouter } from 'next/router';
 export default function AdminHeader() {
   const [userId, setUserId] = useState(null);
   const [userRole, setUserRole] = useState(null);
+  const [userName, setUserName] = useState(null);
   const [unreadNotifications, setUnreadNotifications] = useState(0);
   const router = useRouter();
 
   useEffect(() => {
     const storedUserId = sessionStorage.getItem("userId");
     const storedUserRole = sessionStorage.getItem("userRole");
+    const storedUserName = sessionStorage.getItem("userName");
 
     if (!storedUserId) {
       alert("Please login to continue");
@@ -20,6 +22,7 @@ export default function AdminHeader() {
     } else {
       setUserId(storedUserId);
       setUserRole(storedUserRole);
+      setUserName(storedUserName);
     }
   }, [router]);
 
@@ -82,7 +85,7 @@ export default function AdminHeader() {
             <Link href="/chats">Chat</Link>
           </li>
           <li className={styles.dropdown}>
-            <a className={styles.dropdownToggle}>{userId ? `Admin ${userId}` : 'User'}</a>
+            <a className={styles.dropdownToggle}>{userId ? `${userName}` : 'User'}</a>
             <div className={styles.dropdownContent}>
               <Link href="/profile">Profile</Link>
               <Link href="/notifications">

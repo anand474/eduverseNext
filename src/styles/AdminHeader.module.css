@@ -6,20 +6,6 @@ Konduru Balakrishna, Hanish – 1002175225
 Akepati, Prem Nandhan Reddy - 1002170918
 */
 
-/*
-    Font: 'Jua', sans-serif;
-    
-    Color Palette:
-    -- Header Background: #eaf9f0 (Light Greenish Blue)
-    -- Link Color: black (Text color for links)
-    -- Notification Badge Background: #ff5252 (Red)
-    -- Notification Badge Text: white (Text color for the badge)
-    -- Link Hover Background: #d0f0e0 (Light Greenish Blue)
-    -- Active Link Color: #1515e7 (Blue)
-    -- Dropdown Background: #fff (White)
-    -- Dropdown Item Color: black (Text color for dropdown items)
-*/
-
 .header {
   background-color: #eaf9f0;
   padding: 10px 20px;

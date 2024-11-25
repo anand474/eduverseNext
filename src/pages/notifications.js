@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Header from "@/components/Header";
+import AdminHeader from "@/components/AdminHeader";
 import SearchBar from "@/components/SearchBar";
 import styles from "@/styles/Notifications.module.css";
 
@@ -8,15 +9,18 @@ export default function Notifications() {
   const [searchTerm, setSearchTerm] = useState("");
   const [notifications, setNotifications] = useState([]);
   const [userId, setUserId] = useState(null);
+  const [userRole, setUserRole] = useState(null);
   const router = useRouter();
 
   useEffect(() => {
     const storedUserId = typeof window !== "undefined" && sessionStorage.getItem("userId");
+    const storedUserRole = sessionStorage.getItem("userRole");
     if (!storedUserId) {
       alert("Please login to continue");
       router.push("/login");
     } else {
       setUserId(storedUserId);
+      setUserRole(storedUserRole);
     }
   }, [router]);
 
@@ -27,7 +31,7 @@ export default function Notifications() {
           const response = await fetch(`/api/notifications?userId=${userId}`);
           if (response.ok) {
             const data = await response.json();
-            setNotifications(data);                 
+            setNotifications(data);
           } else {
             console.error("Failed to fetch notifications:", await response.text());
           }
@@ -85,7 +89,7 @@ export default function Notifications() {
 
   return (
     <>
-      <Header />
+      {userRole === "Admin" ? <AdminHeader /> : <Header />}
       <div className={styles.notificationsPage}>
         <SearchBar onSearch={setSearchTerm} />
         <div className={styles.clearAll}>

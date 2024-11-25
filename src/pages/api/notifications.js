@@ -16,64 +16,6 @@ export default async function handler(req, res) {
       }
       res.status(200).json(results);
     });
-    try {
-      const today = new Date();
-      const tomorrow = new Date(today);
-      tomorrow.setDate(today.getDate() + 1); 
-      const tomorrowDate = tomorrow.toISOString().split('T')[0]; 
-  
-      const eventQuery = `
-        SELECT e.eid, e.ename, e.date, e.start_time, ue.uid 
-        FROM events e
-        JOIN userevents ue ON e.eid = ue.eid
-        WHERE e.date = ?
-      `;
-  
-      db.query(eventQuery, [tomorrowDate], (eventError, eventResults) => {
-        if (eventError) {
-          console.error("Error fetching tomorrow's events:", eventError);
-          return res.status(500).json({ error: "Failed to fetch tomorrow's events" });
-        }
-  
-        if (eventResults.length > 0) {
-          eventResults.forEach(({ uid, ename, date, start_time }) => {
-            const message = `You have an event "${ename}" tomorrow, on ${new Date(date).toLocaleDateString("en-GB")} at ${start_time}.`;
-  
-            const checkQuery = `
-              SELECT * FROM notifications 
-              WHERE uId = ? AND message = ? AND isRead = 0
-            `;
-            db.query(checkQuery, [uid, message], (checkError, checkResults) => {
-              if (checkError) {
-                console.error("Error checking existing notifications:", checkError);
-                return;
-              }
-  
-              if (checkResults.length === 0) {
-                const notificationQuery = `
-                  INSERT INTO notifications (uId, message, isRead)
-                  VALUES (?, ?, ?)
-                `;
-                db.query(notificationQuery, [uid, message, 0], (notifError) => {
-                  if (notifError) {
-                    console.error("Error creating notification:", notifError);
-                  }
-                });
-              } else {
-                console.log("Notification already exists for user:", uid);
-              }
-            });
-          });
-  
-          res.status(200).json({ success: "Notifications sent successfully for tomorrow's events" });
-        } else {
-          res.status(200).json({ success: "No events for tomorrow" });
-        }
-      });
-    } catch (error) {
-      console.error("Error sending notifications for tomorrow's events:", error);
-      res.status(500).json({ error: "Server error while sending notifications for tomorrow's events" });
-    }
   } else if (req.method === "PUT") {
     const { nId } = req.body;
 
