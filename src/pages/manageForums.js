@@ -5,7 +5,7 @@ import AdminHeader from "@/components/AdminHeader";
 
 
 export default function ManageForums() {
-  const [forums, setForums] = useState(initialForums);
+  const [forums, setForums] = useState([]);
   const [userId, setUserId] = useState(null);
   const [userRole, setUserRole] = useState(null);
 

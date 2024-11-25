@@ -1,31 +1,17 @@
 import React, { useState, useEffect, useRef } from "react";
+import { io } from 'socket.io-client';
 import styles from "@/styles/GroupChat.module.css";
 import MemberCard from "@/components/MemberCard";
 import { FaTrashAlt } from "react-icons/fa";
 import { useRouter } from "next/router";
 import Header from "@/components/Header";
 
-export default function GroupChat({ group,  handleBack }) {
-    const initialPosts = Array.from({ length: 10 }, (_, index) => {
-        const usernames = ["User1", "User2", "User3", "User4"];
-        const comments = [
-            { username: "User3", text: "Great post!" },
-            { username: "User4", text: "Thanks for sharing!" },
-        ];
+const socket = io('http://localhost:3001');
 
-        return {
-            posttitle: `Post Title ${index + 1}`,
-            description: `Description for post ${index + 1}.`,
-            link: index % 2 === 0 ? `https://example.com/${index}` : "",
-            userName: usernames[index % usernames.length],
-            comments: comments,
-            userId: index + 1,
-        };
-    });
+export default function GroupChat({ group, handleBack }) {
     const router = useRouter();
     console.log(router);
     const { groupId } = router.query;
-    const [groups, setGroup] = useState(null);
 
     const [posts, setPosts] = useState([]);
     const [activeTab, setActiveTab] = useState("chat");
@@ -33,17 +19,13 @@ export default function GroupChat({ group,  handleBack }) {
     const [newPost, setNewPost] = useState({ title: "", description: "", link: "" });
     const [newMessage, setNewMessage] = useState("");
     const [newComment, setNewComment] = useState({});
-    const initialChatMessages = Array.from({ length: 10 }, (_, index) => ({
-        sender: index % 2 === 0 ? "User1" : "User2",
-        text: `This is message number ${index + 1}`,
-    }));
 
-    const [chatMessages, setChatMessages] = useState(initialChatMessages);
+    const [chatMessages, setChatMessages] = useState([]);
     const chatMessagesEndRef = useRef(null);
 
     const [userId, setUserId] = useState(null);
     const [userRole, setUserRole] = useState(null);
-    const[userName,setUserName] = useState(null);
+    const [userName, setUserName] = useState(null);
 
     const [members, setMembers] = useState([]);
     const [loadingMembers, setLoadingMembers] = useState(false);
@@ -77,13 +59,13 @@ export default function GroupChat({ group,  handleBack }) {
                             gid: groupId,
                         }),
                     });
-        
+
                     const data = await response.json();
-        
+
                     if (response.ok) {
-                        const { gname,created_uid } = data;
-                        
-                        setCreatorId(created_uid); 
+                        const { gname, created_uid } = data;
+
+                        setCreatorId(created_uid);
                         setGroupName(gname);
                     } else {
                         alert("Failed to fetch group details");
@@ -93,12 +75,13 @@ export default function GroupChat({ group,  handleBack }) {
                     alert("An error occurred while fetching group details.");
                 }
             };
-        
+
             fetchGroupDetails();
-        }}, [router.isReady,groupId]);
-        if (!group) {
-            return <p>Loading group details...</p>;
-          }
+        }
+    }, [router.isReady, groupId]);
+    if (!group) {
+        return <p>Loading group details...</p>;
+    }
 
     useEffect(() => {
         if (activeTab === "members") {
@@ -147,18 +130,18 @@ export default function GroupChat({ group,  handleBack }) {
                     gid: group.gid,
                 }),
             });
-    
+
             const data = await response.json();
 
-    
+
             if (response.ok) {
                 const { created_uid } = data;
-    
+
                 if (String(userId) === String(created_uid)) {
                     alert("You cannot leave the group as you are the creator.");
                     return;
                 }
-    
+
                 const leaveResponse = await fetch("/api/grouphandler", {
                     method: "POST",
                     headers: {
@@ -170,12 +153,12 @@ export default function GroupChat({ group,  handleBack }) {
                         userId: userId,
                     }),
                 });
-    
+
                 const leaveData = await leaveResponse.json();
-    
+
                 if (leaveResponse.ok) {
                     alert("Successfully left the group!");
-                    
+
                     window.location.href = '/groups';
                 } else {
                     alert(leaveData.error || "Failed to leave the group");
@@ -191,7 +174,7 @@ export default function GroupChat({ group,  handleBack }) {
 
     const handleDeleteGroup = async (group) => {
         try {
-            
+
             const response = await fetch(`/api/grouphandler`, {
                 method: "POST",
                 headers: {
@@ -202,17 +185,17 @@ export default function GroupChat({ group,  handleBack }) {
                     gid: group.gid,
                 }),
             });
-    
+
             const data = await response.json();
-    
+
             if (response.ok) {
                 const { created_uid } = data;
-    
+
                 if (String(userId) !== String(created_uid)) {
                     alert("You can only delete the group if you are the creator.");
                     return;
                 }
-    
+
                 const deleteResponse = await fetch("/api/grouphandler", {
                     method: "POST",
                     headers: {
@@ -224,12 +207,12 @@ export default function GroupChat({ group,  handleBack }) {
                         userId: userId,
                     }),
                 });
-    
+
                 const deleteData = await deleteResponse.json();
-    
+
                 if (deleteResponse.ok) {
                     alert("Group successfully deleted!");
-                    window.location.href = '/groups'; 
+                    window.location.href = '/groups';
                 } else {
                     alert(deleteData.error || "Failed to delete the group");
                 }
@@ -241,8 +224,8 @@ export default function GroupChat({ group,  handleBack }) {
             alert("An error occurred while deleting the group.");
         }
     };
-    
-    
+
+
 
     const handlePostChange = (e) => {
         const { name, value } = e.target;
@@ -267,7 +250,7 @@ export default function GroupChat({ group,  handleBack }) {
                         userName,
                     }),
                 });
-    
+
                 const data = await response.json();
                 if (response.ok) {
                     fetchGroupPosts();
@@ -286,48 +269,122 @@ export default function GroupChat({ group,  handleBack }) {
     };
     const fetchGroupPosts = async () => {
         try {
-          const response = await fetch("/api/grouphandler", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              action: "fetchGroupPosts",
-              gid: group.gid,
-            }),
-          });
-      
-          if (!response.ok) {
-            throw new Error(`Failed to fetch posts: ${response.statusText}`);
-          }
-      
-          const data = await response.json();
-          const formattedPosts = data.map(post => ({
-            ...post,
-            comments: JSON.parse(post.comments || "[]"),
-          }));
-          setPosts(formattedPosts);
+            const response = await fetch("/api/grouphandler", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    action: "fetchGroupPosts",
+                    gid: group.gid,
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Failed to fetch posts: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            const formattedPosts = data.map(post => ({
+                ...post,
+                comments: JSON.parse(post.comments || "[]"),
+            }));
+            setPosts(formattedPosts);
         } catch (error) {
-          console.error(error);
-          alert("An error occurred while fetching posts.");
+            console.error(error);
+            alert("An error occurred while fetching posts.");
         }
-      };
-      
-      useEffect(() => {
+    };
+
+    useEffect(() => {
         if (activeTab === "posts") {
-          fetchGroupPosts();
+            fetchGroupPosts();
         }
-      }, [activeTab, group.gid]);
-      
+    }, [activeTab, group.gid]);
+
+    useEffect(() => {
+        if (activeTab === "chat") {
+            const fetchChats = async () => {
+                try {
+                    const response = await fetch("/api/groupChatHandler", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            action: "fetchGroupChats",
+                            gid: group.gid,
+                        }),
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Failed to fetch chats: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    if (data.chats) {
+                        const transformedChats = data.chats.map(chat => ({
+                            sender: chat.uname,
+                            text: chat.content
+                        }));
+
+                        setChatMessages(transformedChats);
+                    } else {
+                        console.error("Error: No chat data received.");
+                    }
+                } catch (error) {
+                    console.error("Error fetching chats:", error);
+                    alert("Unable to fetch chat messages. Please try again.");
+                }
+            };
+
+            fetchChats();
+
+            socket.on('receiveGroupMessage', (data) => {
+                if (data.groupId === group.gid) {
+                    setChatMessages((prevMessages) => [...prevMessages, { sender: data.sender, text: data.text }]);
+                }
+            });
+        }
+    }, [activeTab, group.gid]);
 
     const handleMessageChange = (e) => {
         setNewMessage(e.target.value);
     };
 
-    const handleSendMessage = () => {
-        if (newMessage.trim()) {
-            setChatMessages([...chatMessages, { sender: "You", text: newMessage }]);
-            setNewMessage("");
+    const handleSendMessage = async () => {
+        if (!newMessage.trim()) {
+            console.log("Cannot send an empty message.");
+            return;
+        }
+        let tempMessage = { groupId: group.gid, sender: userName, text: newMessage };
+        console.log("Sending group message",tempMessage);
+        socket.emit('sendGroupMessage', tempMessage);
+        setNewMessage("");
+        try {
+            const response = await fetch("/api/groupChatHandler", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    action: "addGroupChat",
+                    gid: group.gid,
+                    uid: userId,
+                    uname: userName,
+                    content: newMessage,
+                }),
+            });
+
+            const data = await response.json();
+            if (!response.ok) {
+                console.error("Error sending message:", data.error);
+                alert("Failed to send message. Please try again.");
+                return;
+            }
+        } catch (error) {
+            console.error("Network or unexpected error:", error);
+            alert("An error occurred. Please check your connection and try again.");
         }
     };
 
@@ -335,7 +392,7 @@ export default function GroupChat({ group,  handleBack }) {
         const updatedOpenComments = [...openComments];
         updatedOpenComments[index] = !updatedOpenComments[index];
         setOpenComments(updatedOpenComments);
-    
+
         if (updatedOpenComments[index] && !posts[index].commentsLoaded) {
             try {
                 const response = await fetch("/api/grouphandler", {
@@ -343,10 +400,10 @@ export default function GroupChat({ group,  handleBack }) {
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         action: "fetchComments",
-                        postId: posts[index].gpid, 
+                        postId: posts[index].gpid,
                     }),
                 });
-    
+
                 const data = await response.json();
                 if (response.ok) {
                     const updatedPosts = [...posts];
@@ -362,7 +419,7 @@ export default function GroupChat({ group,  handleBack }) {
             }
         }
     };
-    
+
 
     const handleCommentChange = (index, e) => {
         const { value } = e.target;
@@ -384,7 +441,7 @@ export default function GroupChat({ group,  handleBack }) {
                         userName,
                     }),
                 });
-    
+
                 const data = await response.json();
                 if (response.ok) {
                     const updatedPosts = [...posts];
@@ -406,7 +463,6 @@ export default function GroupChat({ group,  handleBack }) {
             alert("Please enter a comment before submitting.");
         }
     };
-    
 
     const handleDeletePost = async (postId) => {
         try {
@@ -420,9 +476,9 @@ export default function GroupChat({ group,  handleBack }) {
                     postId: postId,
                 }),
             });
-    
+
             const data = await response.json();
-    
+
             if (response.ok) {
                 fetchGroupPosts();
                 alert("Post deleted successfully!");
@@ -445,139 +501,139 @@ export default function GroupChat({ group,  handleBack }) {
 
     return (
         <>
-        <Header/>
+            <Header />
 
-        <div className={styles.groupChat}>
-            <button className={styles.backButton} onClick={handleBack}>Back</button>
-            <h2 className={styles.groupTextCenter}>{gname}</h2>
-            <div className={styles.tabButtons}>
-                <button className={activeTab === "chat" ? styles.active : ""} onClick={() => setActiveTab("chat")}>Chat</button>
-                <button className={activeTab === "posts" ? styles.active : ""} onClick={() => setActiveTab("posts")}>Posts</button>
-                <button className={activeTab === "members" ? styles.active : ""} onClick={() => setActiveTab("members")}>Members</button>
-            </div>
-            {activeTab === "chat" && (
-                <div>
-                    <div className={styles.chatMessages}>
-                        {chatMessages.map((message, index) => (
-                            <div
-                                key={index}
-                                className={`${styles.message} ${message.sender === "You" ? styles.messageYou : styles.messageOther}`}
-                            >
-                                <span className={styles.senderName}>{message.sender}:</span> {message.text}
+            <div className={styles.groupChat}>
+                <button className={styles.backButton} onClick={handleBack}>Back</button>
+                <h2 className={styles.groupTextCenter}>{gname}</h2>
+                <div className={styles.tabButtons}>
+                    <button className={activeTab === "chat" ? styles.active : ""} onClick={() => setActiveTab("chat")}>Chat</button>
+                    <button className={activeTab === "posts" ? styles.active : ""} onClick={() => setActiveTab("posts")}>Posts</button>
+                    <button className={activeTab === "members" ? styles.active : ""} onClick={() => setActiveTab("members")}>Members</button>
+                </div>
+                {activeTab === "chat" && (
+                    <div>
+                        <div className={styles.chatMessages}>
+                            {chatMessages.map((message, index) => (
+                                <div
+                                    key={index}
+                                    className={`${styles.message} ${message.sender === userName ? styles.messageYou : styles.messageOther}`}
+                                >
+                                    <span className={styles.senderName}>{(message.sender === userName) ? "You" : message.sender}:</span> {message.text}
+                                </div>
+                            ))}
+                            <div ref={chatMessagesEndRef} />
+                        </div>
+                        <div className={styles.chatInput}>
+                            <input
+                                type="text"
+                                value={newMessage}
+                                onChange={handleMessageChange}
+                                placeholder="Type a message..."
+                            />
+                            <button onClick={handleSendMessage}>Send</button>
+                        </div>
+                    </div>
+                )}
+                {activeTab === "posts" && (
+                    <div className={styles.postsSection}>
+                        {posts.map((post, index) => (
+                            <div key={index} className={styles.postItem}>
+                                <div className={styles.postUsername}>{post.uname}</div>
+                                <div className={styles.postContent}>
+                                    <div className={styles.postDetails}>
+                                        <h4>{post.title || post.posttitle}</h4>
+                                        <p>{post.description}</p>
+                                        {post.link && (
+                                            <a className={styles.readMore} href={post.link} target="_blank" rel="noopener noreferrer">Read More</a>
+                                        )}
+                                    </div>
+                                    <button onClick={() => toggleComments(index)}> Comments </button>
+                                    {((userId == post.uid || !post.uid)) &&
+                                        <button
+                                            className={styles.groupDeletePostButton}
+                                            onClick={() => handleDeletePost(post.gpid)}
+                                        >
+                                            <FaTrashAlt size={15} color="red" />
+                                        </button>
+                                    }
+                                </div>
+                                {openComments[index] && (
+                                    <div className={styles.commentsSection}>
+                                        {post.comments.map((comment, commentIndex) => (
+                                            <div key={commentIndex} className={styles.comment}>
+                                                <span className={styles.commentUsername}>{comment.uname}:</span> {comment.content}
+                                            </div>
+                                        ))}
+                                        <div className={styles.newComment}>
+                                            <input
+                                                type="text"
+                                                value={newComment[index] || ""}
+                                                onChange={(e) => handleCommentChange(index, e)}
+                                                placeholder="Add a comment..."
+                                            />
+                                            <button onClick={() => handleAddComment(index)}>Add</button>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         ))}
-                        <div ref={chatMessagesEndRef} />
-                    </div>
-                    <div className={styles.chatInput}>
-                        <input
-                            type="text"
-                            value={newMessage}
-                            onChange={handleMessageChange}
-                            placeholder="Type a message..."
-                        />
-                        <button onClick={handleSendMessage}>Send</button>
-                    </div>
-                </div>
-            )}
-            {activeTab === "posts" && (
-                <div className={styles.postsSection}>
-                    {posts.map((post, index) => (
-                        <div key={index} className={styles.postItem}>
-                            <div className={styles.postUsername}>{post.uname}</div>
-                            <div className={styles.postContent}>
-                                <div className={styles.postDetails}>
-                                    <h4>{post.title || post.posttitle}</h4>
-                                    <p>{post.description}</p>
-                                    {post.link && (
-                                        <a className={styles.readMore} href={post.link} target="_blank" rel="noopener noreferrer">Read More</a>
-                                    )}
-                                </div>
-                                <button onClick={() => toggleComments(index)}> Comments </button>
-                                {((userId == post.uid || !post.uid)) &&
-                                    <button
-                                        className={styles.groupDeletePostButton}
-                                        onClick={() => handleDeletePost(post.gpid)}
-                                    >
-                                        <FaTrashAlt size={15} color="red" />
-                                    </button>
-                                }
-                            </div>
-                            {openComments[index] && (
-                                <div className={styles.commentsSection}>
-                                    {post.comments.map((comment, commentIndex) => (
-                                        <div key={commentIndex} className={styles.comment}>
-                                            <span className={styles.commentUsername}>{comment.uname}:</span> {comment.content}
-                                        </div>
-                                    ))}
-                                    <div className={styles.newComment}>
-                                        <input
-                                            type="text"
-                                            value={newComment[index] || ""}
-                                            onChange={(e) => handleCommentChange(index, e)}
-                                            placeholder="Add a comment..."
-                                        />
-                                        <button onClick={() => handleAddComment(index)}>Add</button>
-                                    </div>
-                                </div>
-                            )}
+                        <div className={styles.newPostForm}>
+                            <input
+                                type="text"
+                                name="title"
+                                value={newPost.title}
+                                onChange={handlePostChange}
+                                placeholder="Post Title"
+                            />
+                            <textarea
+                                name="description"
+                                value={newPost.description}
+                                onChange={handlePostChange}
+                                placeholder="Post Description"
+                            ></textarea>
+                            <input
+                                type="text"
+                                name="link"
+                                value={newPost.link}
+                                onChange={handlePostChange}
+                                placeholder="Link (optional)"
+                            />
+                            <button onClick={() => handleAddPost(group)}>Add Post</button>
                         </div>
-                    ))}
-                    <div className={styles.newPostForm}>
-                        <input
-                            type="text"
-                            name="title"
-                            value={newPost.title}
-                            onChange={handlePostChange}
-                            placeholder="Post Title"
-                        />
-                        <textarea
-                            name="description"
-                            value={newPost.description}
-                            onChange={handlePostChange}
-                            placeholder="Post Description"
-                        ></textarea>
-                        <input
-                            type="text"
-                            name="link"
-                            value={newPost.link}
-                            onChange={handlePostChange}
-                            placeholder="Link (optional)"
-                        />
-                        <button onClick={() => handleAddPost(group)}>Add Post</button>
                     </div>
-                </div>
-            )}
-            {activeTab === "members" && (
-                <div>
-                    <h3>Members:</h3>
-                    {loadingMembers && <p>Loading members...</p>}
-                    {error && <p className={styles.errorText}>{error}</p>}
-                    {members.length > 0 ? (
-                        <div className={styles.membersList}>
-                        {members.map((member) => {
-                            const currentUserId = sessionStorage.getItem("userId"); 
-                            const displayName = currentUserId && String(member.uid) === String(currentUserId) ? "You" : member.fullName;
-                            return (
-                                <MemberCard 
-                                    key={member.uid} 
-                                    name={displayName} 
-                                    email={member.emailId} 
-                                />
-                            );
-                        })}
+                )}
+                {activeTab === "members" && (
+                    <div>
+                        <h3>Members:</h3>
+                        {loadingMembers && <p>Loading members...</p>}
+                        {error && <p className={styles.errorText}>{error}</p>}
+                        {members.length > 0 ? (
+                            <div className={styles.membersList}>
+                                {members.map((member) => {
+                                    const currentUserId = sessionStorage.getItem("userId");
+                                    const displayName = currentUserId && String(member.uid) === String(currentUserId) ? "You" : member.fullName;
+                                    return (
+                                        <MemberCard
+                                            key={member.uid}
+                                            name={displayName}
+                                            email={member.emailId}
+                                        />
+                                    );
+                                })}
+                            </div>
+                        ) : !loadingMembers && (
+                            <p>No members found.</p>
+                        )}
+                        <button className={styles.leaveGroupButton} onClick={() => handleLeaveGroup(group)}>Leave Group</button>
+                        {String(userId) === String(creatorId) && (
+                            <button className={styles.deleteGroupButton} onClick={() => handleDeleteGroup(group)}>
+                                Delete Group
+                            </button>
+                        )}
                     </div>
-                    ) : !loadingMembers && (
-                        <p>No members found.</p>
-                    )}
-                    <button className={styles.leaveGroupButton} onClick={() => handleLeaveGroup(group)}>Leave Group</button>
-                    {String(userId) === String(creatorId) && (
-    <button className={styles.deleteGroupButton} onClick={() => handleDeleteGroup(group)}>
-        Delete Group
-    </button>
-)}
-                </div>
-            )}
-        </div>
+                )}
+            </div>
         </>
     );
 }

@@ -6,7 +6,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: `Method ${req.method} Not Allowed` });
   }
 
-  const { fullName, email, password, phoneNumber, type, academicInterests, researchInterests } = req.body;
+  const { fullName, email, password, phoneNumber, type, academicInterests, researchInterests, adminId } = req.body;
 
   if (!fullName || !email || !password || !phoneNumber) {
     return res.status(400).json({ error: "Required fields are missing" });
@@ -51,6 +51,19 @@ export default async function handler(req, res) {
           res.status(200).json({ success: `User registered successfully with UserID: ${userId}` });
         });
       });
+
+      const notificationQuery = `
+    INSERT INTO notifications (uid, message, isRead)
+    VALUES (?, ?, 0)
+  `;
+      const notificationValues = [adminId, "New User Registered , Please assign role!"];
+
+  db.query(notificationQuery, notificationValues, (notifError) => {
+    if (notifError) {
+      return res.status(500).json({ error: "Failed to create notification" });
+    }
+    return res.status(200).json({ message: "User registered and notification created successfully" });
+  });
     });
   } catch (error) {
     res.status(500).json({ error: "An error occurred" });

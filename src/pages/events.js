@@ -12,10 +12,14 @@ export default function Events() {
 
   const [userId, setUserId] = useState(null);
   const [userRole, setUserRole] = useState(null);
+  const [userName,setUserName] = useState(null);
+  const [enableEmail,setEnableEmail] = useState(null);
 
   useEffect(() => {
     const storedUserId = sessionStorage.getItem("userId");
     const storedUserRole = sessionStorage.getItem("userRole");
+    const userName = sessionStorage.getItem("userName");
+    const enableEmail = sessionStorage.getItem("enableEmail");
 
     if (!storedUserId) {
       alert("Please login to continue");
@@ -23,6 +27,8 @@ export default function Events() {
     } else {
       setUserId(storedUserId);
       setUserRole(storedUserRole);
+      setUserName(userName);
+      setEnableEmail(enableEmail);
       fetchEvents(storedUserId, storedUserRole);
     }
   }, []);
@@ -70,6 +76,76 @@ export default function Events() {
       console.error("Error creating event:", error);
     }
   };
+  const handleRegister = async (eid,title,formattedDate,timeRange,location,userId,eventuid) => {
+    try {
+      const emailResponse = await fetch(`/api/registerEvent?userId=${userId}`);
+      const emailData = await emailResponse.json();
+      const adminId=eventuid;
+      const emailResponse1 = await fetch(`/api/registerEvent?userId=${adminId}`);
+      const emailData1 = await emailResponse1.json();
+      alert(
+        "You have successfully registered for the event. A confirmation email has been sent."
+      );
+      const emailResponse2 = await fetch(`/api/advisor?userId=${adminId}`);
+      const emailData2 = await emailResponse2.json();
+      const enableEmaila=emailData2.emailId;
+      if (emailResponse.ok && emailResponse1.ok) {
+        const userEmail = emailData.emailId;
+        const adminEmail = emailData1.emailId;
+      const userEmailData = {
+        to: userEmail,
+        subject: `Registration Confirmation for ${title}`,
+        message: `You have successfully registered for the event: ${title} on ${formattedDate} from ${timeRange}, located at ${location}.`,
+      };
+
+      const adminEmailData = {
+        to: adminEmail,
+        subject: `New Event Registration for ${title}`,
+        message: `User ${userName} has registered for the event: ${title} on ${formattedDate} from ${timeRange}, located at ${location}.`,
+      };
+      if(enableEmail==="true"){
+      await fetch("/api/sendEmail", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userEmailData),
+      });
+    }
+    if(enableEmaila === 1){
+      await fetch("/api/sendEmail", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(adminEmailData),
+      });
+    }
+      
+      const response = await fetch("/api/registerEvent", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: userId,
+          eid: eid, 
+        }),
+      });
+      const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Failed to register for the event");
+    }
+  }else{
+    throw new Error("Failed to fetch user email");
+  }
+    } catch (error) {
+      console.error("Error sending emails:", error);
+      alert("An error occurred while registering for the event.");
+    }
+  };
+
 
   const handleDeleteEvent = async (id) => {
     let flag = window.confirm("Are you sure you want to delete this event?");
@@ -109,6 +185,8 @@ export default function Events() {
             <button
               className={styles.createEventButton}
               onClick={() => setIsModalOpen(true)}
+              title="Use the Embedded code option for the Google Maps link when adding a location."
+              
             >
               Create Event
             </button>
@@ -125,7 +203,9 @@ export default function Events() {
               endTime={event.end_time}
               description={event.description}
               link={event.link}
+              uid={event.uid}
               onDelete={() => handleDeleteEvent(event.eid)}
+              onRegister={() => handleRegister(event.eid,event.ename,event.date ? new Date(event.date).toLocaleDateString("en-GB") : "",event.start_time,event.place,userId,event.uid)}
             />
           ))}
         </div>

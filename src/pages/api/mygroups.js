@@ -11,13 +11,13 @@ export default async function handler(req, res) {
     let query = `
       SELECT gid, gname AS name, groupdescription AS description, academic_interests AS academicInterest, created_uid AS createdUid, users_list AS members
       FROM groups
-      WHERE JSON_CONTAINS(users_list, JSON_QUOTE(?))
+      WHERE FIND_IN_SET('25', users_list) > 0;
     `;
     if (req.query.excludeUserGroups === "true") {
       query = `
-        SELECT gid, gname AS name, groupdescription AS description, academic_interests AS academicInterest, created_uid AS createdUid, users_list AS members
-        FROM groups
-        WHERE NOT JSON_CONTAINS(users_list, JSON_QUOTE(?))
+        SELECT gid, gname AS name, groupdescription AS description, academic_interests AS academicInterest, created_uid AS createdUid, users_list AS members 
+        FROM groups 
+        WHERE (users_list IS NULL OR users_list = '' OR NOT JSON_CONTAINS(users_list, JSON_QUOTE(?)))
       `;
     }
 
@@ -31,15 +31,20 @@ export default async function handler(req, res) {
     });
   } else if (req.method === "PUT") {
     const { userId, groupId } = req.body;
-    console.log(userId,groupId);
+    console.log(userId, groupId);
 
     if (!userId || !groupId) {
       return res.status(400).json({ error: "User ID and Group ID are required" });
     }
 
     db.query(
-      "UPDATE groups SET users_list = JSON_ARRAY_APPEND(users_list, '$', ?) WHERE gid = ?",
-      [userId, groupId],
+      `UPDATE groups
+      SET users_list = CASE
+          WHEN users_list = '' OR users_list IS NULL THEN ?
+          ELSE CONCAT(users_list, ',', ?)
+      END
+      WHERE gid = ?`,
+      [userId, userId, groupId],
       (error, results) => {
         if (error) {
           console.error("Error updating group:", error);
@@ -50,8 +55,8 @@ export default async function handler(req, res) {
       }
     );
   }
- else {
-    res.setHeader("Allow", ["GET","PUT"]);
+  else {
+    res.setHeader("Allow", ["GET", "PUT"]);
     res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }
