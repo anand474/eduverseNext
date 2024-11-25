@@ -118,7 +118,7 @@ export default function Tips() {
             <div className={styles.tipCard}>
               <p>{randomTip.tip_content}</p>
               <div className={styles.tipPoster}>
-                <span>{`Posted by: ${randomTip.postedBy} on ${randomTip.posted_date}`}</span>
+                <span>{`Posted by: ${randomTip.postedBy} on ${new Date(randomTip.posted_date).toDateString()}`}</span>
               </div>
             </div>
           </div>
