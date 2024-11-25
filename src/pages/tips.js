@@ -196,7 +196,7 @@ export default function Tips() {
                 </p>
               </div>
               <div className={styles.tipPoster}>
-                <span>{`Posted by: ${tip.postedBy} on ${tip.posted_date}`}</span>
+                <span>{`Posted by: ${tip.postedBy} on ${new Date(tip.posted_date).toDateString()}`}</span>
               </div>
               {userRole !== "Student" && (
                 <button
