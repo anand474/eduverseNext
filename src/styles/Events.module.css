@@ -71,6 +71,11 @@
   font-weight: bold;
 }
 
+.eventModalContent textarea {
+  width: 100%;
+  height: 10vh;
+}
+
 .eventModalSubmitButton {
   background-color: #4caf50;
   color: white;
@@ -143,6 +148,7 @@
     padding: 5px;
   }
 }
+
 body[data-theme="dark"] .events {
   padding: 20px;
   background-color: #383838;
