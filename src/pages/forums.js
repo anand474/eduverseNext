@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
 import Header from "@/components/Header";
-import SearchBar from "@/components/SearchBar";
-import { forums as initialForums, users } from "@/data/loadData";
 import styles from "@/styles/Forums.module.css";
 
 export default function Forums() {

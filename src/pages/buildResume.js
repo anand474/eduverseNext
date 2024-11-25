@@ -363,131 +363,6 @@ export default function BuildYourResume() {
     });
   };
 
-  // const downloadResume = (resume) => {
-  //   const doc = new Document({
-  //     creator: "Your Name",
-  //     title: "Resume",
-  //     description: `Resume of ${resume.name}`,
-  //     sections: [{
-  //       properties: {},
-  //       children: [
-  //         new Paragraph({
-  //           text: resume.name,
-  //           heading: "Title",
-  //           bold: true,
-  //           size: 32,
-  //           alignment: "center",
-  //         }),
-  //         new Paragraph({
-  //           text: resume.emailId,
-  //           alignment: "center",
-  //         }),
-  //         new Paragraph({
-  //           text: resume.phoneNo,
-  //           alignment: "center",
-  //         }),
-  //         new Paragraph({
-  //           text: resume.summary,
-  //           spacing: { after: 300 },
-  //         }),
-
-  //         new Paragraph({
-  //           text: "Education",
-  //           heading: "Heading1",
-  //           bold: true,
-  //           size: 24,
-  //           spacing: { after: 200 },
-  //         }),
-  //         ...resume.education.map(edu => (
-  //           new Paragraph({
-  //             text: `${edu.degree} in ${edu.major}, ${edu.university} (${edu.fromYear} - ${edu.toYear})`,
-  //             spacing: { after: 100 },
-  //           })
-  //         )),
-
-  //         new Paragraph({
-  //           text: "Experience",
-  //           heading: "Heading1",
-  //           bold: true,
-  //           size: 24,
-  //           spacing: { after: 200 },
-  //         }),
-  //         ...resume.experience.map(exp => (
-  //           new Paragraph({
-  //             text: `${exp.jobTitle} at ${exp.company} (${exp.fromYear} - ${exp.toYear}): ${exp.description}`,
-  //             spacing: { after: 100 },
-  //           })
-  //         )),
-
-  //         new Paragraph({
-  //           text: "Certifications",
-  //           heading: "Heading1",
-  //           bold: true,
-  //           size: 24,
-  //           spacing: { after: 200 },
-  //         }),
-  //         ...resume.certifications.map(cert => (
-  //           new Paragraph({
-  //             text: `${cert.title}, Issued by ${cert.issuer} on ${cert.date}`,
-  //             spacing: { after: 100 },
-  //           })
-  //         )),
-
-  //         new Paragraph({
-  //           text: "Skills",
-  //           heading: "Heading1",
-  //           bold: true,
-  //           size: 24,
-  //           spacing: { after: 200 },
-  //         }),
-  //         new Paragraph({
-  //           text: resume.skills.join(', '),
-  //           spacing: { after: 200 },
-  //         }),
-
-  //         new Paragraph({
-  //           text: "Interests",
-  //           heading: "Heading1",
-  //           bold: true,
-  //           size: 24,
-  //           spacing: { after: 200 },
-  //         }),
-  //         new Paragraph({
-  //           text: resume.interests,
-  //           spacing: { after: 200 },
-  //         }),
-
-  //         new Paragraph({
-  //           text: "Strengths",
-  //           heading: "Heading1",
-  //           bold: true,
-  //           size: 24,
-  //           spacing: { after: 200 },
-  //         }),
-  //         new Paragraph({
-  //           text: resume.strengths,
-  //           spacing: { after: 200 },
-  //         }),
-  //         new Paragraph({
-  //           text: "Weaknesses",
-  //           heading: "Heading1",
-  //           bold: true,
-  //           size: 24,
-  //           spacing: { after: 200 },
-  //         }),
-  //         new Paragraph({
-  //           text: resume.weaknesses,
-  //           spacing: { after: 200 },
-  //         }),
-  //       ],
-  //     }],
-  //   });
-
-  //   Packer.toBlob(doc).then((blob) => {
-  //     saveAs(blob, `${resume.name}_resume.docx`);
-  //   });
-  // };
-
   const downloadResume = (resume) => {
     const doc = new Document({
       creator: "Your Name",
@@ -594,7 +469,7 @@ export default function BuildYourResume() {
             }),
             ...resume.certifications.map((cert) =>
               new Paragraph({
-                text: `${cert.title}, Issued by ${cert.issuer} on ${cert.date}`,
+                text: `${cert.title}, Issued by ${cert.issuer} on ${new Date(cert.date).toDateString()}`,
                 style: "NormalText",
               })
             ),

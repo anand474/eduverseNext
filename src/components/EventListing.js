@@ -2,13 +2,25 @@ import React, { useState, useEffect } from "react";
 import styles from "../styles/EventListing.module.css";
 import { FaTrash, FaMapMarkerAlt } from "react-icons/fa";
 
-export default function EventListing({ eid, title, location, date, startTime, endTime, description, link,uid, onDelete,onRegister, }) {
+export default function EventListing({
+  eid,
+  title,
+  location,
+  date,
+  startTime,
+  endTime,
+  description,
+  link,
+  uid,
+  onDelete,
+  onRegister,
+}) {
   const [isMapOpen, setIsMapOpen] = useState(false);
   const [userId, setUserId] = useState(null);
   const [userRole, setUserRole] = useState(null);
   var mapUrl = "";
 
-  if(location.toLowerCase() !== 'remote'){
+  if (location.toLowerCase() !== "remote") {
     mapUrl = link;
     link = "";
   }
@@ -34,11 +46,13 @@ export default function EventListing({ eid, title, location, date, startTime, en
     setIsMapOpen(!isMapOpen);
   };
 
-  
   return (
     <div className={styles.eventCard}>
       <div className={styles.eventCardInfo}>
-        <h3 className={styles.eventCardTitle}>{title}{eid}</h3>
+        <h3 className={styles.eventCardTitle}>
+          {title}
+          {eid}
+        </h3>
         <p className={styles.eventCardLocation}>{location}</p>
         {link && (
           <p className={styles.eventCardLink}>
@@ -61,12 +75,24 @@ export default function EventListing({ eid, title, location, date, startTime, en
         ) : (
           <FaMapMarkerAlt className={styles.eventMapIconHide} title="Map" />
         )}
-        <button
-          className={styles.eventInterestedButton}
-          onClick={() => onRegister(eid,title,formattedDate,timeRange,location,userId,uid)}
-        >
-          Register
-        </button>
+        {userRole === "Student" && (
+          <button
+            className={styles.eventInterestedButton}
+            onClick={() =>
+              onRegister(
+                eid,
+                title,
+                formattedDate,
+                timeRange,
+                location,
+                userId,
+                uid
+              )
+            }
+          >
+            Register
+          </button>
+        )}
         {userRole !== "Student" && (
           <FaTrash
             onClick={() => onDelete(eid)}
@@ -78,8 +104,9 @@ export default function EventListing({ eid, title, location, date, startTime, en
 
       {mapUrl && (
         <div
-          className={`${styles.eventCardMapContainer} ${isMapOpen ? styles.open : ""
-            }`}
+          className={`${styles.eventCardMapContainer} ${
+            isMapOpen ? styles.open : ""
+          }`}
         >
           <h4>Location Map</h4>
           <iframe

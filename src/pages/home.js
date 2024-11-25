@@ -117,10 +117,10 @@ export default function HomePage() {
           <h2 className={styles.homeH2}>Quick Links</h2>
           <div className={styles.linkCard}>
             <p>
-              <a href="/mentorship-program">Join Mentorship Program</a>
+              <a href="/mentorshipProgram">Join Mentorship Program</a>
             </p>
             <p>
-              <a href="/build-resume">Build your Resume</a>
+              <a href="/buildResume">Build your Resume</a>
             </p>
             <p>
               <a href="/forums">Forums</a>

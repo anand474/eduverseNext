@@ -48,9 +48,6 @@ export default function ForumPage() {
                     }
                 };
                 
-                
-                
-    
                 fetchForum();
                 fetchPosts();
             }

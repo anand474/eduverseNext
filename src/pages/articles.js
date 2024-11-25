@@ -61,7 +61,7 @@ export default function Articles() {
       postedBy: event.target.postedBy.value,
       description: event.target.description.value,
       article_link: event.target.link.value,
-      posted_date: new Date().toLocaleDateString(),
+      posted_date: (new Date().toISOString()).slice(0, -1) + "-06:00",
       uid: userId,
     };
 
@@ -76,7 +76,6 @@ export default function Articles() {
 
       if (response.ok) {
         const createdArticle = await response.json();
-        // setArticles([...articles, { ...newArticle, aid: createdArticle.id }]);
         fetchArticles(userId, userRole);
         setShowForm(false);
       } else {
@@ -181,7 +180,7 @@ export default function Articles() {
                 <p>
                   <strong>Posted By:</strong> {article.postedBy}
                 </p>
-                <p>{article.posted_date}</p>
+                <p>{date.setHours(new Date(article.posted_date).getHours() - 6).toLocaleString()}</p>
               </div>
               <div className={styles.readMore}>
                 <a

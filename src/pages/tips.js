@@ -76,7 +76,7 @@ export default function Tips() {
       const newTipObj = {
         title: shortDescription.substring(0, 50),
         tip_content: newTip,
-        posted_date: new Date(),
+        posted_date: new Date().toDateString(),
         postedBy: uname,
         uid_created: userId,
       };

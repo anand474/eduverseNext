@@ -6,7 +6,7 @@ const db = mysql.createConnection({
   password: '',
   database: 'eduverse',
   waitForConnections: true,
-  connectionLimit: 1000,
+  connectionLimit: 10000,
   queueLimit: 0
 });
 
