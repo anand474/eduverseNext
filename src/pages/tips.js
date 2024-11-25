@@ -108,14 +108,6 @@ export default function Tips() {
       (tip.tip_content && tip.tip_content.toLowerCase().includes(searchTerm))
   );
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
-  };
-
   return (
     <>
       <Header />
@@ -126,9 +118,7 @@ export default function Tips() {
             <div className={styles.tipCard}>
               <p>{randomTip.tip_content}</p>
               <div className={styles.tipPoster}>
-                <span>{`Posted by: ${randomTip.postedBy} on ${formatDate(
-                  randomTip.posted_date
-                )}`}</span>
+                <span>{`Posted by: ${randomTip.postedBy} on ${randomTip.posted_date}`}</span>
               </div>
             </div>
           </div>
@@ -206,9 +196,7 @@ export default function Tips() {
                 </p>
               </div>
               <div className={styles.tipPoster}>
-                <span>{`Posted by: ${tip.postedBy} on ${formatDate(
-                  tip.posted_date
-                )}`}</span>
+                <span>{`Posted by: ${tip.postedBy} on ${tip.posted_date}`}</span>
               </div>
               {userRole !== "Student" && (
                 <button

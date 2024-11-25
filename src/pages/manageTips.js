@@ -7,7 +7,6 @@ export default function ManageTips() {
   const [userId, setUserId] = useState(null);
   const [userRole, setUserRole] = useState(null);
   const [isLoading, setLoading] = useState(true);
-
   useEffect(() => {
     const storedUserId = sessionStorage.getItem("userId");
     const storedUserRole = sessionStorage.getItem("userRole");
@@ -21,7 +20,6 @@ export default function ManageTips() {
     setUserId(storedUserId);
     setUserRole(storedUserRole);
   }, []);
-
   useEffect(() => {
     if (userId && userRole) {
       fetchTips();
@@ -59,14 +57,6 @@ export default function ManageTips() {
     }
   };
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
-  };
-
   if (isLoading) {
     return <p>Loading...</p>;
   }
@@ -94,7 +84,7 @@ export default function ManageTips() {
                 <td>{tip.title}</td>
                 <td>{tip.tip_content}</td>
                 <td>{tip.postedBy}</td>
-                <td>{formatDate(tip.posted_date)}</td>
+                <td>{tip.posted_date}</td>
                 <td>
                   <button
                     className={`${styles.deleteButton} ${styles.actionsCell}`}
